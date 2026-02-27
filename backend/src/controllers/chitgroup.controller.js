@@ -603,8 +603,11 @@ const getChitGroupDetails = async (req, res, next) => {
                         orderBy: { created_at: 'desc' }
                     });
                     if (latestRequest) {
-                        joinRequestStatus = latestRequest.status;
-                        applyStatus = latestRequest.status?.toUpperCase();
+                        joinRequestStatus = String(latestRequest.status || '').trim().toLowerCase();
+                        applyStatus = (latestRequest.status || '').toUpperCase();
+                        if (joinRequestStatus === 'approved') {
+                            isMember = true;
+                        }
                     }
                 } catch (error) {
                     if (!isMissingTableError(error, 'join_requests')) throw error;
@@ -614,7 +617,10 @@ const getChitGroupDetails = async (req, res, next) => {
                     });
                     if (legacyRequest) {
                         applyStatus = legacyRequest.status;
-                        joinRequestStatus = String(legacyRequest.status || '').toLowerCase();
+                        joinRequestStatus = String(legacyRequest.status || '').trim().toLowerCase();
+                        if (joinRequestStatus === 'approved') {
+                            isMember = true;
+                        }
                     }
                 }
             }

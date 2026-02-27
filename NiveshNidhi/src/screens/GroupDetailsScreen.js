@@ -1,7 +1,7 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { View, Text, StyleSheet, ScrollView, ActivityIndicator, Alert, TouchableOpacity, RefreshControl } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRoute } from '@react-navigation/native';
+import { useRoute, useFocusEffect } from '@react-navigation/native';
 import { Users, Calendar, IndianRupee, ShieldCheck } from 'lucide-react-native';
 import { chitGroups, escrow, user as userApi } from '../services/api';
 import { colors } from '../theme/colors';
@@ -9,11 +9,12 @@ import Button from '../components/Button';
 
 function getRazorpayCheckout() {
   try {
-    // `react-native-razorpay` is a native module and will not exist in Expo Go.
-    // Lazy-require so the app can run in Expo Go; payments will require a dev build.
+    // react-native-razorpay is a native module; not available in Expo Go.
     // eslint-disable-next-line global-require
     const mod = require('react-native-razorpay');
-    return mod?.default ?? mod;
+    const Razorpay = mod?.default ?? mod;
+    if (Razorpay && typeof Razorpay.open === 'function') return Razorpay;
+    return null;
   } catch (e) {
     return null;
   }
@@ -37,11 +38,46 @@ export default function GroupDetailsScreen({ navigation }) {
     fetchProfile();
   }, []);
 
+  const fetchGroupDetails = useCallback(async (options = {}) => {
+    const { silent = false } = options;
+    if (!groupId) return;
+    if (!silent) setLoading(true);
+    try {
+      const res = await chitGroups.getById(groupId);
+      if (res.data?.success) {
+        const payload = res.data.data;
+        setGroup(payload);
+        setJoinRequestStatus(payload.joinRequestStatus ?? null);
+        setIsMember(Boolean(payload.isMember));
+        setIsOrganizer(Boolean(payload.isOrganizer));
+      } else if (!silent) {
+        Alert.alert('Error', res.data?.message || 'Group not found');
+      }
+    } catch (error) {
+      if (!silent) {
+        Alert.alert(
+          'Error',
+          error?.response?.data?.message || 'Failed to load group details'
+        );
+      }
+    } finally {
+      if (!silent) setLoading(false);
+    }
+  }, [groupId]);
+
   useEffect(() => {
     if (groupId) {
       fetchGroupDetails();
     }
-  }, [groupId]);
+  }, [groupId, fetchGroupDetails]);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (groupId && group) {
+        fetchGroupDetails({ silent: true });
+      }
+    }, [groupId, group, fetchGroupDetails])
+  );
 
   const fetchProfile = async () => {
     try {
@@ -53,40 +89,18 @@ export default function GroupDetailsScreen({ navigation }) {
     }
   };
 
-  const fetchGroupDetails = async () => {
-    setLoading(true);
-    try {
-      const res = await chitGroups.getById(groupId);
-      if (res.data?.success) {
-        const payload = res.data.data;
-        setGroup(payload);
-        setJoinRequestStatus(payload.joinRequestStatus || null);
-        setIsMember(Boolean(payload.isMember));
-        setIsOrganizer(Boolean(payload.isOrganizer));
-      } else {
-        Alert.alert('Error', res.data?.message || 'Group not found');
-      }
-    } catch (error) {
-      Alert.alert(
-        'Error',
-        error?.response?.data?.message || 'Failed to load group details'
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const onRefresh = async () => {
+  const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    await fetchGroupDetails();
+    await fetchGroupDetails({ silent: true });
     setRefreshing(false);
-  };
+  }, [fetchGroupDetails]);
 
   const ensureKyc = () => {
     const isKycVerified =
       profile?.isKycVerified ||
-      profile?.aadhaarVerified ||
-      profile?.kycVerified;
+      profile?.kycVerified ||
+      profile?.data?.user?.isKycVerified ||
+      false;
 
     if (!isKycVerified) {
       Alert.alert(
@@ -161,18 +175,18 @@ export default function GroupDetailsScreen({ navigation }) {
 
     if (!ensureKyc()) return;
 
-    setPaymentLoading(true);
-    try {
-      const RazorpayCheckout = getRazorpayCheckout();
-      if (!RazorpayCheckout?.open) {
-        setPaymentLoading(false);
-        Alert.alert(
-          'Payments not supported in Expo Go',
-          'Razorpay needs a custom development build (or production build). Please run the app with a dev build to make payments.'
-        );
-        return;
-      }
+    const RazorpayCheckout = getRazorpayCheckout();
+    if (!RazorpayCheckout) {
+      Alert.alert(
+        'Payment gateway not available',
+        'Razorpay requires a development or production build. It does not work in Expo Go. Build the app with a dev client to make payments.'
+      );
+      return;
+    }
 
+    setPaymentLoading(true);
+    let transaction_id = null;
+    try {
       const monthlyAmount =
         Number(group.group.rules?.monthly_amount || 0) > 0
           ? Number(group.group.rules.monthly_amount)
@@ -186,10 +200,11 @@ export default function GroupDetailsScreen({ navigation }) {
       });
 
       if (!res.data?.success) {
-        throw new Error('Failed to initialize payment');
+        throw new Error(res.data?.message || 'Failed to initialize payment');
       }
 
-      const { razorpay_order_id, transaction_id, amount } = res.data;
+      const { razorpay_order_id, amount } = res.data;
+      transaction_id = res.data.transaction_id;
 
       const options = {
         key: process.env.EXPO_PUBLIC_RAZORPAY_KEY_ID || 'rzp_test_SKVpiqvO8UAmrn',
@@ -208,68 +223,88 @@ export default function GroupDetailsScreen({ navigation }) {
         },
       };
 
-      RazorpayCheckout.open(options)
-        .then(async (response) => {
-          try {
-            const verifyRes = await escrow.verifyWebhook({
-              transaction_id,
-              payload: {
-                payment: {
-                  entity: {
-                    id: response.razorpay_payment_id,
-                    notes: { transaction_id },
-                  },
+      try {
+        const response = await RazorpayCheckout.open(options);
+        try {
+          const verifyRes = await escrow.verifyWebhook({
+            transaction_id,
+            payload: {
+              payment: {
+                entity: {
+                  id: response.razorpay_payment_id,
+                  notes: { transaction_id },
                 },
               },
-            });
-
-            if (verifyRes.data?.success) {
-              Alert.alert(
-                'Payment Successful',
-                'Payment successful! Funds secured in Escrow & Blockchain.'
-              );
-              await fetchGroupDetails();
-            } else {
-              throw new Error('Payment verification failed');
-            }
-          } catch (err) {
+            },
+          });
+          if (verifyRes.data?.success) {
             Alert.alert(
-              'Verification Failed',
-              'Sorry, something went wrong. If money has been deducted it will be refunded to your account in 2-3 days.'
+              'Payment Successful',
+              'Payment successful! Funds secured in Escrow & Blockchain.'
             );
-          } finally {
-            setPaymentLoading(false);
-          }
-        })
-        .catch(async (error) => {
-          setPaymentLoading(false);
-          if (error?.description) {
-            Alert.alert(
-              'Payment Failed',
-              `${error.description}. If money has been deducted it will be refunded to your account in 2-3 days.`
-            );
+            await fetchGroupDetails();
           } else {
             Alert.alert(
-              'Payment Cancelled',
-              'Payment cancelled by user.'
+              'Verification issue',
+              'Payment was received but verification failed. If amount was deducted, it will be refunded within 2–3 days.'
             );
           }
+        } catch (err) {
+          Alert.alert(
+            'Verification failed',
+            'Payment may have gone through. If amount was deducted, it will be refunded within 2–3 days if not confirmed.'
+          );
+          if (transaction_id) {
+            try {
+              await escrow.webhookFailed({
+                transaction_id,
+                error_description: err?.message || 'Verification failed',
+              });
+            } catch (e) {
+              // ignore
+            }
+          }
+        } finally {
+          setPaymentLoading(false);
+        }
+      } catch (razorpayError) {
+        setPaymentLoading(false);
+        const msg = String(razorpayError?.message || razorpayError?.description || '');
+        const isGatewayUnavailable =
+          !msg ||
+          /open of null|cannot read property 'open'|razorpay.*not available|native module/i.test(msg);
+        const isUserCancel = /cancel|cancelled|dismiss|closed/i.test(msg);
+
+        if (transaction_id) {
           try {
             await escrow.webhookFailed({
               transaction_id,
-              error_description: error?.description || 'Payment failed or cancelled on mobile.',
+              error_description: msg || 'Payment did not complete',
             });
-          } catch (err) {
-            // no-op
+          } catch (e) {
+            // ignore
           }
-        });
+        }
+
+        if (isGatewayUnavailable) {
+          Alert.alert(
+            'Payment gateway not available',
+            'Razorpay could not be opened. Use a development or production build (not Expo Go) to make payments.'
+          );
+        } else if (!isUserCancel && msg) {
+          Alert.alert(
+            'Payment failed',
+            msg + (msg.includes('refund') ? '' : '\n\nIf amount was deducted, it will be refunded within 2–3 days.')
+          );
+        }
+      }
     } catch (error) {
       setPaymentLoading(false);
       Alert.alert(
-        'Payment Error',
+        'Payment error',
         error?.response?.data?.message ||
         error?.message ||
-        'Could not initiate payment. Please try again later.'
+        'Could not start payment. Please try again.'
       );
     }
   };
@@ -428,7 +463,12 @@ export default function GroupDetailsScreen({ navigation }) {
             title={actionButton?.label || 'Apply to Join'}
             onPress={actionButton?.action}
             disabled={actionButton?.disabled}
-            style={styles.primaryBtn}
+            style={[
+              styles.primaryBtn,
+              (isMember || joinRequestStatus === 'approved') && !group?.hasPaidCurrentMonth && actionButton?.action === handleMonthlyPayment
+                ? styles.paymentBtn
+                : null,
+            ]}
           />
         </View>
       </ScrollView>
@@ -508,6 +548,9 @@ const styles = StyleSheet.create({
   },
   primaryBtn: {
     backgroundColor: colors.secondary,
+  },
+  paymentBtn: {
+    backgroundColor: '#16a34a',
   },
 });
 
