@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, ActivityIndicator, TouchableOpacity, RefreshControl, Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { chitGroups } from '../services/api';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { chitGroups, user as userApi } from '../services/api';
 import { colors } from '../theme/colors';
 import Button from '../components/Button';
 import { Users, Clock } from 'lucide-react-native';
@@ -12,9 +13,14 @@ export default function GroupsScreen({ navigation }) {
     const [groups, setGroups] = useState([]);
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
+    const [profile, setProfile] = useState(null);
+    const [profileLoading, setProfileLoading] = useState(true);
+    const [applyLoadingId, setApplyLoadingId] = useState(null);
+    const [joinStatusByGroup, setJoinStatusByGroup] = useState({});
 
     useEffect(() => {
         fetchGroups();
+        fetchProfile();
     }, []);
 
     const fetchGroups = async () => {
@@ -33,6 +39,19 @@ export default function GroupsScreen({ navigation }) {
         }
     };
 
+    const fetchProfile = async () => {
+        try {
+            const res = await userApi.getMe();
+            const fetchedUser = res.data?.data?.user || res.data?.data || res.data?.user || res.data || {};
+            setProfile(fetchedUser);
+        } catch (error) {
+            // Non-blocking; profile will remain null and auth checks will fallback to navigation
+            console.error('Profile fetch error (GroupsScreen):', error);
+        } finally {
+            setProfileLoading(false);
+        }
+    };
+
     const handleRefresh = () => {
         setRefreshing(true);
         fetchGroups();
@@ -44,29 +63,142 @@ export default function GroupsScreen({ navigation }) {
         </View>
     );
 
-    const renderGroup = ({ item }) => (
-        <View style={styles.card}>
-            <Text style={styles.groupName}>{item.name}</Text>
+    const handleApplyToGroup = async (group) => {
+        try {
+            const token = await AsyncStorage.getItem('nn_token');
+            if (!token) {
+                Alert.alert(
+                    t('auth.login') || 'Login Required',
+                    t('groups.login_required') || 'Please login to apply for this chit group.',
+                    [
+                        {
+                            text: t('auth.login') || 'Login',
+                            onPress: () => navigation.replace('Auth'),
+                        },
+                        { text: 'Cancel', style: 'cancel' },
+                    ]
+                );
+                return;
+            }
 
-            <View style={styles.infoRow}>
-                <View style={styles.infoBox}>
-                    <Users size={20} color={colors.textMuted} />
-                    <Text style={styles.infoText}>{item.member_capacity || item.max_members || item.maxMembers} {t('groups.members')}</Text>
+            if (!profileLoading && !profile) {
+                Alert.alert(
+                    'Profile Required',
+                    'We could not load your profile details. Please try again from the Profile tab.'
+                );
+                return;
+            }
+
+            const isKycVerified =
+                profile?.isKycVerified ||
+                profile?.aadhaarVerified ||
+                profile?.kycVerified;
+
+            if (!isKycVerified) {
+                Alert.alert(
+                    'KYC Required',
+                    'KYC verification is required to join this chit group. Please complete your KYC from the Profile tab on web.'
+                );
+                return;
+            }
+
+            const groupId = group.id || group._id || group.chit_group_id;
+            if (!groupId) {
+                Alert.alert('Error', 'Invalid group information. Please try again later.');
+                return;
+            }
+
+            const userId = profile?.id || profile?._id || profile?.userId;
+            if (!userId) {
+                Alert.alert('Error', 'Could not determine your user account. Please re-login and try again.');
+                return;
+            }
+
+            setApplyLoadingId(groupId);
+
+            const payload = { userId };
+            const res = await chitGroups.applyToJoin(groupId, payload);
+
+            if (res.data?.success) {
+                setJoinStatusByGroup((prev) => ({
+                    ...prev,
+                    [groupId]: 'pending',
+                }));
+                Alert.alert('Success', 'Your request to join this chit group has been sent for organizer approval.');
+            } else {
+                const message = res.data?.message || 'Failed to apply for this chit group.';
+                if (message.toLowerCase().includes('pending')) {
+                    setJoinStatusByGroup((prev) => ({
+                        ...prev,
+                        [groupId]: 'pending',
+                    }));
+                }
+                Alert.alert('Error', message);
+            }
+        } catch (error) {
+            const message =
+                error?.response?.data?.message ||
+                error?.message ||
+                'Failed to apply for this chit group.';
+
+            if (message.toLowerCase().includes('pending')) {
+                const groupId = group.id || group._id || group.chit_group_id;
+                if (groupId) {
+                    setJoinStatusByGroup((prev) => ({
+                        ...prev,
+                        [groupId]: 'pending',
+                    }));
+                }
+            }
+
+            Alert.alert('Error', message);
+        } finally {
+            const groupId = group.id || group._id || group.chit_group_id;
+            setApplyLoadingId((prevId) => (prevId === groupId ? null : prevId));
+        }
+    };
+
+    const renderGroup = ({ item }) => {
+        const groupId = item.id || item._id || item.chit_group_id;
+        const isPending = groupId && joinStatusByGroup[groupId] === 'pending';
+        const isLoading = groupId && applyLoadingId === groupId;
+
+        let buttonLabel = t('groups.apply');
+        if (isPending) {
+            buttonLabel = 'Request Sent (Awaiting Approval)';
+        } else if (isLoading) {
+            buttonLabel = 'Applying...';
+        }
+
+        return (
+            <View style={styles.card}>
+                <Text style={styles.groupName}>{item.name}</Text>
+
+                <View style={styles.infoRow}>
+                    <View style={styles.infoBox}>
+                        <Users size={20} color={colors.textMuted} />
+                        <Text style={styles.infoText}>{item.member_capacity || item.max_members || item.maxMembers} {t('groups.members')}</Text>
+                    </View>
+                    <View style={styles.infoBox}>
+                        <Clock size={20} color={colors.textMuted} />
+                        <Text style={styles.infoText}>{item.duration_months || item.durationMonths} {t('groups.months')}</Text>
+                    </View>
                 </View>
-                <View style={styles.infoBox}>
-                    <Clock size={20} color={colors.textMuted} />
-                    <Text style={styles.infoText}>{item.duration_months || item.durationMonths} {t('groups.months')}</Text>
+
+                <View style={styles.amountRow}>
+                    <Text style={styles.amountLabel}>{t('groups.subscription')}</Text>
+                    <Text style={styles.amountVal}>₹{Number(item.chit_value || item.subscription_amount || item.subscriptionAmount || 0).toLocaleString()}/{t('groups.mo')}</Text>
                 </View>
-            </View>
 
-            <View style={styles.amountRow}>
-                <Text style={styles.amountLabel}>{t('groups.subscription')}</Text>
-                <Text style={styles.amountVal}>₹{Number(item.chit_value || item.subscription_amount || item.subscriptionAmount || 0).toLocaleString()}/{t('groups.mo')}</Text>
+                <Button
+                    title={buttonLabel}
+                    onPress={() => handleApplyToGroup(item)}
+                    style={styles.joinBtn}
+                    disabled={isPending || isLoading}
+                />
             </View>
-
-            <Button title={t('groups.apply')} onPress={() => { }} style={styles.joinBtn} />
-        </View>
-    );
+        );
+    };
 
     return (
         <SafeAreaView style={styles.container}>
