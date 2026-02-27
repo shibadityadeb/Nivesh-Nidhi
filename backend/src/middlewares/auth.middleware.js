@@ -48,4 +48,32 @@ const authorize = (...roles) => {
   };
 };
 
-module.exports = { protect, authorize };
+const optionalProtect = async (req, res, next) => {
+  try {
+    let token;
+
+    if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+      token = req.headers.authorization.split(' ')[1];
+    }
+
+    console.log('[optionalProtect] Token present:', !!token, 'Path:', req.path);
+
+    if (!token) {
+      console.log('[optionalProtect] No token, proceeding as guest');
+      return next();
+    }
+
+    const decoded = verifyToken(token);
+    const user = await User.findById(decoded.id);
+    if (user) {
+      req.user = user;
+      console.log('[optionalProtect] User found:', user.email);
+    }
+    return next();
+  } catch (error) {
+    console.log('[optionalProtect] Error:', error.message);
+    return next();
+  }
+};
+
+module.exports = { protect, authorize, optionalProtect };
