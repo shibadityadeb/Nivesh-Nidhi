@@ -145,19 +145,19 @@ export default function ProfileScreen({ navigation }) {
                                 </Text>
                             </TouchableOpacity>
                             <TouchableOpacity
-                                style={[styles.langBtn, i18n.language === 'hi' && styles.activeLangBtn]}
-                                onPress={() => changeLanguage('hi')}
-                            >
-                                <Text style={[styles.langText, i18n.language === 'hi' && styles.activeLangText]}>
-                                    हिन्दी
-                                </Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity
                                 style={[styles.langBtn, i18n.language === 'mr' && styles.activeLangBtn]}
                                 onPress={() => changeLanguage('mr')}
                             >
                                 <Text style={[styles.langText, i18n.language === 'mr' && styles.activeLangText]}>
                                     मराठी
+                                </Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={[styles.langBtn, i18n.language === 'hi' && styles.activeLangBtn]}
+                                onPress={() => changeLanguage('hi')}
+                            >
+                                <Text style={[styles.langText, i18n.language === 'hi' && styles.activeLangText]}>
+                                    हिन्दी
                                 </Text>
                             </TouchableOpacity>
                         </View>
