@@ -31,7 +31,10 @@ export const auth = {
 
 export const user = {
     getMe: () => api.get('/user/me'),
-    getChits: () => api.get('/user/chits')
+    getChits: () => api.get('/user/chits'),
+    getNotifications: () => api.get('/user/notifications'),
+    markNotificationRead: (id) => api.patch(`/user/notifications/${id}/read`),
+    markAllNotificationsRead: () => api.patch('/user/notifications/read-all')
 };
 
 export const kyc = {

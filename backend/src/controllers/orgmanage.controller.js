@@ -315,6 +315,37 @@ const createAnnouncement = async (req, res, next) => {
             }
         });
 
+        // Mirror announcements into member notifications for active group members.
+        const members = await prisma.chitGroupMember.findMany({
+            where: {
+                chit_group_id: groupId,
+                status: 'ACTIVE'
+            },
+            select: { user_id: true }
+        });
+
+        if (members.length > 0) {
+            await prisma.memberNotification.createMany({
+                data: members.map((member) => ({
+                    chit_group_id: groupId,
+                    user_id: member.user_id,
+                    title,
+                    message,
+                    type: 'CUSTOM'
+                }))
+            });
+        } else {
+            await prisma.memberNotification.create({
+                data: {
+                    chit_group_id: groupId,
+                    user_id: null,
+                    title,
+                    message,
+                    type: 'CUSTOM'
+                }
+            });
+        }
+
         res.status(201).json({ success: true, message: 'Announcement created', data: announcement });
     } catch (error) {
         next(error);
