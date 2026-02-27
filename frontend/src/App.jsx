@@ -13,7 +13,6 @@ import ApplyOrganizer from "./pages/ApplyOrganizer";
 import AdminDashboard from "./pages/AdminDashboard";
 import UserDashboard from "./pages/UserDashboard";
 import MyChitGroup from "./pages/MyChitGroup";
-import JoinedGroups from "./pages/JoinedGroups";
 import Kyc from "./pages/Kyc";
 import ChitProcess from "./pages/ChitProcess";
 import GovSchemes from "./pages/GovSchemes";
@@ -51,7 +50,6 @@ const App = () => (
               <Route path="/solutions-goal-based" element={<GoalBasedSolutions />} />
               <Route path="/solutions-personalized" element={<PersonalizedSolutions />} />
               <Route path="/dashboard" element={<UserDashboard />} />
-              <Route path="/joined-groups" element={<JoinedGroups />} />
               <Route path="/my-chit-group" element={<MyChitGroup />} />
               <Route path="*" element={<NotFound />} />
             </Routes>

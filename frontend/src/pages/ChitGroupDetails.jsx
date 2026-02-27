@@ -185,9 +185,12 @@ export default function ChitGroupDetails() {
 
             if (verifyRes.data.success) {
               toast.success("Payment successful! Funds secured in Escrow & Blockchain.");
+              await fetchGroupDetails();
             }
           } catch (err) {
-            toast.error("Payment verification failed. If deducted, it will be refunded.");
+            toast.error("Sorry something went wrong. If money has been deducted it will be refunded to your account in 2-3 days.");
+          } finally {
+            setPaymentLoading(false);
           }
         },
         prefill: {
@@ -198,11 +201,21 @@ export default function ChitGroupDetails() {
         theme: {
           color: "#1d4ed8",
         },
+        modal: {
+          backdropclose: false,
+          escape: true,
+          handleback: true,
+          ondismiss: function () {
+            setPaymentLoading(false);
+            toast.info("Payment cancelled.");
+          }
+        }
       };
 
       const rzp = new window.Razorpay(options);
       rzp.on("payment.failed", async function (response) {
-        toast.error(`Payment Failed: ${response.error.description}`);
+        setPaymentLoading(false);
+        toast.error(`Payment Failed: ${response.error.description}. If money has been deducted it will be refunded to your account in 2-3 days.`);
         try {
           await escrow.webhookFailed({
             transaction_id,
@@ -214,9 +227,8 @@ export default function ChitGroupDetails() {
       });
       rzp.open();
     } catch (error) {
-      toast.error(error.response?.data?.message || "Could not initiate payment. Please try again later.");
-    } finally {
       setPaymentLoading(false);
+      toast.error(error.response?.data?.message || "Could not initiate payment. Please try again later.");
     }
   };
 
@@ -378,7 +390,9 @@ export default function ChitGroupDetails() {
               toast.error(confirmRes.data.message || "Payment confirmed but auction update failed");
             }
           } catch (err) {
-            toast.error(err.response?.data?.message || "Payment verification failed.");
+            toast.error("Sorry something went wrong. If money has been deducted it will be refunded to your account in 2-3 days.");
+          } finally {
+            setWinnerPaymentLoadingId(null);
           }
         },
         prefill: {
@@ -389,11 +403,21 @@ export default function ChitGroupDetails() {
         theme: {
           color: "#1d4ed8",
         },
+        modal: {
+          backdropclose: false,
+          escape: true,
+          handleback: true,
+          ondismiss: function () {
+            setWinnerPaymentLoadingId(null);
+            toast.info("Payment cancelled.");
+          }
+        }
       };
 
       const rzp = new window.Razorpay(options);
       rzp.on("payment.failed", async function (response) {
-        toast.error(`Payment Failed: ${response.error.description}`);
+        setWinnerPaymentLoadingId(null);
+        toast.error(`Payment Failed: ${response.error.description}. If money has been deducted it will be refunded to your account in 2-3 days.`);
         try {
           await escrow.webhookFailed({
             transaction_id,
@@ -405,9 +429,8 @@ export default function ChitGroupDetails() {
       });
       rzp.open();
     } catch (error) {
-      toast.error(error.response?.data?.message || error.message || "Could not initiate winner payment");
-    } finally {
       setWinnerPaymentLoadingId(null);
+      toast.error(error.response?.data?.message || error.message || "Could not initiate winner payment");
     }
   };
 
@@ -425,6 +448,13 @@ export default function ChitGroupDetails() {
     }
 
     if (isMember || joinRequestStatus === "approved") {
+      if (group.hasPaidCurrentMonth) {
+        return {
+          label: "Paid for Current Month",
+          disabled: true,
+          action: undefined,
+        };
+      }
       return {
         label: paymentLoading ? "Processing Payment..." : "Make Monthly Payment",
         disabled: paymentLoading,

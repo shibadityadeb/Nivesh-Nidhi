@@ -162,9 +162,6 @@ const Navbar = () => {
                           My Chit Group
                         </a>
                       )}
-                      <a href="/joined-groups" className="block px-4 py-2.5 text-sm font-medium text-card-foreground hover:bg-muted hover:text-primary rounded-lg transition-colors mb-1">
-                        Joined Groups
-                      </a>
                       <a href="/dashboard" className="block px-4 py-2.5 text-sm font-medium text-card-foreground hover:bg-muted hover:text-primary rounded-lg transition-colors mb-1">
                         My Dashboard
                       </a>
@@ -244,11 +241,11 @@ const Navbar = () => {
                       </a>
                     )}
                     <a
-                      href="/joined-groups"
-                      className="w-full mt-2 flex items-center justify-center gap-2 px-5 py-3 rounded-lg border border-input text-foreground font-medium text-sm"
+                      href="/dashboard"
+                      className="w-full mt-2 flex items-center justify-center gap-2 px-5 py-3 rounded-lg border border-input text-foreground font-medium text-sm hover:bg-muted transition-colors"
                     >
-                      <Users className="w-4 h-4" />
-                      Joined Groups
+                      <User className="w-4 h-4" />
+                      My Dashboard
                     </a>
                     <button
                       onClick={logoutUser}

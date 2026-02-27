@@ -406,6 +406,7 @@ const getChitGroupDetails = async (req, res, next) => {
         let joinRequestStatus = null;
         let isMember = false;
         let isOrganizer = false;
+        let hasPaidCurrentMonth = false;
         if (req.user) {
             const userId = req.user.id;
             if (organizerUser?.id === userId) {
@@ -419,6 +420,25 @@ const getChitGroupDetails = async (req, res, next) => {
                 isMember = true;
                 applyStatus = 'APPROVED';
                 joinRequestStatus = 'approved';
+
+                // Evaluate if there is a CONFIRMED contribution this month
+                const startOfMonth = new Date();
+                startOfMonth.setDate(1);
+                startOfMonth.setHours(0, 0, 0, 0);
+
+                const currentMonthPayment = await prisma.escrowTransaction.findFirst({
+                    where: {
+                        user_id: userId,
+                        escrow_account: { chit_group_id: id },
+                        type: 'CONTRIBUTION',
+                        status: 'CONFIRMED',
+                        created_at: { gte: startOfMonth }
+                    }
+                });
+
+                if (currentMonthPayment) {
+                    hasPaidCurrentMonth = true;
+                }
             } else if (prisma.joinRequest?.findFirst) {
                 try {
                     const latestRequest = await prisma.joinRequest.findFirst({
@@ -453,7 +473,8 @@ const getChitGroupDetails = async (req, res, next) => {
                 applyStatus,
                 joinRequestStatus,
                 isMember,
-                isOrganizer
+                isOrganizer,
+                hasPaidCurrentMonth
             }
         });
     } catch (error) {
