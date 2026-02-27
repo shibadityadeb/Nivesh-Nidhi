@@ -62,7 +62,14 @@ const login = async (req, res) => {
       });
     }
 
-    const { email, password } = req.body;
+    const { email, password, location } = req.body;
+
+    if (!location || typeof location !== 'object') {
+      return res.status(400).json({
+        success: false,
+        message: 'Location access is mandatory for login.'
+      });
+    }
 
     const user = await User.findByEmail(email, true); // Include password for comparison
     if (!user) {

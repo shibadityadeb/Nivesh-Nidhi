@@ -1,5 +1,6 @@
 const { body, validationResult } = require('express-validator');
 const { validateAadhaar, sanitizeAadhaar } = require('../utils/validateAadhaar');
+const { getCanonicalState, getCanonicalCity } = require('../constants/indiaLocations');
 
 const kycValidationRules = [
   body('aadhaarNumber')
@@ -13,10 +14,20 @@ const kycValidationRules = [
   body('age')
     .isInt({ min: 18 })
     .withMessage('Age must be 18 or above'),
-  body('address')
+  body('state')
     .trim()
-    .isLength({ min: 10 })
-    .withMessage('Address must be at least 10 characters')
+    .notEmpty().withMessage('State is required')
+    .custom((value) => Boolean(getCanonicalState(value)))
+    .withMessage('Invalid state'),
+  body('city')
+    .trim()
+    .notEmpty().withMessage('City is required')
+    .custom((value, { req }) => {
+      const canonicalState = getCanonicalState(req.body.state);
+      if (!canonicalState) return false;
+      return Boolean(getCanonicalCity(canonicalState, value));
+    })
+    .withMessage('Invalid city for selected state')
 ];
 
 const validateKyc = (req, res, next) => {

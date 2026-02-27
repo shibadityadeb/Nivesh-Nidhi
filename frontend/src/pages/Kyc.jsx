@@ -8,12 +8,14 @@ import AuthModal from "@/components/AuthModal";
 import { useAuth } from "@/context/AuthContext";
 import { kyc } from "@/lib/api";
 import { validateAadhaar } from "@/lib/validateAadhaar";
+import { STATE_CITY_MAP, STATES } from "@/constants/indiaLocations";
 
 const initialForm = {
   aadhaarNumber: "",
   name: "",
   age: "",
-  address: "",
+  state: "",
+  city: "",
 };
 
 export default function Kyc() {
@@ -23,6 +25,8 @@ export default function Kyc() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [aadhaarStatus, setAadhaarStatus] = useState("");
+  const [cityQuery, setCityQuery] = useState("");
+  const [showCityOptions, setShowCityOptions] = useState(false);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -82,7 +86,8 @@ export default function Kyc() {
         aadhaarNumber: form.aadhaarNumber.trim(),
         name: form.name.trim(),
         age: Number(form.age),
-        address: form.address.trim(),
+        state: form.state,
+        city: form.city,
       };
 
       const response = await kyc.verify(payload);
@@ -105,6 +110,10 @@ export default function Kyc() {
   };
 
   if (!isAuthenticated) return null;
+  const availableCities = form.state ? (STATE_CITY_MAP[form.state] || []) : [];
+  const filteredCities = availableCities.filter((city) =>
+    city.toLowerCase().includes(cityQuery.toLowerCase())
+  );
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
@@ -180,23 +189,72 @@ export default function Kyc() {
               />
             </div>
 
-            <div className="space-y-2">
-              <label htmlFor="address" className="text-sm font-semibold">Address</label>
-              <textarea
-                id="address"
-                name="address"
-                minLength={10}
-                required
-                value={form.address}
-                onChange={handleChange}
-                className="flex min-h-28 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                placeholder="Enter your complete address"
-              />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label htmlFor="state" className="text-sm font-semibold">State</label>
+                <select
+                  id="state"
+                  name="state"
+                  required
+                  value={form.state}
+                  onChange={(e) => {
+                    const nextState = e.target.value;
+                    setForm((prev) => ({ ...prev, state: nextState, city: "" }));
+                    setCityQuery("");
+                    setShowCityOptions(false);
+                  }}
+                  className="flex h-12 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                >
+                  <option value="">Select state</option>
+                  {STATES.map((state) => (
+                    <option key={state} value={state}>{state}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="space-y-2 relative">
+                <label htmlFor="citySearch" className="text-sm font-semibold">City</label>
+                <input
+                  id="citySearch"
+                  name="citySearch"
+                  type="text"
+                  required
+                  disabled={!form.state}
+                  value={cityQuery}
+                  onChange={(e) => {
+                    setCityQuery(e.target.value);
+                    setForm((prev) => ({ ...prev, city: "" }));
+                    setShowCityOptions(true);
+                  }}
+                  onFocus={() => setShowCityOptions(true)}
+                  onBlur={() => setTimeout(() => setShowCityOptions(false), 120)}
+                  className="flex h-12 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:opacity-60"
+                  placeholder={form.state ? "Search city" : "Select state first"}
+                />
+                {showCityOptions && form.state && filteredCities.length > 0 && (
+                  <div className="absolute z-20 mt-1 w-full max-h-48 overflow-auto rounded-md border border-border bg-card shadow-lg">
+                    {filteredCities.map((city) => (
+                      <button
+                        key={city}
+                        type="button"
+                        onClick={() => {
+                          setForm((prev) => ({ ...prev, city }));
+                          setCityQuery(city);
+                          setShowCityOptions(false);
+                        }}
+                        className="w-full px-3 py-2 text-left text-sm hover:bg-muted"
+                      >
+                        {city}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
 
             <button
               type="submit"
-              disabled={isSubmitting || isSuccess}
+              disabled={isSubmitting || isSuccess || !form.state || !form.city}
               className="w-full h-12 rounded-md bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
             >
               Submit for Verification

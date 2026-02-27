@@ -1,12 +1,13 @@
 const crypto = require('crypto');
 const User = require('../models/User');
+const { getCanonicalState, getCanonicalCity } = require('../constants/indiaLocations');
 
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const randomDelay = () => Math.floor(Math.random() * 1001) + 7000;
 
 const verifyKyc = async (req, res) => {
   try {
-    const { aadhaarNumber, name, age, address } = req.body;
+    const { aadhaarNumber, name, age, state, city } = req.body;
     const user = await User.findById(req.user.id);
 
     if (!user) {
@@ -33,6 +34,10 @@ const verifyKyc = async (req, res) => {
       });
     }
 
+    const canonicalState = getCanonicalState(state);
+    const canonicalCity = getCanonicalCity(canonicalState, city);
+    const normalizedAddress = `${canonicalCity}, ${canonicalState}`;
+
     await wait(randomDelay());
 
     const updatedUser = await User.updateById(req.user.id, {
@@ -40,7 +45,7 @@ const verifyKyc = async (req, res) => {
       isKycVerified: true,
       aadhaarNumber: aadhaarHash,
       age: Number(age),
-      address: address.trim()
+      address: normalizedAddress
     });
 
     return res.status(200).json({
