@@ -64,8 +64,7 @@ const TABS = [
   { key: "requests", label: "Join Requests", icon: ClipboardList },
   { key: "members", label: "Manage Members", icon: Users },
   { key: "rules", label: "Set Rules", icon: ScrollText },
-  { key: "announcements", label: "Announcements", icon: Megaphone },
-  { key: "notifications", label: "Notify Members", icon: Bell },
+  { key: "updates", label: "Announcements & Notifications", icon: Bell },
 ];
 
 const MyChitGroup = () => {
@@ -178,8 +177,10 @@ const MyChitGroup = () => {
     if (!selectedGroup) return;
     if (activeTab === "members") fetchMembers();
     if (activeTab === "rules") fetchRules();
-    if (activeTab === "announcements") fetchAnnouncements();
-    if (activeTab === "notifications") fetchNotifications();
+    if (activeTab === "updates") {
+      fetchAnnouncements();
+      fetchNotifications();
+    }
   }, [selectedGroup, activeTab]);
 
   const fetchJoinRequests = async () => {
@@ -528,6 +529,16 @@ const MyChitGroup = () => {
                       </button>
                     ))}
                   </div>
+                  {selectedGroup && (
+                    <button
+                      type="button"
+                      onClick={() => navigate(`/chit-groups/${selectedGroup.id}`)}
+                      className="w-full mt-4 px-4 py-3 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 flex items-center justify-center gap-2"
+                    >
+                      <Gavel className="w-4 h-4" />
+                      Open Auction Desk
+                    </button>
+                  )}
                 </div>
               )}
             </aside>
@@ -671,10 +682,22 @@ const MyChitGroup = () => {
                   {/* Chit Groups Overview */}
                   {isApproved && selectedOrg.chit_groups?.length > 0 && (
                     <section>
-                      <h2 className="font-heading font-semibold text-lg text-foreground mb-4 flex items-center gap-2">
-                        <Users className="w-5 h-5 text-accent" />
-                        Chit Groups ({selectedOrg.chit_groups.length})
-                      </h2>
+                      <div className="flex items-center justify-between gap-3 mb-4">
+                        <h2 className="font-heading font-semibold text-lg text-foreground flex items-center gap-2">
+                          <Users className="w-5 h-5 text-accent" />
+                          Chit Groups ({selectedOrg.chit_groups.length})
+                        </h2>
+                        {selectedGroup && (
+                          <button
+                            type="button"
+                            onClick={() => navigate(`/chit-groups/${selectedGroup.id}`)}
+                            className="px-4 py-2 rounded-lg bg-secondary text-secondary-foreground text-sm font-semibold hover:bg-secondary/90 flex items-center gap-2"
+                          >
+                            <Gavel className="w-4 h-4" />
+                            Approve Auctions
+                          </button>
+                        )}
+                      </div>
                       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {selectedOrg.chit_groups.map((group) => (
                           <div
@@ -1033,19 +1056,19 @@ const MyChitGroup = () => {
                 </div>
               )}
 
-              {/* ANNOUNCEMENTS TAB */}
-              {activeTab === "announcements" && isApproved && (
+              {/* UPDATES TAB */}
+              {activeTab === "updates" && isApproved && (
                 <div className="space-y-6">
                   <h2 className="font-heading font-semibold text-lg text-foreground flex items-center gap-2">
                     <Megaphone className="w-5 h-5 text-primary" />
-                    Announcements
+                    Announcements & Notifications
                     {selectedGroup && (
                       <span className="text-sm font-normal text-muted-foreground ml-2">— {selectedGroup.name}</span>
                     )}
                   </h2>
 
                   {!selectedGroup ? (
-                    <EmptyState icon={Megaphone} message="Select a chit group from the sidebar to manage announcements." />
+                    <EmptyState icon={Megaphone} message="Select a chit group from the sidebar to manage announcements and notifications." />
                   ) : (
                     <>
                       {/* Create Announcement */}
@@ -1135,26 +1158,12 @@ const MyChitGroup = () => {
                           ))
                         )}
                       </div>
-                    </>
-                  )}
-                </div>
-              )}
 
-              {/* NOTIFICATIONS TAB */}
-              {activeTab === "notifications" && isApproved && (
-                <div className="space-y-6">
-                  <h2 className="font-heading font-semibold text-lg text-foreground flex items-center gap-2">
-                    <Bell className="w-5 h-5 text-primary" />
-                    Notify Members
-                    {selectedGroup && (
-                      <span className="text-sm font-normal text-muted-foreground ml-2">— {selectedGroup.name}</span>
-                    )}
-                  </h2>
+                      <h3 className="font-medium text-sm text-foreground flex items-center gap-2 pt-2">
+                        <Bell className="w-4 h-4 text-blue-500" />
+                        Notify Members
+                      </h3>
 
-                  {!selectedGroup ? (
-                    <EmptyState icon={Bell} message="Select a chit group from the sidebar to send notifications." />
-                  ) : (
-                    <>
                       {/* Send Notification Form */}
                       <div className="bg-card border border-border rounded-2xl p-6">
                         <h3 className="font-medium text-sm text-foreground mb-4 flex items-center gap-2">

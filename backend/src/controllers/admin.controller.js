@@ -151,6 +151,8 @@ const approveApplication = async (req, res, next) => {
                 data: {
                     organization_id: org.id,
                     name: `${application.company_name || 'Unnamed'} Chit Fund`,
+                    state: application.state || 'Unknown',
+                    city: application.city || 'Unknown',
                     chit_value: application.proposed_chit_size || 0,
                     duration_months: application.proposed_duration_months || Number(purposeInfo.expectedMembersCount) || 12,
                     member_capacity: Number(purposeInfo.expectedMembersCount) || 10,
