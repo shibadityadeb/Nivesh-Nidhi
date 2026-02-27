@@ -1,6 +1,41 @@
 const User = require('../models/User');
 const { prisma } = require('../config/db');
 
+const buildBroadcastMembershipFilter = (userId, userEmail) => ({
+  user_id: null,
+  chit_group: {
+    OR: [
+      {
+        members: {
+          some: {
+            status: 'ACTIVE',
+            OR: [
+              { user_id: userId },
+              ...(userEmail ? [{ email: { equals: userEmail, mode: 'insensitive' } }] : []),
+            ],
+          },
+        },
+      },
+      {
+        join_requests: {
+          some: {
+            user_id: userId,
+            status: { in: ['approved', 'APPROVED'] },
+          },
+        },
+      },
+      {
+        applications: {
+          some: {
+            user_id: userId,
+            status: { in: ['approved', 'APPROVED'] },
+          },
+        },
+      },
+    ],
+  },
+});
+
 const getMe = async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
@@ -23,6 +58,8 @@ const getMe = async (req, res) => {
           role: user.role,
           isKycVerified: user.isKycVerified,
           age: user.age,
+          city: user.city,
+          state: user.state,
           address: user.address,
           createdAt: user.createdAt
         }
@@ -75,22 +112,13 @@ const getUserChits = async (req, res) => {
 const getMyNotifications = async (req, res) => {
   try {
     const userId = req.user.id;
+    const userEmail = req.user.email;
     const unreadOnly = String(req.query.unreadOnly || '').toLowerCase() === 'true';
 
     const where = {
       OR: [
         { user_id: userId },
-        {
-          user_id: null,
-          chit_group: {
-            members: {
-              some: {
-                user_id: userId,
-                status: 'ACTIVE',
-              },
-            },
-          },
-        },
+        buildBroadcastMembershipFilter(userId, userEmail),
       ],
     };
 
@@ -136,6 +164,7 @@ const getMyNotifications = async (req, res) => {
 const markNotificationRead = async (req, res) => {
   try {
     const userId = req.user.id;
+    const userEmail = req.user.email;
     const { id } = req.params;
 
     const notification = await prisma.memberNotification.findFirst({
@@ -143,17 +172,7 @@ const markNotificationRead = async (req, res) => {
         id,
         OR: [
           { user_id: userId },
-          {
-            user_id: null,
-            chit_group: {
-              members: {
-                some: {
-                  user_id: userId,
-                  status: 'ACTIVE',
-                },
-              },
-            },
-          },
+          buildBroadcastMembershipFilter(userId, userEmail),
         ],
       },
       select: { id: true },
@@ -187,23 +206,14 @@ const markNotificationRead = async (req, res) => {
 const markAllNotificationsRead = async (req, res) => {
   try {
     const userId = req.user.id;
+    const userEmail = req.user.email;
 
     const result = await prisma.memberNotification.updateMany({
       where: {
         is_read: false,
         OR: [
           { user_id: userId },
-          {
-            user_id: null,
-            chit_group: {
-              members: {
-                some: {
-                  user_id: userId,
-                  status: 'ACTIVE',
-                },
-              },
-            },
-          },
+          buildBroadcastMembershipFilter(userId, userEmail),
         ],
       },
       data: { is_read: true },

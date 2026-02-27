@@ -56,6 +56,8 @@ model User {
   isKycVerified Boolean   @default(false) @map("is_kyc_verified")
   aadhaarNumber String?   @unique @map("aadhaar_number") @db.VarChar(255)
   age           Int?
+  city          String?   @db.VarChar(100)
+  state         String?   @db.VarChar(100)
   address       String?   @map("aadhaar_address") @db.Text
   createdAt     DateTime  @default(now()) @map("created_at") @db.Timestamp(6)
   updatedAt     DateTime? @updatedAt @map("updated_at") @db.Timestamp(3)

@@ -15,12 +15,34 @@ const isMissingTableError = (error, tableName) => {
     return metaTable.includes(tableName.toLowerCase());
 };
 
+const normalizeLocationValue = (value) => String(value || '').trim().toLowerCase();
+
+const resolveUserLocation = (user) => {
+    const city = normalizeLocationValue(user?.city);
+    const state = normalizeLocationValue(user?.state);
+
+    if (city && state) {
+        return { city, state };
+    }
+
+    // Backward compatibility for users created before separate city/state columns.
+    const rawAddress = String(user?.address || '');
+    const [addrCity, addrState] = rawAddress.split(',');
+    const fallbackCity = normalizeLocationValue(addrCity);
+    const fallbackState = normalizeLocationValue(addrState);
+
+    return {
+        city: city || fallbackCity,
+        state: state || fallbackState
+    };
+};
+
 /**
  * Get all open chit groups (public listing)
  */
 const getAllChitGroups = async (req, res, next) => {
     try {
-        const chitGroups = await prisma.chitGroup.findMany({
+        let chitGroups = await prisma.chitGroup.findMany({
             where: {
                 status: { in: ['OPEN', 'IN_PROGRESS'] }
             },
@@ -40,6 +62,26 @@ const getAllChitGroups = async (req, res, next) => {
                 { created_at: 'desc' }
             ]
         });
+
+        const { city: userCity, state: userState } = resolveUserLocation(req.user);
+        const hasUserLocation = Boolean(userCity && userState);
+
+        if (hasUserLocation) {
+            chitGroups = chitGroups.sort((a, b) => {
+                const getPriority = (chit) => {
+                    const chitCity = normalizeLocationValue(chit.city);
+                    const chitState = normalizeLocationValue(chit.state);
+                    if (chitCity === userCity) return 1;
+                    if (chitState === userState) return 2;
+                    return 3;
+                };
+
+                const priorityDiff = getPriority(a) - getPriority(b);
+                if (priorityDiff !== 0) return priorityDiff;
+
+                return new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime();
+            });
+        }
 
         res.status(200).json({
             success: true,
