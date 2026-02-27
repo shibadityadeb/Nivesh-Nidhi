@@ -100,7 +100,14 @@ const AuthModal = () => {
                   type="tel"
                   placeholder="Phone Number (10-digit Indian)"
                   value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
+                  onChange={(e) => {
+                    const value = e.target.value.replace(/\D/g, ''); // Remove non-digits
+                    if (value.length <= 10) {
+                      setPhone(value);
+                    }
+                  }}
+                  maxLength={10}
+                  pattern="[0-9]{10}"
                   required
                   className="w-full pl-10 pr-4 py-3 rounded-xl border border-input bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all"
                 />
