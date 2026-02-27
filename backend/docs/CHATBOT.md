@@ -145,7 +145,8 @@ The chatbot uses the following environment variables (already configured in `bac
 
 ```bash
 CLAUDE_API_KEY=sk-ant-api03-WES8DtqfzPj_Cu4zcb...
-CLAUDE_MODEL=claude-3-5-haiku-latest
+# Choose a current model; older haiku‑latest flavor has been retired
+CLAUDE_MODEL=claude-3-5  # or claude-3-5-sonnet / claude-3-5-haiku as needed
 ```
 
 ## Usage Examples
@@ -178,9 +179,10 @@ The chatbot is automatically integrated into your application:
 ### Changing the Claude Model
 Edit `backend/.env`:
 ```bash
-CLAUDE_MODEL=claude-3-5-sonnet-latest  # For more advanced responses
+CLAUDE_MODEL=claude-3-5-sonnet  # For more advanced responses
 # or
-CLAUDE_MODEL=claude-3-5-haiku-latest   # For faster, cost-effective responses
+CLAUDE_MODEL=claude-3-5-haiku   # For faster, cost-effective responses
+# or simply CLAUDE_MODEL=claude-3-5 for the latest general-purpose 3.5 model
 ```
 
 ### Adjusting Response Length

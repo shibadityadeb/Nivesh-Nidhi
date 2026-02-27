@@ -5,6 +5,23 @@ const prisma = new PrismaClient();
 const anthropic = new Anthropic({
   apiKey: process.env.CLAUDE_API_KEY,
 });
+const DEPRECATED_MODEL_ALIASES = new Map([
+  ['claude-3-5-haiku-latest', 'claude-3-5-haiku'],
+]);
+
+function buildModelCandidates() {
+  const configured = (process.env.CLAUDE_MODEL || 'claude-3-5').trim();
+  const normalized = DEPRECATED_MODEL_ALIASES.get(configured) || configured;
+  const candidates = [
+    normalized,
+    'claude-3-5',
+    'claude-3-5-haiku',
+    'claude-3-5-sonnet',
+    'claude-3-haiku-20240307',
+  ];
+
+  return [...new Set(candidates.filter(Boolean))];
+}
 
 class ChatbotService {
   /**
@@ -320,13 +337,35 @@ GUEST RESTRICTIONS:
 
       console.log('Calling Claude API with', messages.length, 'messages');
 
-      // Call Claude API
-      const response = await anthropic.messages.create({
-        model: process.env.CLAUDE_MODEL || 'claude-3-haiku-20240307',
-        max_tokens: 1024,
-        system: systemPrompt,
-        messages: messages,
-      });
+      // Call Claude API with fallback models for retired/invalid model names
+      const modelCandidates = buildModelCandidates();
+      let response = null;
+      let lastModelError = null;
+
+      for (const model of modelCandidates) {
+        try {
+          response = await anthropic.messages.create({
+            model,
+            max_tokens: 1024,
+            system: systemPrompt,
+            messages: messages,
+          });
+          break;
+        } catch (apiError) {
+          const isNotFoundModel = apiError?.status === 404
+            && apiError?.error?.error?.type === 'not_found_error';
+          if (isNotFoundModel) {
+            lastModelError = apiError;
+            console.warn(`[ChatbotService] Model unavailable: ${model}. Trying next fallback model.`);
+            continue;
+          }
+          throw apiError;
+        }
+      }
+
+      if (!response) {
+        throw lastModelError || new Error('No compatible Claude model available');
+      }
 
       const aiResponse = response.content[0].text;
 
