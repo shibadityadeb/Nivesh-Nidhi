@@ -31,8 +31,8 @@ const navItems = [
   {
     label: "SOLUTIONS",
     submenu: [
-      { label: "Goal Based Solution", href: "#solutions-goal-based" },
-      { label: "Personalised Solution", href: "#solutions-personalised" },
+      { label: "Goal Based Solution", href: "/solutions-goal-based" },
+      { label: "Personalised Solution", href: "/solutions-personalized" },
     ],
   },
 ];
