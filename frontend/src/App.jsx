@@ -19,6 +19,10 @@ import ChitProcess from "./pages/ChitProcess";
 import GovSchemes from "./pages/GovSchemes";
 import GoalBasedSolutions from "./pages/GoalBasedSolutions";
 import PersonalizedSolutions from "./pages/PersonalizedSolutions";
+import SecurityNorms from "./pages/SecurityNorms";
+import BenefitsOfChits from "./pages/BenefitsOfChits";
+import DocumentsRequired from "./pages/DocumentsRequired";
+import EligibilityCriteria from "./pages/EligibilityCriteria";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -39,6 +43,10 @@ const App = () => (
               <Route path="/admin" element={<AdminDashboard />} />
               <Route path="/kyc" element={<Kyc />} />
               <Route path="/chit-process" element={<ChitProcess />} />
+              <Route path="/security-norms" element={<SecurityNorms />} />
+              <Route path="/benefits-of-chits" element={<BenefitsOfChits />} />
+              <Route path="/documents-required" element={<DocumentsRequired />} />
+              <Route path="/eligibility-criteria" element={<EligibilityCriteria />} />
               <Route path="/gov-schemes" element={<GovSchemes />} />
               <Route path="/solutions-goal-based" element={<GoalBasedSolutions />} />
               <Route path="/solutions-personalized" element={<PersonalizedSolutions />} />

@@ -11,10 +11,10 @@ const navItems = [
     label: "CHITS",
     submenu: [
       { label: "The Chit Process – How It Works", href: "/chit-process" },
-      { label: "Security Norms / How To Draw Prize Money", href: "#" },
-      { label: "Benefits Of Chits", href: "#" },
-      { label: "Documents Required For Chits", href: "#" },
-      { label: "Eligibility Criteria", href: "#" },
+      { label: "Security Norms / How To Draw Prize Money", href: "/security-norms" },
+      { label: "Benefits Of Chits", href: "/benefits-of-chits" },
+      { label: "Documents Required For Chits", href: "/documents-required" },
+      { label: "Eligibility Criteria", href: "/eligibility-criteria" },
     ],
   },
   {
