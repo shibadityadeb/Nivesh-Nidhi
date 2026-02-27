@@ -1,6 +1,7 @@
 import { ExternalLink } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import AuthModal from "@/components/AuthModal";
 
 const schemes = [
   {
@@ -139,6 +140,7 @@ const GovSchemes = () => {
         </div>
       </div>
       <Footer />
+      <AuthModal />
     </>
   );
 };

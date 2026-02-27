@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/context/AuthContext";
 import { user as userApi } from "@/lib/api";
 import { toast } from "sonner";
 import { IndianRupee, ShieldCheck, Link2, ExternalLink, Calendar, Loader2, ArrowRight } from "lucide-react";

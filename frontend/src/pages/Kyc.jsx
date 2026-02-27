@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import AuthModal from "@/components/AuthModal";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/context/AuthContext";
 import { kyc } from "@/lib/api";
 import { validateAadhaar } from "@/lib/validateAadhaar";
 
