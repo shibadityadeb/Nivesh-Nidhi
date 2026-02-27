@@ -7,11 +7,12 @@ const TTL = 6 * 60 * 60 * 1000;
 
 const CLAUDE_API_KEY = process.env.CLAUDE_API_KEY;
 const CLAUDE_API_URL = 'https://api.anthropic.com/v1/messages';
-const PRIMARY_MODEL = process.env.CLAUDE_MODEL || 'claude-3-5-haiku-latest';
+const PRIMARY_MODEL = process.env.CLAUDE_MODEL || 'claude-3-5';
 const FALLBACK_MODELS = [
   PRIMARY_MODEL,
-  'claude-3-5-sonnet-latest',
-  'claude-3-haiku-20240307'
+  'claude-3-5-sonnet',
+  'claude-3-5-haiku',
+  'claude-3-haiku-20240307' // legacy fallback
 ];
 
 function hashKey(groupData) {
