@@ -1,0 +1,85 @@
+{
+    "onboarding": {
+        "welcome": "Welcome to NiveshNidhi",
+        "subtitle": "Your Trusted Platform for Chit Funds",
+        "next": "Next",
+        "skip": "Skip",
+        "start": "Get Started",
+        "slide1_title": "Secure Chit Funds",
+        "slide1_desc": "Join verified and secure chit funds customized for your needs.",
+        "slide2_title": "Escrow Protection",
+        "slide2_desc": "Your money is protected by our automated blockchain and escrow system.",
+        "slide3_title": "Government Schemes",
+        "slide3_desc": "Explore various government schemes and apply eligible subsidies easily."
+    },
+    "auth": {
+        "login": "Login",
+        "signup": "Sign Up",
+        "phone": "Phone Number",
+        "password": "Password",
+        "name": "Full Name",
+        "email": "Email Address"
+    },
+    "home": {
+        "greeting": "Hello, {{name}}",
+        "dashboard": "Dashboard",
+        "explore": "Explore Groups",
+        "schemes": "Govt Schemes",
+        "profile": "Profile",
+        "welcome_sub": "Welcome to NiveshNidhi",
+        "badge_govt": "Govt. Registered",
+        "hero_title": "Group Savings & Chit Fund Digitization",
+        "hero_sub": "Transparent, secure, and blockchain-backed.",
+        "explore_btn": "Explore Chits",
+        "quick_actions": "Quick Actions",
+        "join_group": "Join Group",
+        "my_dashboard": "My Dashboard",
+        "platform_overview": "Platform Overview",
+        "happy_subscribers": "Happy subscribers",
+        "secured_by": "Secured by",
+        "funds_managed": "Funds Managed",
+        "blockchain": "Blockchain"
+    },
+    "settings": {
+        "language": "Language",
+        "english": "English",
+        "hindi": "हिन्दी",
+        "marathi": "मराठी",
+        "logout": "Logout"
+    },
+    "groups": {
+        "members": "Members",
+        "months": "Months",
+        "subscription": "Subscription",
+        "mo": "mo",
+        "apply": "Apply to Join",
+        "no_chits": "No Chits Available"
+    },
+    "dashboard": {
+        "total_investments": "Total Investments (Monthly)",
+        "escrow_protected": "Escrow Protected",
+        "est_payout": "Est. Payout",
+        "active_groups": "Active Groups",
+        "recent_activity": "Recent Activity",
+        "no_activity": "No recent activity.",
+        "unknown_chit": "Unknown Chit",
+        "joined_group": "Joined Group",
+        "active": "Active"
+    },
+    "profile": {
+        "title": "Profile & Settings",
+        "kyc_verified": "KYC Verified",
+        "kyc_pending": "KYC Pending",
+        "verify_email": "Tap to verify email",
+        "account": "Account",
+        "personal_info": "Personal Information",
+        "become_organizer": "Become an Organizer",
+        "host_chits": "Apply to host your own Chit Funds",
+        "kyc_docs": "KYC Documents",
+        "preferences": "Preferences",
+        "push_notifications": "Push Notifications",
+        "app_language": "App Language",
+        "log_out": "Log Out",
+        "version": "NiveshNidhi App"
+    }
+}

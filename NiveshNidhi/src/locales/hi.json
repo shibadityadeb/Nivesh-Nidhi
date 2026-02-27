@@ -1,0 +1,85 @@
+{
+    "onboarding": {
+        "welcome": "निवेशनिधि में आपका स्वागत है",
+        "subtitle": "चिट फंड के लिए आपका विश्वसनीय मंच",
+        "next": "अगला",
+        "skip": "छोड़ें",
+        "start": "शुरू करें",
+        "slide1_title": "सुरक्षित चिट फंड",
+        "slide1_desc": "अपनी ज़रूरतों के अनुसार सत्यापित और सुरक्षित चिट फंड से जुड़ें।",
+        "slide2_title": "एस्क्रो सुरक्षा",
+        "slide2_desc": "आपका पैसा हमारे स्वचालित ब्लॉकचेन और एस्क्रो सिस्टम द्वारा सुरक्षित है।",
+        "slide3_title": "सरकारी योजनाएं",
+        "slide3_desc": "विभिन्न सरकारी योजनाओं का अन्वेषण करें और आसानी से लागू सब्सिडी प्राप्त करें।"
+    },
+    "auth": {
+        "login": "लॉग इन",
+        "signup": "साइन अप",
+        "phone": "फ़ोन नंबर",
+        "password": "पासवर्ड",
+        "name": "पूरा नाम",
+        "email": "ईमेल पता"
+    },
+    "home": {
+        "greeting": "नमस्ते, {{name}}",
+        "dashboard": "डैशबोर्ड",
+        "explore": "समूह खोजें",
+        "schemes": "सरकारी योजनाएं",
+        "profile": "प्रोफ़ाइल",
+        "welcome_sub": "निवेशनिधि में आपका स्वागत है",
+        "badge_govt": "सरकारी पंजीकृत",
+        "hero_title": "सामूहिक बचत और चिट फंड डिजिटलीकरण",
+        "hero_sub": "पारदर्शी, सुरक्षित और ब्लॉकचेन आधारित।",
+        "explore_btn": "चिट्स खोजें",
+        "quick_actions": "त्वरित क्रियाएं",
+        "join_group": "समूह से जुड़ें",
+        "my_dashboard": "मेरा डैशबोर्ड",
+        "platform_overview": "मंच अवलोकन",
+        "happy_subscribers": "खुशहाल ग्राहक",
+        "secured_by": "द्वारा सुरक्षित",
+        "funds_managed": "प्रबंधित धन",
+        "blockchain": "ब्लॉकचेन"
+    },
+    "settings": {
+        "language": "भाषा",
+        "english": "English",
+        "hindi": "हिन्दी",
+        "marathi": "मराठी",
+        "logout": "लॉग आउट"
+    },
+    "groups": {
+        "members": "सदस्य",
+        "months": "महीने",
+        "subscription": "सदस्यता",
+        "mo": "माह",
+        "apply": "शामिल होने के लिए आवेदन करें",
+        "no_chits": "कोई चिट उपलब्ध नहीं"
+    },
+    "dashboard": {
+        "total_investments": "कुल निवेश (मासिक)",
+        "escrow_protected": "एस्क्रो द्वारा सुरक्षित",
+        "est_payout": "अनुमानित भुगतान",
+        "active_groups": "सक्रिय समूह",
+        "recent_activity": "हाल की गतिविधि",
+        "no_activity": "कोई हालिया गतिविधि नहीं।",
+        "unknown_chit": "अज्ञात चिट",
+        "joined_group": "समूह में शामिल हुए",
+        "active": "सक्रिय"
+    },
+    "profile": {
+        "title": "प्रोफ़ाइल और सेटिंग्स",
+        "kyc_verified": "KYC सत्यापित",
+        "kyc_pending": "KYC शेष है",
+        "verify_email": "ईमेल सत्यापित करें",
+        "account": "खाता",
+        "personal_info": "व्यक्तिगत जानकारी",
+        "become_organizer": "आयोजक बनें",
+        "host_chits": "अपने चिट फंड होस्ट करने के लिए आवेदन करें",
+        "kyc_docs": "KYC दस्तावेज़",
+        "preferences": "प्राथमिकताएं",
+        "push_notifications": "पुश सूचनाएं",
+        "app_language": "ऐप भाषा",
+        "log_out": "लॉग आउट",
+        "version": "निवेशनिधि ऐप"
+    }
+}

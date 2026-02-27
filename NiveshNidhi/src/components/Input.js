@@ -1,0 +1,43 @@
+import React from 'react';
+import { View, TextInput, StyleSheet, Text } from 'react-native';
+import { colors } from '../theme/colors';
+
+export default function Input({ placeholder, value, onChangeText, secureTextEntry, keyboardType, label, style, autoCapitalize, maxLength }) {
+    return (
+        <View style={styles.container}>
+            {label && <Text style={styles.label}>{label}</Text>}
+            <TextInput
+                style={[styles.input, style]}
+                placeholder={placeholder}
+                placeholderTextColor={colors.textMuted}
+                value={value}
+                onChangeText={onChangeText}
+                secureTextEntry={secureTextEntry}
+                keyboardType={keyboardType}
+                autoCapitalize={autoCapitalize || 'none'}
+                maxLength={maxLength}
+            />
+        </View>
+    );
+}
+
+const styles = StyleSheet.create({
+    container: {
+        marginVertical: 8,
+    },
+    label: {
+        fontSize: 14,
+        color: colors.text,
+        marginBottom: 4,
+        fontWeight: '500',
+    },
+    input: {
+        borderWidth: 1,
+        borderColor: colors.border,
+        borderRadius: 8,
+        padding: 12,
+        fontSize: 16,
+        color: colors.text,
+        backgroundColor: colors.surface,
+    }
+});
