@@ -3,6 +3,11 @@ const {
     getCanonicalState,
     getCanonicalCity
 } = require('../constants/indiaLocations');
+const {
+    normalizeCalculatorConfig,
+    validateCalculatePayload,
+    calculateByType
+} = require('../utils/groupCalculator');
 
 const isMissingTableError = (error, tableName) => {
     if (!error || error.code !== 'P2021') return false;
@@ -110,7 +115,20 @@ const getMyChitGroups = async (req, res, next) => {
 const createChitGroup = async (req, res, next) => {
     try {
         const userId = req.user.id;
-        const { organization_id, name, state, city, chit_value, duration_months, member_capacity } = req.body;
+        const {
+            organization_id,
+            name,
+            state,
+            city,
+            chit_value,
+            duration_months,
+            member_capacity,
+            minAmount,
+            maxAmount,
+            defaultRate,
+            calculationType,
+            allowedTimePeriod
+        } = req.body;
 
         // Verify ownership
         const org = await prisma.organization.findFirst({
@@ -133,17 +151,49 @@ const createChitGroup = async (req, res, next) => {
             return res.status(400).json({ success: false, message: 'Invalid city for selected state' });
         }
 
+        const parsedChitValue = parseFloat(chit_value);
+        const parsedDuration = parseInt(duration_months, 10);
+        const parsedMemberCapacity = parseInt(member_capacity, 10);
+        const normalizedCalculationType = String(calculationType || 'simple').toLowerCase();
+        const parsedMinAmount = Number.isFinite(Number(minAmount)) ? parseFloat(minAmount) : parsedChitValue;
+        const parsedMaxAmount = Number.isFinite(Number(maxAmount)) ? parseFloat(maxAmount) : parsedChitValue * 1000;
+        const parsedDefaultRate = Number.isFinite(Number(defaultRate)) ? parseFloat(defaultRate) : 0;
+        const parsedMinTime = Number.isFinite(Number(allowedTimePeriod?.min))
+            ? parseInt(allowedTimePeriod.min, 10)
+            : 1;
+        const parsedMaxTime = Number.isFinite(Number(allowedTimePeriod?.max))
+            ? parseInt(allowedTimePeriod.max, 10)
+            : parsedDuration;
+
+        if (!['simple', 'compound', 'custom'].includes(normalizedCalculationType)) {
+            return res.status(400).json({ success: false, message: 'calculationType must be one of simple, compound, custom' });
+        }
+
+        if (parsedMinAmount <= 0 || parsedMaxAmount <= 0 || parsedMinAmount > parsedMaxAmount) {
+            return res.status(400).json({ success: false, message: 'Invalid amount limits' });
+        }
+
+        if (parsedMinTime <= 0 || parsedMaxTime <= 0 || parsedMinTime > parsedMaxTime) {
+            return res.status(400).json({ success: false, message: 'Invalid allowed time period limits' });
+        }
+
         const chitGroup = await prisma.chitGroup.create({
             data: {
                 organization_id,
                 name,
                 state: canonicalState,
                 city: canonicalCity,
-                chit_value: parseFloat(chit_value),
-                duration_months: parseInt(duration_months),
-                member_capacity: parseInt(member_capacity),
+                chit_value: parsedChitValue,
+                duration_months: parsedDuration,
+                member_capacity: parsedMemberCapacity,
                 current_members: 0,
-                status: 'OPEN'
+                status: 'OPEN',
+                min_amount: parsedMinAmount,
+                max_amount: parsedMaxAmount,
+                default_rate: parsedDefaultRate,
+                calculation_type: normalizedCalculationType,
+                allowed_time_period_min: parsedMinTime,
+                allowed_time_period_max: parsedMaxTime,
             }
         });
 
@@ -165,7 +215,21 @@ const updateChitGroup = async (req, res, next) => {
     try {
         const userId = req.user.id;
         const { id } = req.params;
-        const { name, state, city, chit_value, duration_months, member_capacity, status } = req.body;
+        const {
+            name,
+            state,
+            city,
+            chit_value,
+            duration_months,
+            member_capacity,
+            status,
+            minAmount,
+            maxAmount,
+            defaultRate,
+            calculationType,
+            allowedTimePeriod,
+            calculatorCustomRules
+        } = req.body;
 
         const group = await prisma.chitGroup.findFirst({
             where: {
@@ -196,6 +260,30 @@ const updateChitGroup = async (req, res, next) => {
             }
         }
 
+        const nextMinAmount = typeof minAmount !== 'undefined' ? parseFloat(minAmount) : Number(group.min_amount);
+        const nextMaxAmount = typeof maxAmount !== 'undefined' ? parseFloat(maxAmount) : Number(group.max_amount);
+        const nextMinTime = typeof allowedTimePeriod?.min !== 'undefined'
+            ? parseInt(allowedTimePeriod.min, 10)
+            : group.allowed_time_period_min;
+        const nextMaxTime = typeof allowedTimePeriod?.max !== 'undefined'
+            ? parseInt(allowedTimePeriod.max, 10)
+            : group.allowed_time_period_max;
+        const nextType = typeof calculationType !== 'undefined'
+            ? String(calculationType).toLowerCase()
+            : String(group.calculation_type || 'simple').toLowerCase();
+
+        if (!['simple', 'compound', 'custom'].includes(nextType)) {
+            return res.status(400).json({ success: false, message: 'calculationType must be one of simple, compound, custom' });
+        }
+
+        if (!Number.isFinite(nextMinAmount) || !Number.isFinite(nextMaxAmount) || nextMinAmount <= 0 || nextMaxAmount <= 0 || nextMinAmount > nextMaxAmount) {
+            return res.status(400).json({ success: false, message: 'Invalid amount limits' });
+        }
+
+        if (!Number.isFinite(nextMinTime) || !Number.isFinite(nextMaxTime) || nextMinTime <= 0 || nextMaxTime <= 0 || nextMinTime > nextMaxTime) {
+            return res.status(400).json({ success: false, message: 'Invalid allowed time period limits' });
+        }
+
         const updated = await prisma.chitGroup.update({
             where: { id },
             data: {
@@ -205,7 +293,16 @@ const updateChitGroup = async (req, res, next) => {
                 chit_value: chit_value ? parseFloat(chit_value) : group.chit_value,
                 duration_months: duration_months ? parseInt(duration_months) : group.duration_months,
                 member_capacity: member_capacity ? parseInt(member_capacity) : group.member_capacity,
-                status: status || group.status
+                status: status || group.status,
+                min_amount: nextMinAmount,
+                max_amount: nextMaxAmount,
+                default_rate: typeof defaultRate !== 'undefined' ? parseFloat(defaultRate) : group.default_rate,
+                calculation_type: nextType,
+                allowed_time_period_min: nextMinTime,
+                allowed_time_period_max: nextMaxTime,
+                calculator_custom_rules: typeof calculatorCustomRules !== 'undefined'
+                    ? calculatorCustomRules
+                    : group.calculator_custom_rules,
             }
         });
 
@@ -417,24 +514,7 @@ const getChitGroupDetails = async (req, res, next) => {
         // Calculation inputs for frontend
         const calcInputs = {
             groupName: group.name,
-            totalMembers: group.member_capacity, // ask full capacity
-            monthlyContribution: group.chit_value,
-            durationMonths: group.duration_months,
-            foremanCommissionPercent: rules?.commission_pct || 0,
-            latePenaltyPercent: rules?.late_penalty_pct || 0,
-            auctionType: rules?.auction_type || "STANDARD",
-            minimumBidDiscountPercent: rules?.min_bid_pct || 0,
-            maximumBidDiscountPercent: rules?.max_bid_pct || 0,
-            startDate: group.created_at,
-            currentMonthNumber: (() => {
-                if (!group.created_at) return 1;
-                const start = new Date(group.created_at);
-                const now = new Date();
-                let months = (now.getFullYear() - start.getFullYear()) * 12 + (now.getMonth() - start.getMonth()) + 1;
-                if (months < 1) months = 1;
-                if (group.duration_months && months > group.duration_months) months = group.duration_months;
-                return months;
-            })()
+            ...normalizeCalculatorConfig(group, rules),
         };
         // Apply status (if user is logged in)
         let applyStatus = null;
@@ -510,6 +590,76 @@ const getChitGroupDetails = async (req, res, next) => {
                 isMember,
                 isOrganizer,
                 hasPaidCurrentMonth
+            }
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+const getGroupCalculatorConfig = async (req, res, next) => {
+    try {
+        const { groupId } = req.params;
+        const group = await prisma.chitGroup.findUnique({
+            where: { id: groupId },
+            include: {
+                rules: true
+            }
+        });
+
+        if (!group) {
+            return res.status(404).json({ success: false, message: 'Invalid groupId' });
+        }
+
+        const config = normalizeCalculatorConfig(group, group.rules);
+        res.status(200).json({
+            success: true,
+            data: config
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+const calculateGroupReturn = async (req, res, next) => {
+    try {
+        const { groupId } = req.params;
+        const group = await prisma.chitGroup.findUnique({
+            where: { id: groupId },
+            include: {
+                rules: true
+            }
+        });
+
+        if (!group) {
+            return res.status(404).json({ success: false, message: 'Invalid groupId' });
+        }
+
+        const config = normalizeCalculatorConfig(group, group.rules);
+        const validation = validateCalculatePayload(req.body, config);
+        if (!validation.isValid) {
+            return res.status(400).json({
+                success: false,
+                message: 'Validation failed',
+                errors: validation.errors,
+            });
+        }
+
+        const result = calculateByType(validation.sanitized, config);
+        if (result.error) {
+            return res.status(422).json({
+                success: false,
+                message: result.error
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            data: {
+                groupId: config.groupId,
+                calculationType: config.calculationType,
+                inputs: validation.sanitized,
+                result
             }
         });
     } catch (error) {
@@ -692,6 +842,8 @@ module.exports = {
     updateChitGroup,
     deleteChitGroup,
     getChitGroupDetails,
+    getGroupCalculatorConfig,
+    calculateGroupReturn,
     applyToJoinChitGroup,
     getMyActiveGroups
 };

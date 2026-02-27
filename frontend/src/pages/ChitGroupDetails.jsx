@@ -556,12 +556,7 @@ export default function ChitGroupDetails() {
                   <div className="bg-white rounded-xl p-6 border border-border">
                     <h2 className="font-heading font-bold text-xl mb-4">Payout Calculator</h2>
                     <ChitPayoutCalculator
-                      totalMembers={group.calcInputs.totalMembers}
-                      monthlyContribution={group.calcInputs.monthlyContribution}
-                      durationMonths={group.calcInputs.durationMonths}
-                      foremanCommissionPercent={group.calcInputs.foremanCommissionPercent}
-                      minDiscount={group.calcInputs.minimumBidDiscountPercent}
-                      maxDiscount={group.calcInputs.maximumBidDiscountPercent}
+                      groupId={group.group.id}
                       onCalculate={(r) => setCalcSnapshot(r)}
                     />
                   </div>
