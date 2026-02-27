@@ -1,5 +1,6 @@
 
 import { ArrowRight, Shield, Users, TrendingUp, ChevronDown } from "lucide-react";
+import { T } from "@/context/LanguageContext";
 
 const HeroSection = () => {
 
@@ -15,16 +16,16 @@ const HeroSection = () => {
         <div className="max-w-2xl">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-secondary/20 border border-secondary/30 mb-6">
             <Shield className="w-4 h-4 text-secondary" />
-            <span className="text-sm font-medium text-secondary">Government Registered Platform</span>
+            <span className="text-sm font-medium text-secondary"><T>Government Registered Platform</T></span>
           </div>
 
           <h1 className="font-heading font-extrabold text-5xl md:text-6xl lg:text-7xl text-primary-foreground leading-tight mb-8">
-            Group Savings &<br />
-            <span className="text-secondary">Chit Fund</span> Digitization
+            <T>Group Savings &</T><br />
+            <span className="text-secondary"><T>Chit Fund</T></span> <T>Digitization</T>
           </h1>
 
           <p className="text-xl text-primary-foreground/80 mb-10 max-w-lg leading-relaxed">
-            A transparent, secure, and blockchain-backed platform for traditional chit funds and group savings — empowering communities across India.
+            <T>A transparent, secure, and blockchain-backed platform for traditional chit funds and group savings — empowering communities across India.</T>
           </p>
 
           <div className="flex flex-wrap gap-4 mb-16">
@@ -32,14 +33,14 @@ const HeroSection = () => {
               href="/chit-groups"
               className="flex items-center gap-2 px-7 py-3.5 rounded-full gradient-saffron text-saffron-foreground font-heading font-semibold shadow-lg hover:shadow-xl transition-all hover:scale-[1.02]"
             >
-              Explore Chits
+              <T>Explore Chits</T>
               <ArrowRight className="w-4 h-4" />
             </a>
             <a
               href="/apply-organizer"
               className="flex items-center gap-2 px-7 py-3.5 rounded-full border-2 border-primary-foreground/30 text-primary-foreground font-heading font-semibold hover:bg-primary-foreground/10 transition-all border-amber-300"
             >
-              Become an Organizer
+              <T>Become an Organizer</T>
             </a>
           </div>
 
@@ -56,7 +57,7 @@ const HeroSection = () => {
                 </div>
                 <div>
                   <p className="font-heading font-bold text-primary-foreground text-xl">{stat.value}</p>
-                  <p className="text-sm text-primary-foreground/60">{stat.label}</p>
+                  <p className="text-sm text-primary-foreground/60"><T>{stat.label}</T></p>
                 </div>
               </div>
             ))}

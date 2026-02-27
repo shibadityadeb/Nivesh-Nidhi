@@ -8,6 +8,8 @@ import AuthModal from "@/components/AuthModal";
 import { useAuth } from "@/context/AuthContext";
 import { kyc, locations } from "@/lib/api";
 import { validateAadhaar } from "@/lib/validateAadhaar";
+import { STATE_CITY_MAP, STATES } from "@/constants/indiaLocations";
+import { T } from "@/context/LanguageContext";
 import { STATES } from "@/constants/indiaLocations";
 
 const initialForm = {
@@ -176,8 +178,8 @@ export default function Kyc() {
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-500/20 to-orange-600/20 mb-4">
               <ShieldCheck className="w-8 h-8 text-orange-600" />
             </div>
-            <h1 className="text-3xl md:text-4xl font-heading font-bold mb-2">Complete Your KYC</h1>
-            <p className="text-muted-foreground">Secure and instant verification powered by Government of India</p>
+            <h1 className="text-3xl md:text-4xl font-heading font-bold mb-2"><T>Complete Your KYC</T></h1>
+            <p className="text-muted-foreground"><T>Secure and instant verification powered by Government of India</T></p>
           </div>
 
           <div className="grid md:grid-cols-[1fr,380px] gap-8 items-start">
@@ -185,7 +187,7 @@ export default function Kyc() {
             <div className="bg-card border border-border rounded-xl p-6 shadow-sm order-2 md:order-1">
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-1.5">
-                  <label htmlFor="aadhaarNumber" className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Aadhaar Number</label>
+                  <label htmlFor="aadhaarNumber" className="text-xs font-semibold text-muted-foreground uppercase tracking-wide"><T>Aadhaar Number</T></label>
                   <input
                     id="aadhaarNumber"
                     name="aadhaarNumber"
@@ -208,14 +210,14 @@ export default function Kyc() {
                         <div className="w-4 h-4 rounded-full border-2 border-amber-500 border-t-transparent animate-spin" />
                       )}
                       <p className={`text-xs font-medium ${aadhaarStatus === "verified" ? "text-orange-700 dark:text-orange-300" : "text-amber-700 dark:text-amber-300"}`}>
-                        {aadhaarStatus === "verified" ? "Aadhaar Verified Successfully" : "Enter valid 12-digit Aadhaar"}
+                        {aadhaarStatus === "verified" ? <T>Aadhaar Verified Successfully</T> : <T>Enter valid 12-digit Aadhaar</T>}
                       </p>
                     </div>
                   )}
                 </div>
 
                 <div className="space-y-1.5">
-                  <label htmlFor="name" className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Full Name</label>
+                  <label htmlFor="name" className="text-xs font-semibold text-muted-foreground uppercase tracking-wide"><T>Full Name</T></label>
                   <input
                     id="name"
                     name="name"
@@ -230,7 +232,7 @@ export default function Kyc() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label htmlFor="age" className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Age</label>
+                  <label htmlFor="age" className="text-xs font-semibold text-muted-foreground uppercase tracking-wide"><T>Age</T></label>
                   <input
                     id="age"
                     name="age"
@@ -244,6 +246,66 @@ export default function Kyc() {
                   />
                 </div>
 
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1.5">
+                    <label htmlFor="state" className="text-xs font-semibold text-muted-foreground uppercase tracking-wide"><T>State</T></label>
+                    <select
+                      id="state"
+                      name="state"
+                      required
+                      value={form.state}
+                      onChange={(e) => {
+                        const nextState = e.target.value;
+                        setForm((prev) => ({ ...prev, state: nextState, city: "" }));
+                        setCityQuery("");
+                        setShowCityOptions(false);
+                      }}
+                      className="flex h-11 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary transition-all"
+                    >
+                      <option value=""><T>Select</T></option>
+                      {STATES.map((state) => (
+                        <option key={state} value={state}>{state}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="space-y-1.5 relative">
+                    <label htmlFor="citySearch" className="text-xs font-semibold text-muted-foreground uppercase tracking-wide"><T>City</T></label>
+                    <input
+                      id="citySearch"
+                      name="citySearch"
+                      type="text"
+                      required
+                      disabled={!form.state}
+                      value={cityQuery}
+                      onChange={(e) => {
+                        setCityQuery(e.target.value);
+                        setForm((prev) => ({ ...prev, city: "" }));
+                        setShowCityOptions(true);
+                      }}
+                      onFocus={() => setShowCityOptions(true)}
+                      onBlur={() => setTimeout(() => setShowCityOptions(false), 120)}
+                      className="flex h-11 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary transition-all disabled:opacity-50"
+                      placeholder={form.state ? "Search" : "Select state"}
+                    />
+                    {showCityOptions && form.state && filteredCities.length > 0 && (
+                      <div className="absolute z-20 mt-1 w-full max-h-48 overflow-auto rounded-lg border border-border bg-card shadow-xl">
+                        {filteredCities.map((city) => (
+                          <button
+                            key={city}
+                            type="button"
+                            onClick={() => {
+                              setForm((prev) => ({ ...prev, city }));
+                              setCityQuery(city);
+                              setShowCityOptions(false);
+                            }}
+                            className="w-full px-3 py-2 text-left text-sm hover:bg-muted transition-colors"
+                          >
+                            {city}
+                          </button>
+                        ))}
+                      </div>
+                    )}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <label htmlFor="state" className="text-sm font-semibold">State</label>
@@ -312,7 +374,7 @@ export default function Kyc() {
                   disabled={isSubmitting || isSuccess || !form.state || !form.city}
                   className="w-full h-11 rounded-lg bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold hover:from-orange-600 hover:to-orange-700 hover:shadow-lg hover:shadow-orange-500/25 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none mt-6"
                 >
-                  Verify & Continue
+                  <T>Verify & Continue</T>
                 </button>
               </form>
             </div>
@@ -330,35 +392,35 @@ export default function Kyc() {
                     />
                   </div>
                   <div>
-                    <h3 className="font-bold text-blue-900 dark:text-blue-100">DigiLocker</h3>
-                    <p className="text-xs text-blue-700 dark:text-blue-300">Government of India</p>
+                    <h3 className="font-bold text-blue-900 dark:text-blue-100"><T>DigiLocker</T></h3>
+                    <p className="text-xs text-blue-700 dark:text-blue-300"><T>Government of India</T></p>
                   </div>
                 </div>
-                <p className="text-xs text-blue-800 dark:text-blue-200 leading-relaxed">Your documents are securely verified through India's official digital locker system</p>
+                <p className="text-xs text-blue-800 dark:text-blue-200 leading-relaxed"><T>Your documents are securely verified through India's official digital locker system</T></p>
               </div>
 
               {/* Security Features */}
               <div className="bg-card border border-border rounded-xl p-5">
                 <h3 className="font-semibold text-sm mb-3 flex items-center gap-2">
                   <Lock className="w-4 h-4 text-orange-600" />
-                  Secured Verification
+                  <T>Secured Verification</T>
                 </h3>
                 <div className="space-y-2.5">
                   <div className="flex items-start gap-2">
                     <CheckCircle2 className="w-4 h-4 text-orange-600 mt-0.5 flex-shrink-0" />
-                    <p className="text-xs text-muted-foreground">256-bit encrypted data transmission</p>
+                    <p className="text-xs text-muted-foreground"><T>256-bit encrypted data transmission</T></p>
                   </div>
                   <div className="flex items-start gap-2">
                     <CheckCircle2 className="w-4 h-4 text-orange-600 mt-0.5 flex-shrink-0" />
-                    <p className="text-xs text-muted-foreground">Instant verification in seconds</p>
+                    <p className="text-xs text-muted-foreground"><T>Instant verification in seconds</T></p>
                   </div>
                   <div className="flex items-start gap-2">
                     <CheckCircle2 className="w-4 h-4 text-orange-600 mt-0.5 flex-shrink-0" />
-                    <p className="text-xs text-muted-foreground">No data stored on our servers</p>
+                    <p className="text-xs text-muted-foreground"><T>No data stored on our servers</T></p>
                   </div>
                   <div className="flex items-start gap-2">
                     <CheckCircle2 className="w-4 h-4 text-orange-600 mt-0.5 flex-shrink-0" />
-                    <p className="text-xs text-muted-foreground">Compliant with IT Act 2000</p>
+                    <p className="text-xs text-muted-foreground"><T>Compliant with IT Act 2000</T></p>
                   </div>
                 </div>
               </div>
@@ -373,7 +435,7 @@ export default function Kyc() {
         <div className="fixed inset-0 z-[80] bg-background/95 flex flex-col items-center justify-center px-4">
           <Loader2 className="w-12 h-12 text-secondary animate-spin" />
           <p className="mt-5 text-base text-foreground font-medium text-center">
-            Verifying your Aadhaar details securely...
+            <T>Verifying your Aadhaar details securely...</T>
           </p>
         </div>
       )}
@@ -381,7 +443,7 @@ export default function Kyc() {
       {isSuccess && (
         <div className="fixed inset-0 z-[90] bg-background/95 flex flex-col items-center justify-center px-4">
           <CircleCheckBig className="w-16 h-16 text-green-600 animate-pulse" />
-          <p className="mt-4 text-lg font-semibold text-foreground">KYC Verified Successfully</p>
+          <p className="mt-4 text-lg font-semibold text-foreground"><T>KYC Verified Successfully</T></p>
         </div>
       )}
     </div>

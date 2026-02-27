@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { MessageCircle, X, Send, Loader2 } from 'lucide-react';
 import { sendChatMessage, getChatbotContext } from '../lib/api';
+import { T } from "@/context/LanguageContext";
 
 const Chatbot = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -126,10 +127,10 @@ const Chatbot = () => {
         <div className="flex items-center gap-2.5">
           <img src="/chatbot.png" alt="Nidhi AI" className="w-9 h-9 rounded-full object-cover" />
           <div>
-            <h3 className="font-semibold text-foreground text-sm">Nidhi AI</h3>
+            <h3 className="font-semibold text-foreground text-sm"><T>Nidhi AI</T></h3>
             <p className="text-xs text-muted-foreground flex items-center gap-1">
               <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-              Online now
+              <T>Online now</T>
             </p>
           </div>
         </div>
@@ -200,7 +201,7 @@ const Chatbot = () => {
             <Send className="w-4 h-4" />
           </button>
         </div>
-        <p className="text-xs text-muted-foreground text-center mt-2">Powered by Team Async</p>
+        <p className="text-xs text-muted-foreground text-center mt-2"><T>Powered by Team Async</T></p>
       </div>
     </div>
   );

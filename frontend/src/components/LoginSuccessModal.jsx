@@ -1,4 +1,5 @@
 import { CheckCircle } from "lucide-react";
+import { T } from "@/context/LanguageContext";
 
 const LoginSuccessModal = ({ show, onClose, userName }) => {
   if (!show) return null;
@@ -20,10 +21,10 @@ const LoginSuccessModal = ({ show, onClose, userName }) => {
           {/* Message */}
           <div>
             <h3 className="font-bold text-lg text-foreground">
-              Welcome Back!
+              <T>Welcome Back!</T>
             </h3>
             <p className="text-sm text-muted-foreground">
-              Successfully signed in as <span className="font-semibold text-foreground">{userName}</span>
+              <T>Successfully signed in as</T>{" "}<span className="font-semibold text-foreground">{userName}</span>
             </p>
           </div>
         </div>

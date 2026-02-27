@@ -9,6 +9,7 @@ import { GroupRiskCard } from "@/components/GroupRiskCard";
 import ChitPayoutCalculator from "@/components/ChitPayoutCalculator";
 import { toast } from "sonner";
 import { useAuth } from "@/context/AuthContext";
+import { T } from "@/context/LanguageContext";
 
 const statusClassMap = {
   ACTIVE: "bg-green-100 text-green-700",
@@ -504,13 +505,13 @@ export default function ChitGroupDetails() {
         {loading ? (
           <div className="flex justify-center items-center py-20">
             <Loader2 className="w-8 h-8 animate-spin text-primary" />
-            <span className="ml-3 text-muted-foreground">Loading group details...</span>
+            <span className="ml-3 text-muted-foreground"><T>Loading group details...</T></span>
           </div>
         ) : !group ? (
           <div className="text-center py-20 bg-card rounded-2xl border border-border max-w-xl mx-auto">
             <Users className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-50" />
-            <h3 className="text-lg font-medium text-foreground">Group Not Found</h3>
-            <p className="text-muted-foreground mt-1">This chit group does not exist or has been deleted.</p>
+            <h3 className="text-lg font-medium text-foreground"><T>Group Not Found</T></h3>
+            <p className="text-muted-foreground mt-1"><T>This chit group does not exist or has been deleted.</T></p>
           </div>
         ) : (
           <div className="max-w-5xl mx-auto">
@@ -527,14 +528,14 @@ export default function ChitGroupDetails() {
             <div className="grid lg:grid-cols-3 gap-6">
               <div className="lg:col-span-2 space-y-6">
                 <div className="bg-white rounded-xl p-6 border border-border">
-                  <h2 className="font-heading font-bold text-xl mb-4">Group Details</h2>
+                  <h2 className="font-heading font-bold text-xl mb-4"><T>Group Details</T></h2>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
                         <IndianRupee className="w-5 h-5 text-primary" />
                       </div>
                       <div>
-                        <p className="text-xs text-muted-foreground">Chit Value</p>
+                        <p className="text-xs text-muted-foreground"><T>Chit Value</T></p>
                         <p className="font-semibold text-foreground">₹{Number(group.group.chit_value).toLocaleString("en-IN")}</p>
                       </div>
                     </div>
@@ -543,7 +544,7 @@ export default function ChitGroupDetails() {
                         <Calendar className="w-5 h-5 text-secondary" />
                       </div>
                       <div>
-                        <p className="text-xs text-muted-foreground">Duration</p>
+                        <p className="text-xs text-muted-foreground"><T>Duration</T></p>
                         <p className="font-semibold text-foreground">{group.group.duration_months} months</p>
                       </div>
                     </div>
@@ -552,7 +553,7 @@ export default function ChitGroupDetails() {
                         <Users className="w-5 h-5 text-accent" />
                       </div>
                       <div>
-                        <p className="text-xs text-muted-foreground">Members</p>
+                        <p className="text-xs text-muted-foreground"><T>Members</T></p>
                         <p className="font-semibold text-foreground">{group.memberStats.total} / {group.memberStats.capacity}</p>
                       </div>
                     </div>
@@ -561,7 +562,7 @@ export default function ChitGroupDetails() {
                         <Calendar className="w-5 h-5 text-green-600" />
                       </div>
                       <div>
-                        <p className="text-xs text-muted-foreground">Start Date</p>
+                        <p className="text-xs text-muted-foreground"><T>Start Date</T></p>
                         <p className="font-semibold text-foreground">{group.group.created_at ? new Date(group.group.created_at).toLocaleDateString() : "N/A"}</p>
                       </div>
                     </div>
@@ -570,7 +571,7 @@ export default function ChitGroupDetails() {
 
                 {group.calcInputs && (
                   <div className="bg-white rounded-xl p-6 border border-border">
-                    <h2 className="font-heading font-bold text-xl mb-4">Payout Calculator</h2>
+                    <h2 className="font-heading font-bold text-xl mb-4"><T>Payout Calculator</T></h2>
                     <ChitPayoutCalculator
                       groupId={group.group.id}
                       onCalculate={(r) => setCalcSnapshot(r)}
@@ -583,14 +584,14 @@ export default function ChitGroupDetails() {
                     <div className="flex items-center justify-between gap-3">
                       <h2 className="font-heading font-bold text-xl flex items-center gap-2">
                         <Gavel className="w-5 h-5 text-primary" />
-                        Live Auctions
+                        <T>Live Auctions</T>
                       </h2>
                       {isMember && (
                         <button
                           className="px-4 py-2 rounded-lg bg-primary text-primary-foreground font-semibold hover:bg-primary/90 transition-colors"
                           onClick={() => setShowCreateAuctionModal(true)}
                         >
-                          Create Auction
+                          <T>Create Auction</T>
                         </button>
                       )}
                     </div>
@@ -598,10 +599,10 @@ export default function ChitGroupDetails() {
                     {auctionsLoading ? (
                       <div className="flex items-center py-4">
                         <Loader2 className="w-5 h-5 animate-spin text-primary" />
-                        <span className="ml-2 text-sm text-muted-foreground">Loading auctions...</span>
+                        <span className="ml-2 text-sm text-muted-foreground"><T>Loading auctions...</T></span>
                       </div>
                     ) : auctions.length === 0 ? (
-                      <p className="text-sm text-muted-foreground">No auctions in this group yet.</p>
+                      <p className="text-sm text-muted-foreground"><T>No auctions in this group yet.</T></p>
                     ) : (
                       <div className="space-y-3">
                         {auctions.map((auction) => {
@@ -646,7 +647,7 @@ export default function ChitGroupDetails() {
                                     disabled={bidLoadingId === auction.id}
                                     onClick={() => handlePlaceBid(auction.id)}
                                   >
-                                    {bidLoadingId === auction.id ? "Placing..." : "Place Higher Bid"}
+                                    {bidLoadingId === auction.id ? <T>Placing...</T> : <T>Place Higher Bid</T>}
                                   </button>
                                 </div>
                               )}
@@ -660,14 +661,14 @@ export default function ChitGroupDetails() {
                                         disabled={organizerActionLoadingId === auction.id}
                                         onClick={() => handleCloseAuction(auction.id)}
                                       >
-                                        Close Auction
+                                        <T>Close Auction</T>
                                       </button>
                                       <button
                                         className="px-3 py-1.5 rounded-lg bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 disabled:opacity-60"
                                         disabled={organizerActionLoadingId === auction.id}
                                         onClick={() => handleDeclareWinner(auction.id)}
                                       >
-                                        Declare Winner
+                                        <T>Declare Winner</T>
                                       </button>
                                     </>
                                   )}
@@ -678,7 +679,7 @@ export default function ChitGroupDetails() {
                                       disabled={organizerActionLoadingId === auction.id}
                                       onClick={() => handleReopenAuction(auction.id)}
                                     >
-                                      Reopen Auction
+                                      <T>Reopen Auction</T>
                                     </button>
                                   )}
                                 </div>
@@ -690,7 +691,7 @@ export default function ChitGroupDetails() {
                                   disabled={winnerPaymentLoadingId === auction.id}
                                   onClick={() => handleWinnerPayment(auction)}
                                 >
-                                  {winnerPaymentLoadingId === auction.id ? "Processing..." : "Proceed to Payment"}
+                                  {winnerPaymentLoadingId === auction.id ? <T>Processing...</T> : <T>Proceed to Payment</T>}
                                 </button>
                               )}
 
@@ -720,12 +721,12 @@ export default function ChitGroupDetails() {
                 {group.group?.aiRiskReport ? (
                   <GroupRiskCard report={group.group.aiRiskReport} />
                 ) : (
-                  <p className="text-xs text-muted-foreground">No AI risk report available.</p>
+                  <p className="text-xs text-muted-foreground"><T>No AI risk report available.</T></p>
                 )}
 
                 {group.organizerDetails?.risk_profile && (
                   <div className="bg-white rounded-xl p-6 border border-border">
-                    <h2 className="font-heading font-bold text-lg mb-4">Risk Assessment</h2>
+                    <h2 className="font-heading font-bold text-lg mb-4"><T>Risk Assessment</T></h2>
                     <RiskAssessmentCard riskProfile={group.organizerDetails.risk_profile} />
                   </div>
                 )}
@@ -739,7 +740,7 @@ export default function ChitGroupDetails() {
         <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="w-full max-w-md bg-white rounded-xl border border-border shadow-xl p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="font-heading font-bold text-lg">Create Auction</h3>
+              <h3 className="font-heading font-bold text-lg"><T>Create Auction</T></h3>
               <button
                 className="p-1 rounded-md hover:bg-muted"
                 onClick={() => setShowCreateAuctionModal(false)}
@@ -751,7 +752,7 @@ export default function ChitGroupDetails() {
 
             <div className="space-y-3">
               <div>
-                <label className="text-sm font-medium text-foreground">Bid Amount</label>
+                <label className="text-sm font-medium text-foreground"><T>Bid Amount</T></label>
                 <input
                   type="number"
                   min="1"
@@ -762,7 +763,7 @@ export default function ChitGroupDetails() {
               </div>
 
               <div>
-                <label className="text-sm font-medium text-foreground">Reason (optional)</label>
+                <label className="text-sm font-medium text-foreground"><T>Reason (optional)</T></label>
                 <textarea
                   className="w-full mt-1 border border-border rounded-lg px-3 py-2 min-h-[90px]"
                   value={createAuctionForm.reason}
@@ -771,7 +772,7 @@ export default function ChitGroupDetails() {
               </div>
 
               <div>
-                <label className="text-sm font-medium text-foreground">Round Number (optional)</label>
+                <label className="text-sm font-medium text-foreground"><T>Round Number (optional)</T></label>
                 <input
                   type="number"
                   min="1"
@@ -787,14 +788,14 @@ export default function ChitGroupDetails() {
                   onClick={() => setShowCreateAuctionModal(false)}
                   disabled={createAuctionLoading}
                 >
-                  Cancel
+                  <T>Cancel</T>
                 </button>
                 <button
                   className="px-4 py-2 rounded-lg bg-primary text-primary-foreground font-semibold hover:bg-primary/90 disabled:bg-muted disabled:text-muted-foreground"
                   onClick={handleCreateAuction}
                   disabled={createAuctionLoading}
                 >
-                  {createAuctionLoading ? "Creating..." : "Create Auction"}
+                  {createAuctionLoading ? <T>Creating...</T> : <T>Create Auction</T>}
                 </button>
               </div>
             </div>

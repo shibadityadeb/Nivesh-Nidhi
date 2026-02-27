@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { FileText, AlertCircle } from "lucide-react";
+import { T } from "@/context/LanguageContext";
 
 const TermsModal = ({ show, onAccept }) => {
   const [agreed, setAgreed] = useState(false);
@@ -27,11 +28,11 @@ const TermsModal = ({ show, onAccept }) => {
                 <FileText className="w-6 h-6 text-primary" />
               </div>
               <h2 className="font-heading font-bold text-2xl text-foreground">
-                Terms & Conditions
+                <T>Terms & Conditions</T>
               </h2>
             </div>
             <p className="text-sm text-muted-foreground">
-              Please review and accept our terms to continue
+              <T>Please review and accept our terms to continue</T>
             </p>
           </div>
 
@@ -39,44 +40,44 @@ const TermsModal = ({ show, onAccept }) => {
           <div className="bg-muted/30 rounded-xl p-6 mb-6 max-h-64 overflow-y-auto border border-border">
             <div className="space-y-4 text-sm text-foreground">
               <div>
-                <h3 className="font-bold text-base mb-2">1. Acceptance of Terms</h3>
+                <h3 className="font-bold text-base mb-2"><T>1. Acceptance of Terms</T></h3>
                 <p className="text-muted-foreground">
-                  By accessing and using Nivesh Nidhi platform, you accept and agree to be bound by the terms and provision of this agreement.
+                  <T>By accessing and using Nivesh Nidhi platform, you accept and agree to be bound by the terms and provision of this agreement.</T>
                 </p>
               </div>
               
               <div>
-                <h3 className="font-bold text-base mb-2">2. Use of Platform</h3>
+                <h3 className="font-bold text-base mb-2"><T>2. Use of Platform</T></h3>
                 <p className="text-muted-foreground">
-                  You agree to use the platform only for lawful purposes and in accordance with these Terms. You must not use the platform in any way that violates any applicable laws or regulations.
+                  <T>You agree to use the platform only for lawful purposes and in accordance with these Terms. You must not use the platform in any way that violates any applicable laws or regulations.</T>
                 </p>
               </div>
               
               <div>
-                <h3 className="font-bold text-base mb-2">3. Chit Fund Participation</h3>
+                <h3 className="font-bold text-base mb-2"><T>3. Chit Fund Participation</T></h3>
                 <p className="text-muted-foreground">
-                  Participation in chit funds is subject to the rules and regulations set by the organizer and applicable laws. You acknowledge the risks involved in chit fund investments.
+                  <T>Participation in chit funds is subject to the rules and regulations set by the organizer and applicable laws. You acknowledge the risks involved in chit fund investments.</T>
                 </p>
               </div>
               
               <div>
-                <h3 className="font-bold text-base mb-2">4. Privacy & Data Protection</h3>
+                <h3 className="font-bold text-base mb-2"><T>4. Privacy & Data Protection</T></h3>
                 <p className="text-muted-foreground">
-                  We are committed to protecting your privacy. Your personal information will be handled in accordance with our Privacy Policy and applicable data protection laws.
+                  <T>We are committed to protecting your privacy. Your personal information will be handled in accordance with our Privacy Policy and applicable data protection laws.</T>
                 </p>
               </div>
               
               <div>
-                <h3 className="font-bold text-base mb-2">5. Liability</h3>
+                <h3 className="font-bold text-base mb-2"><T>5. Liability</T></h3>
                 <p className="text-muted-foreground">
-                  Nivesh Nidhi acts as a platform facilitator. We are not responsible for any losses incurred through participation in chit funds. Users participate at their own risk.
+                  <T>Nivesh Nidhi acts as a platform facilitator. We are not responsible for any losses incurred through participation in chit funds. Users participate at their own risk.</T>
                 </p>
               </div>
 
               <div>
-                <h3 className="font-bold text-base mb-2">6. Modifications</h3>
+                <h3 className="font-bold text-base mb-2"><T>6. Modifications</T></h3>
                 <p className="text-muted-foreground">
-                  We reserve the right to modify these terms at any time. Continued use of the platform after changes constitutes acceptance of the modified terms.
+                  <T>We reserve the right to modify these terms at any time. Continued use of the platform after changes constitutes acceptance of the modified terms.</T>
                 </p>
               </div>
             </div>
@@ -93,7 +94,7 @@ const TermsModal = ({ show, onAccept }) => {
               />
               <div className="flex-1">
                 <p className="text-sm font-semibold text-foreground">
-                  I agree to the Terms & Conditions
+                  <T>I agree to the Terms & Conditions</T>
                 </p>
               </div>
             </label>
@@ -104,7 +105,7 @@ const TermsModal = ({ show, onAccept }) => {
             <div className="flex items-start gap-3 p-4 bg-amber-50 border border-amber-200 rounded-xl mb-6">
               <AlertCircle className="w-5 h-5 text-amber-600 mt-0.5 shrink-0" />
               <p className="text-sm text-amber-800">
-                Please accept the terms and conditions to continue.
+                <T>Please accept the terms and conditions to continue.</T>
               </p>
             </div>
           )}
@@ -119,7 +120,7 @@ const TermsModal = ({ show, onAccept }) => {
                 : "bg-muted text-muted-foreground cursor-not-allowed"
             }`}
           >
-            Accept & Continue
+            <T>Accept & Continue</T>
           </button>
         </div>
       </div>

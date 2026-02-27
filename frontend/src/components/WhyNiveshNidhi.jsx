@@ -1,3 +1,6 @@
+import { Smartphone, FileSearch, Network, FileCheck, HandshakeIcon, Calendar, Headphones } from "lucide-react";
+import { T } from "@/context/LanguageContext";
+
 const WhyNiveshNidhi = () => {
   const advantages = [
     {
@@ -57,6 +60,10 @@ const WhyNiveshNidhi = () => {
       <div className="container mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-12">
+          <h2 className="font-heading font-bold text-3xl md:text-4xl lg:text-5xl text-primary mb-2">
+            <T>Why Nivesh Nidhi Chits?</T>
+          </h2>
+          <p className="text-foreground/60 text-lg"><T>Trusted, transparent, and technology-driven chit fund solutions</T></p>
           <h2 className="font-heading font-bold text-3xl md:text-4xl lg:text-5xl mb-3">
             <span className="text-primary">Nivesh Nidhi</span>
             <span className="text-secondary"> Advantage</span>
@@ -78,6 +85,11 @@ const WhyNiveshNidhi = () => {
                   className="w-28 h-28 md:w-32 md:h-32 object-contain"
                 />
               </div>
+              <h3 className="font-heading font-bold text-lg text-foreground mb-3">
+                <T>{feature.title}</T>
+              </h3>
+              <p className="text-muted-foreground text-sm leading-relaxed">
+                <T>{feature.description}</T>
               <h3 className={`font-heading font-semibold text-lg md:text-xl ${advantage.titleColor}`}>
                 {advantage.title}
               </h3>

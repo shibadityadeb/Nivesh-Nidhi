@@ -8,6 +8,7 @@ import Footer from "@/components/Footer";
 import { RiskAssessmentCard } from "@/components/RiskAssessmentCard";
 import { EscrowPanel } from "@/components/EscrowPanel";
 import { CheckCircle, XCircle, Clock, ShieldAlert, Building2, Lock } from "lucide-react";
+import { T } from "@/context/LanguageContext";
 
 export default function AdminDashboard() {
     const { user, isAuthenticated } = useAuth();
@@ -89,8 +90,8 @@ export default function AdminDashboard() {
             <main className="flex-grow container mx-auto px-4 py-24">
                 <div className="flex justify-between items-center mb-8">
                     <div>
-                        <h1 className="text-3xl font-heading font-bold">Admin Dashboard</h1>
-                        <p className="text-muted-foreground mt-2">Manage organizer applications and platform integrity.</p>
+                        <h1 className="text-3xl font-heading font-bold"><T>Admin Dashboard</T></h1>
+                        <p className="text-muted-foreground mt-2"><T>Manage organizer applications and platform integrity.</T></p>
                     </div>
                 </div>
 
@@ -100,19 +101,19 @@ export default function AdminDashboard() {
                         onClick={() => setActiveTab("pending")}
                         className={`pb-4 px-2 font-medium text-sm transition-colors border-b-2 ${activeTab === "pending" ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground"}`}
                     >
-                        Pending Validations
+                        <T>Pending Validations</T>
                     </button>
                     <button
                         onClick={() => setActiveTab("migrating")}
                         className={`pb-4 px-2 font-medium text-sm transition-colors border-b-2 ${activeTab === "migrating" ? "border-amber-500 text-amber-600" : "border-transparent text-muted-foreground hover:text-foreground"}`}
                     >
-                        Migration Queue
+                        <T>Migration Queue</T>
                     </button>
                     <button
                         onClick={() => setActiveTab("escrow")}
                         className={`pb-4 px-2 font-medium text-sm transition-colors border-b-2 flex items-center gap-1 ${activeTab === "escrow" ? "border-green-500 text-green-600" : "border-transparent text-muted-foreground hover:text-foreground"}`}
                     >
-                        <Lock className="w-4 h-4" /> Escrow Management
+                        <Lock className="w-4 h-4" /> <T>Escrow Management</T>
                     </button>
                 </div>
 
@@ -120,11 +121,11 @@ export default function AdminDashboard() {
                 {activeTab === "escrow" ? (
                     <EscrowPanel />
                 ) : loading ? (
-                    <div className="text-center py-20 text-muted-foreground">Loading applications...</div>
+                    <div className="text-center py-20 text-muted-foreground"><T>Loading applications...</T></div>
                 ) : !applications || applications.length === 0 ? (
                     <div className="text-center py-20 bg-card rounded-2xl border border-border">
                         <ShieldAlert className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-50" />
-                        <h3 className="text-lg font-medium text-foreground">No applications found</h3>
+                        <h3 className="text-lg font-medium text-foreground"><T>No applications found</T></h3>
                         <p className="text-muted-foreground mt-1">The {activeTab} queue is currently empty.</p>
                     </div>
                 ) : (
@@ -147,19 +148,19 @@ export default function AdminDashboard() {
 
                                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
                                             <div>
-                                                <p className="text-xs text-muted-foreground font-medium">Location</p>
+                                                <p className="text-xs text-muted-foreground font-medium"><T>Location</T></p>
                                                 <p className="text-sm font-medium">{app.city}, {app.state}</p>
                                             </div>
                                             <div>
-                                                <p className="text-xs text-muted-foreground font-medium">Experience</p>
+                                                <p className="text-xs text-muted-foreground font-medium"><T>Experience</T></p>
                                                 <p className="text-sm font-medium">{app.years_of_operation} Years</p>
                                             </div>
                                             <div>
-                                                <p className="text-xs text-muted-foreground font-medium">Proposed Size</p>
+                                                <p className="text-xs text-muted-foreground font-medium"><T>Proposed Size</T></p>
                                                 <p className="text-sm font-medium">₹{app.proposed_chit_size?.toLocaleString() || 'N/A'}</p>
                                             </div>
                                             <div>
-                                                <p className="text-xs text-muted-foreground font-medium">Risk Score</p>
+                                                <p className="text-xs text-muted-foreground font-medium"><T>Risk Score</T></p>
                                                 <div className="flex items-center gap-1">
                                                     <span className={`text-sm font-bold ${app.application_risk_score > 70 ? 'text-green-600' :
                                                         app.application_risk_score > 40 ? 'text-amber-600' : 'text-red-600'
@@ -180,13 +181,13 @@ export default function AdminDashboard() {
                                             onClick={() => handleApprove(app.id)}
                                             className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-green-50 text-green-700 border border-green-200 rounded-lg hover:bg-green-100 transition-colors font-medium text-sm"
                                         >
-                                            <CheckCircle className="w-4 h-4" /> Approve
+                                            <CheckCircle className="w-4 h-4" /> <T>Approve</T>
                                         </button>
                                         <button
                                             onClick={() => handleReject(app.id)}
                                             className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-red-50 text-red-700 border border-red-200 rounded-lg hover:bg-red-100 transition-colors font-medium text-sm"
                                         >
-                                            <XCircle className="w-4 h-4" /> Reject
+                                            <XCircle className="w-4 h-4" /> <T>Reject</T>
                                         </button>
                                     </div>
                                 </div>

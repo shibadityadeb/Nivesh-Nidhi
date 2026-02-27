@@ -35,6 +35,7 @@ import {
   Timer,
   Percent,
 } from "lucide-react";
+import { T } from "@/context/LanguageContext";
 
 const ORG_STATUS = {
   PENDING: { label: "Pending Review", color: "bg-yellow-100 text-yellow-700", icon: Clock },
@@ -367,9 +368,9 @@ const MyChitGroup = () => {
               </div>
               <div>
                 <h1 className="font-heading font-bold text-4xl text-foreground bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                  Organization Hub
+                  <T>Organization Hub</T>
                 </h1>
-                <p className="text-muted-foreground text-sm mt-1">Complete control over your chit fund operations</p>
+                <p className="text-muted-foreground text-sm mt-1"><T>Complete control over your chit fund operations</T></p>
               </div>
             </div>
             {selectedOrg && isApproved && (
@@ -378,7 +379,7 @@ const MyChitGroup = () => {
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-xl gradient-saffron text-saffron-foreground font-semibold text-sm shadow-lg hover:shadow-xl transition-all hover:scale-105"
               >
                 <Plus className="w-5 h-5" />
-                Create New Group
+                <T>Create New Group</T>
               </a>
             )}
           </div>
@@ -387,21 +388,21 @@ const MyChitGroup = () => {
         {loading ? (
           <div className="flex justify-center items-center py-20">
             <Loader2 className="w-8 h-8 animate-spin text-primary" />
-            <span className="ml-3 text-muted-foreground">Loading...</span>
+            <span className="ml-3 text-muted-foreground"><T>Loading...</T></span>
           </div>
         ) : organizations.length === 0 && applications.length === 0 ? (
           <div className="text-center py-16 bg-card rounded-2xl border border-border max-w-xl mx-auto">
             <Building2 className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-50" />
-            <h3 className="text-lg font-medium text-foreground">No Organization Yet</h3>
+            <h3 className="text-lg font-medium text-foreground"><T>No Organization Yet</T></h3>
             <p className="text-muted-foreground mt-1 mb-4">
-              You haven't applied as an organizer yet.
+              <T>You haven't applied as an organizer yet.</T>
             </p>
             <a
               href="/apply-organizer"
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl gradient-navy text-primary-foreground font-medium text-sm"
             >
               <Plus className="w-4 h-4" />
-              Apply as Organizer
+              <T>Apply as Organizer</T>
             </a>
           </div>
         ) : (
@@ -415,7 +416,7 @@ const MyChitGroup = () => {
                     <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent to-accent/70 flex items-center justify-center">
                       <Settings className="w-5 h-5 text-white" />
                     </div>
-                    <h3 className="text-base font-bold text-foreground">Quick Actions</h3>
+                    <h3 className="text-base font-bold text-foreground"><T>Quick Actions</T></h3>
                   </div>
                   <nav className="space-y-2">
                     {TABS.map((tab) => {
@@ -439,7 +440,7 @@ const MyChitGroup = () => {
                           }`}>
                             <Icon className="w-5 h-5" />
                           </div>
-                          <span className="flex-1 text-left">{tab.label}</span>
+                          <span className="flex-1 text-left"><T>{tab.label}</T></span>
                           {!disabled && activeTab === tab.key && <ChevronRight className="w-5 h-5" />}
                         </button>
                       );
@@ -454,7 +455,7 @@ const MyChitGroup = () => {
                   <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center">
                     <Building2 className="w-5 h-5 text-white" />
                   </div>
-                  <h3 className="text-base font-bold text-foreground">Organizations</h3>
+                  <h3 className="text-base font-bold text-foreground"><T>Organizations</T></h3>
                 </div>
                 <div className="space-y-3">
                   {organizations.map((org) => {
@@ -502,7 +503,7 @@ const MyChitGroup = () => {
                     <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-secondary to-secondary/70 flex items-center justify-center">
                       <Users className="w-5 h-5 text-white" />
                     </div>
-                    <h3 className="text-base font-bold text-foreground">Active Groups</h3>
+                    <h3 className="text-base font-bold text-foreground"><T>Active Groups</T></h3>
                   </div>
                   <div className="space-y-3">
                     {selectedOrg.chit_groups.map((group) => (
@@ -553,7 +554,7 @@ const MyChitGroup = () => {
                     <section>
                       <h2 className="font-heading font-semibold text-lg text-foreground mb-4 flex items-center gap-2">
                         <ScrollText className="w-5 h-5 text-secondary" />
-                        Application Status
+                        <T>Application Status</T>
                       </h2>
                       <div className="grid md:grid-cols-2 gap-4">
                         {applications.map((app) => {
@@ -567,30 +568,30 @@ const MyChitGroup = () => {
                                 </h3>
                                 <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium ${st.color}`}>
                                   <StIcon className="w-3 h-3" />
-                                  {st.label}
+                                  <T>{st.label}</T>
                                 </span>
                               </div>
                               <div className="space-y-1.5 text-xs text-muted-foreground">
                                 <div className="flex items-center gap-2">
                                   <Building2 className="w-3.5 h-3.5" />
-                                  Type: <span className="font-medium text-foreground">{app.type}</span>
+                                  <T>Type:</T> <span className="font-medium text-foreground">{app.type}</span>
                                 </div>
                                 <div className="flex items-center gap-2">
                                   <Calendar className="w-3.5 h-3.5" />
-                                  Applied: {new Date(app.created_at).toLocaleDateString("en-IN")}
+                                  <T>Applied:</T> {new Date(app.created_at).toLocaleDateString("en-IN")}
                                 </div>
                               </div>
                               {(app.status === "APPROVED" || app.status === "APPROVED_LIMITED") && (
                                 <div className="mt-3 p-2.5 bg-emerald-50 rounded-lg border border-emerald-200">
                                   <p className="text-xs text-emerald-700 font-medium">
-                                    ✅ Approved! You can now manage your organization below.
+                                    <T>✅ Approved! You can now manage your organization below.</T>
                                   </p>
                                 </div>
                               )}
                               {app.status === "REJECTED" && (
                                 <div className="mt-3 p-2.5 bg-red-50 rounded-lg border border-red-200">
                                   <p className="text-xs text-red-600 font-medium">
-                                    Your application was rejected. You may re-apply with updated details.
+                                    <T>Your application was rejected. You may re-apply with updated details.</T>
                                   </p>
                                 </div>
                               )}
@@ -609,7 +610,7 @@ const MyChitGroup = () => {
                           <Building2 className="w-6 h-6 text-white" />
                         </div>
                         <h2 className="font-heading font-bold text-2xl text-foreground">
-                          Organization Overview
+                          <T>Organization Overview</T>
                         </h2>
                       </div>
                       
@@ -625,12 +626,12 @@ const MyChitGroup = () => {
                           {selectedOrg.is_verified ? (
                             <div className="inline-flex items-center gap-3 px-6 py-3 rounded-2xl text-base font-bold bg-gradient-to-r from-emerald-100 to-emerald-50 text-emerald-700 border-2 border-emerald-300 shadow-md">
                               <ShieldCheck className="w-6 h-6" />
-                              <span>Verified</span>
+                              <span><T>Verified</T></span>
                             </div>
                           ) : (
                             <div className="inline-flex items-center gap-3 px-6 py-3 rounded-2xl text-base font-bold bg-gradient-to-r from-yellow-100 to-yellow-50 text-yellow-700 border-2 border-yellow-300 shadow-md">
                               <Clock className="w-6 h-6" />
-                              <span>Pending</span>
+                              <span><T>Pending</T></span>
                             </div>
                           )}
                         </div>
@@ -649,10 +650,9 @@ const MyChitGroup = () => {
                                 <Clock className="w-6 h-6 text-yellow-700" />
                               </div>
                               <div>
-                                <h4 className="text-base font-bold text-yellow-900 mb-2">Awaiting Admin Approval</h4>
+                                <h4 className="text-base font-bold text-yellow-900 mb-2"><T>Awaiting Admin Approval</T></h4>
                                 <p className="text-sm text-yellow-800">
-                                  Your organization is under review. Once approved, you'll unlock full access to manage
-                                  members, configure rules, send announcements, and notify members.
+                                  <T>Your organization is under review. Once approved, you'll unlock full access to manage members, configure rules, send announcements, and notify members.</T>
                                 </p>
                               </div>
                             </div>
@@ -666,10 +666,9 @@ const MyChitGroup = () => {
                                 <CheckCircle2 className="w-6 h-6 text-emerald-700" />
                               </div>
                               <div>
-                                <h4 className="text-base font-bold text-emerald-900 mb-2">Organization Approved!</h4>
+                                <h4 className="text-base font-bold text-emerald-900 mb-2"><T>Organization Approved!</T></h4>
                                 <p className="text-sm text-emerald-800">
-                                  You now have full access to all management features. Use the Quick Actions menu to
-                                  manage members, set rules, create announcements, and send notifications.
+                                  <T>You now have full access to all management features. Use the Quick Actions menu to manage members, set rules, create announcements, and send notifications.</T>
                                 </p>
                               </div>
                             </div>
@@ -709,7 +708,7 @@ const MyChitGroup = () => {
                             <div className="space-y-2 mt-3 text-xs text-muted-foreground">
                               <div className="flex items-center gap-2">
                                 <Users className="w-3.5 h-3.5" />
-                                {group.current_members}/{group.member_capacity} members
+                                {group.current_members}/{group.member_capacity} <T>members</T>
                               </div>
                               <div className="flex items-center gap-2">
                                 <IndianRupee className="w-3.5 h-3.5" />
@@ -717,11 +716,11 @@ const MyChitGroup = () => {
                               </div>
                               <div className="flex items-center gap-2">
                                 <Calendar className="w-3.5 h-3.5" />
-                                {group.duration_months} months
+                                {group.duration_months} <T>months</T>
                               </div>
                             </div>
                             <div className="mt-3 flex items-center gap-1 text-xs text-primary font-medium">
-                              Manage <ChevronRight className="w-3 h-3" />
+                              <T>Manage</T> <ChevronRight className="w-3 h-3" />
                             </div>
                           </div>
                         ))}
@@ -736,7 +735,7 @@ const MyChitGroup = () => {
                 <div className="space-y-6">
                   <h2 className="font-heading font-semibold text-lg text-foreground flex items-center gap-2">
                     <ClipboardList className="w-5 h-5 text-primary" />
-                    Join Requests
+                    <T>Join Requests</T>
                   </h2>
 
                   {subLoading ? (
@@ -746,7 +745,7 @@ const MyChitGroup = () => {
                   ) : joinRequests.length === 0 ? (
                     <div className="text-center py-14 bg-card rounded-2xl border border-border">
                       <ClipboardList className="w-10 h-10 text-muted-foreground mx-auto mb-3 opacity-50" />
-                      <p className="text-sm text-muted-foreground">No pending join requests.</p>
+                      <p className="text-sm text-muted-foreground"><T>No pending join requests.</T></p>
                     </div>
                   ) : (
                     <div className="grid gap-4">
@@ -765,7 +764,7 @@ const MyChitGroup = () => {
                                 <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${
                                   request.user?.isKycVerified ? "bg-emerald-100 text-emerald-700" : "bg-yellow-100 text-yellow-700"
                                 }`}>
-                                  {request.user?.isKycVerified ? "KYC Verified" : "KYC Pending"}
+                                  {request.user?.isKycVerified ? <T>KYC Verified</T> : <T>KYC Pending</T>}
                                 </span>
                               </div>
                             </div>
@@ -776,7 +775,7 @@ const MyChitGroup = () => {
                                 disabled={submitting}
                                 className="px-4 py-2 rounded-lg bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-700 disabled:opacity-50"
                               >
-                                Approve
+                                <T>Approve</T>
                               </button>
                               <button
                                 type="button"
@@ -784,7 +783,7 @@ const MyChitGroup = () => {
                                 disabled={submitting}
                                 className="px-4 py-2 rounded-lg bg-red-600 text-white text-sm font-medium hover:bg-red-700 disabled:opacity-50"
                               >
-                                Reject
+                                <T>Reject</T>
                               </button>
                             </div>
                           </div>
@@ -801,7 +800,7 @@ const MyChitGroup = () => {
                   <div className="flex items-center justify-between">
                     <h2 className="font-heading font-semibold text-lg text-foreground flex items-center gap-2">
                       <Users className="w-5 h-5 text-primary" />
-                      Manage Members
+                      <T>Manage Members</T>
                       {selectedGroup && (
                         <span className="text-sm font-normal text-muted-foreground ml-2">— {selectedGroup.name}</span>
                       )}
@@ -816,7 +815,7 @@ const MyChitGroup = () => {
                       <div className="bg-card border border-border rounded-2xl p-6">
                         <h3 className="font-medium text-sm text-foreground mb-4 flex items-center gap-2">
                           <UserPlus className="w-4 h-4 text-emerald-500" />
-                          Add New Member
+                          <T>Add New Member</T>
                         </h3>
                         <form onSubmit={handleAddMember} className="flex flex-col md:flex-row gap-3">
                           <input
@@ -848,7 +847,7 @@ const MyChitGroup = () => {
                             className="px-5 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 disabled:opacity-50 flex items-center gap-2 whitespace-nowrap"
                           >
                             {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
-                            Add
+                            <T>Add</T>
                           </button>
                         </form>
                       </div>
@@ -866,7 +865,7 @@ const MyChitGroup = () => {
                           </div>
                         ) : members.length === 0 ? (
                           <div className="text-center py-10 text-muted-foreground text-sm">
-                            No members yet. Add members using the form above.
+                            <T>No members yet. Add members using the form above.</T>
                           </div>
                         ) : (
                           <div className="divide-y divide-border">
@@ -912,7 +911,7 @@ const MyChitGroup = () => {
                 <div className="space-y-6">
                   <h2 className="font-heading font-semibold text-lg text-foreground flex items-center gap-2">
                     <ScrollText className="w-5 h-5 text-primary" />
-                    Set Rules
+                    <T>Set Rules</T>
                     {selectedGroup && (
                       <span className="text-sm font-normal text-muted-foreground ml-2">— {selectedGroup.name}</span>
                     )}
@@ -928,7 +927,7 @@ const MyChitGroup = () => {
                       <div>
                         <h3 className="font-medium text-sm text-foreground mb-3 flex items-center gap-2">
                           <CircleDollarSign className="w-4 h-4 text-emerald-500" />
-                          Amount & Duration
+                          <T>Amount & Duration</T>
                         </h3>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <InputField
@@ -955,7 +954,7 @@ const MyChitGroup = () => {
                       <div>
                         <h3 className="font-medium text-sm text-foreground mb-3 flex items-center gap-2">
                           <Percent className="w-4 h-4 text-orange-500" />
-                          Penalties & Commission
+                          <T>Penalties & Commission</T>
                         </h3>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                           <InputField
@@ -991,7 +990,7 @@ const MyChitGroup = () => {
                       <div>
                         <h3 className="font-medium text-sm text-foreground mb-3 flex items-center gap-2">
                           <Gavel className="w-4 h-4 text-indigo-500" />
-                          Bidding Rules
+                          <T>Bidding Rules</T>
                         </h3>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                           <InputField
@@ -1027,7 +1026,7 @@ const MyChitGroup = () => {
                       <div>
                         <h3 className="font-medium text-sm text-foreground mb-3 flex items-center gap-2">
                           <Timer className="w-4 h-4 text-blue-500" />
-                          Payment Schedule
+                          <T>Payment Schedule</T>
                         </h3>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <InputField
@@ -1048,7 +1047,7 @@ const MyChitGroup = () => {
                           className="px-6 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 disabled:opacity-50 flex items-center gap-2"
                         >
                           {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Settings className="w-4 h-4" />}
-                          {rules ? "Update Rules" : "Save Rules"}
+                          {rules ? <T>Update Rules</T> : <T>Save Rules</T>}
                         </button>
                       </div>
                     </form>
@@ -1061,6 +1060,7 @@ const MyChitGroup = () => {
                 <div className="space-y-6">
                   <h2 className="font-heading font-semibold text-lg text-foreground flex items-center gap-2">
                     <Megaphone className="w-5 h-5 text-primary" />
+                    <T>Announcements</T>
                     Announcements & Notifications
                     {selectedGroup && (
                       <span className="text-sm font-normal text-muted-foreground ml-2">— {selectedGroup.name}</span>
@@ -1075,7 +1075,7 @@ const MyChitGroup = () => {
                       <div className="bg-card border border-border rounded-2xl p-6">
                         <h3 className="font-medium text-sm text-foreground mb-4 flex items-center gap-2">
                           <Plus className="w-4 h-4 text-emerald-500" />
-                          New Announcement
+                          <T>New Announcement</T>
                         </h3>
                         <form onSubmit={handleCreateAnnouncement} className="space-y-3">
                           <div className="flex gap-3">
@@ -1112,7 +1112,7 @@ const MyChitGroup = () => {
                               className="px-5 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 disabled:opacity-50 flex items-center gap-2"
                             >
                               {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Megaphone className="w-4 h-4" />}
-                              Post Announcement
+                              <T>Post Announcement</T>
                             </button>
                           </div>
                         </form>
@@ -1124,7 +1124,7 @@ const MyChitGroup = () => {
                           <div className="flex justify-center py-10"><Loader2 className="w-6 h-6 animate-spin text-primary" /></div>
                         ) : announcements.length === 0 ? (
                           <div className="text-center py-10 bg-card border border-border rounded-2xl text-muted-foreground text-sm">
-                            No announcements yet. Create your first announcement above.
+                            <T>No announcements yet. Create your first announcement above.</T>
                           </div>
                         ) : (
                           announcements.map((ann) => (
@@ -1159,6 +1159,16 @@ const MyChitGroup = () => {
                         )}
                       </div>
 
+              {/* NOTIFICATIONS TAB */}
+              {activeTab === "notifications" && isApproved && (
+                <div className="space-y-6">
+                  <h2 className="font-heading font-semibold text-lg text-foreground flex items-center gap-2">
+                    <Bell className="w-5 h-5 text-primary" />
+                    <T>Notify Members</T>
+                    {selectedGroup && (
+                      <span className="text-sm font-normal text-muted-foreground ml-2">— {selectedGroup.name}</span>
+                    )}
+                  </h2>
                       <h3 className="font-medium text-sm text-foreground flex items-center gap-2 pt-2">
                         <Bell className="w-4 h-4 text-blue-500" />
                         Notify Members
@@ -1168,7 +1178,7 @@ const MyChitGroup = () => {
                       <div className="bg-card border border-border rounded-2xl p-6">
                         <h3 className="font-medium text-sm text-foreground mb-4 flex items-center gap-2">
                           <Send className="w-4 h-4 text-blue-500" />
-                          Send Notification
+                          <T>Send Notification</T>
                         </h3>
                         <form onSubmit={handleSendNotification} className="space-y-3">
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -1200,7 +1210,7 @@ const MyChitGroup = () => {
                           />
                           <div className="flex items-center justify-between">
                             <p className="text-xs text-muted-foreground">
-                              Sends to all active members in this group
+                              <T>Sends to all active members in this group</T>
                             </p>
                             <button
                               type="submit"
@@ -1208,7 +1218,7 @@ const MyChitGroup = () => {
                               className="px-5 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 disabled:opacity-50 flex items-center gap-2"
                             >
                               {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
-                              Send Notification
+                              <T>Send Notification</T>
                             </button>
                           </div>
                         </form>
@@ -1216,7 +1226,7 @@ const MyChitGroup = () => {
 
                       {/* Quick Templates */}
                       <div className="bg-card border border-border rounded-2xl p-6">
-                        <h3 className="font-medium text-sm text-foreground mb-4">Quick Templates</h3>
+                        <h3 className="font-medium text-sm text-foreground mb-4"><T>Quick Templates</T></h3>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                           {[
                             {
@@ -1270,13 +1280,13 @@ const MyChitGroup = () => {
                       {/* Notification History */}
                       <div className="bg-card border border-border rounded-2xl overflow-hidden">
                         <div className="p-4 border-b border-border bg-muted/30">
-                          <h3 className="font-medium text-sm text-foreground">Notification History</h3>
+                          <h3 className="font-medium text-sm text-foreground"><T>Notification History</T></h3>
                         </div>
                         {subLoading ? (
                           <div className="flex justify-center py-10"><Loader2 className="w-6 h-6 animate-spin text-primary" /></div>
                         ) : notifications.length === 0 ? (
                           <div className="text-center py-10 text-muted-foreground text-sm">
-                            No notifications sent yet.
+                            <T>No notifications sent yet.</T>
                           </div>
                         ) : (
                           <div className="divide-y divide-border max-h-96 overflow-y-auto">
@@ -1307,9 +1317,9 @@ const MyChitGroup = () => {
               {activeTab !== "overview" && !isApproved && (
                 <div className="text-center py-16 bg-card rounded-2xl border border-border">
                   <Clock className="w-12 h-12 text-yellow-500 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-foreground">Organization Not Yet Approved</h3>
+                  <h3 className="text-lg font-medium text-foreground"><T>Organization Not Yet Approved</T></h3>
                   <p className="text-muted-foreground mt-1">
-                    This feature will be available once your organization is approved by the admin.
+                    <T>This feature will be available once your organization is approved by the admin.</T>
                   </p>
                 </div>
               )}

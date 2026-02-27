@@ -1,4 +1,5 @@
 import { Users, Building2, MapPin, UserCheck } from "lucide-react";
+import { T } from "@/context/LanguageContext";
 
 const StatsSection = () => {
   const stats = [
@@ -19,7 +20,7 @@ const StatsSection = () => {
                 {stat.value}
               </p>
               <p className="text-sm text-foreground/70">
-                {stat.label}
+                <T>{stat.label}</T>
               </p>
             </div>
           ))}

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { chitGroups as chitGroupsApi, escrow } from "@/lib/api";
 import { toast } from "sonner";
 import { IndianRupee, ShieldAlert, Lock, Unlock, PlayCircle, Loader2, CheckCircle } from "lucide-react";
+import { T } from "@/context/LanguageContext";
 
 export function EscrowPanel() {
     const [groups, setGroups] = useState([]);
@@ -95,7 +96,7 @@ export function EscrowPanel() {
         return (
             <div className="text-center py-20 bg-card rounded-2xl border border-border">
                 <ShieldAlert className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-50" />
-                <h3 className="text-lg font-medium text-foreground">No Active Groups Found</h3>
+                <h3 className="text-lg font-medium text-foreground"><T>No Active Groups Found</T></h3>
             </div>
         );
     }
@@ -114,15 +115,15 @@ export function EscrowPanel() {
                             </h3>
                             <div className="grid grid-cols-3 gap-4 mt-4">
                                 <div className="bg-secondary/5 p-3 rounded-xl border border-secondary/10">
-                                    <p className="text-xs text-muted-foreground font-medium mb-1">Total Fund Size</p>
+                                    <p className="text-xs text-muted-foreground font-medium mb-1"><T>Total Fund Size</T></p>
                                     <p className="font-bold flex items-center"><IndianRupee className="w-4 h-4 mr-1" />{Number(group.chit_value).toLocaleString()}</p>
                                 </div>
                                 <div className="bg-green-50 p-3 rounded-xl border border-green-100">
-                                    <p className="text-xs text-muted-foreground font-medium mb-1">Locked in Escrow</p>
+                                    <p className="text-xs text-muted-foreground font-medium mb-1"><T>Locked in Escrow</T></p>
                                     <p className="font-bold text-green-700 flex items-center"><Lock className="w-4 h-4 mr-1" />{Number(bal.locked_amount).toLocaleString()}</p>
                                 </div>
                                 <div className="bg-blue-50 p-3 rounded-xl border border-blue-100">
-                                    <p className="text-xs text-muted-foreground font-medium mb-1">Total Collected</p>
+                                    <p className="text-xs text-muted-foreground font-medium mb-1"><T>Total Collected</T></p>
                                     <p className="font-bold text-blue-700 flex items-center"><IndianRupee className="w-4 h-4 mr-1" />{Number(bal.total_collected).toLocaleString()}</p>
                                 </div>
                             </div>
@@ -134,14 +135,14 @@ export function EscrowPanel() {
                                 disabled={!!processingId || Number(bal.locked_amount) === 0}
                                 className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-primary text-primary-foreground font-medium rounded-xl hover:bg-primary/90 transition-colors disabled:opacity-50"
                             >
-                                {processingId === `payout-${group.id}` ? <Loader2 className="w-5 h-5 animate-spin" /> : <><PlayCircle className="w-5 h-5" /> Release Payout</>}
+                                {processingId === `payout-${group.id}` ? <Loader2 className="w-5 h-5 animate-spin" /> : <><PlayCircle className="w-5 h-5" /> <T>Release Payout</T></>}
                             </button>
                             <button
                                 onClick={() => handleFreeze(group.id)}
                                 disabled={!!processingId}
                                 className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-red-50 text-red-600 font-medium rounded-xl border border-red-200 hover:bg-red-100 transition-colors disabled:opacity-50"
                             >
-                                <ShieldAlert className="w-4 h-4" /> Freeze Escrow
+                                <ShieldAlert className="w-4 h-4" /> <T>Freeze Escrow</T>
                             </button>
                         </div>
                     </div>

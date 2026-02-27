@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { X, Mail, Lock, User, Phone, Eye, EyeOff, AlertCircle } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
+import { getCurrentLocation } from "@/utils/getCurrentLocation";
+import { T } from "@/context/LanguageContext";
+
 
 const AuthModal = () => {
   const { showAuthModal, setShowAuthModal, signupUser, loginUser } = useAuth();
@@ -56,10 +59,10 @@ const AuthModal = () => {
           <div className="flex justify-between items-center mb-6">
             <div>
               <h2 className="font-heading font-bold text-2xl text-foreground">
-                {isSignUp ? "Create Account" : "Welcome Back"}
+                {isSignUp ? <T>Create Account</T> : <T>Welcome Back</T>}
               </h2>
               <p className="text-sm text-muted-foreground mt-1">
-                {isSignUp ? "Join the ChitFund platform" : "Sign in to your account"}
+                {isSignUp ? <T>Join the ChitFund platform</T> : <T>Sign in to your account</T>}
               </p>
             </div>
             <button
@@ -153,18 +156,19 @@ const AuthModal = () => {
               disabled={loading}
               className="w-full py-3 rounded-xl gradient-navy text-primary-foreground font-heading font-semibold text-sm shadow-md hover:shadow-lg transition-all hover:scale-[1.01] disabled:opacity-60 disabled:cursor-not-allowed"
             >
+              {locationLoading ? <T>Fetching your location...</T> : loading ? <T>Please wait...</T> : isSignUp ? <T>Create Account</T> : <T>Sign In</T>}
               {loading ? "Please wait..." : isSignUp ? "Create Account" : "Sign In"}
             </button>
           </form>
 
           <div className="mt-6 text-center">
             <p className="text-sm text-muted-foreground">
-              {isSignUp ? "Already have an account?" : "Don't have an account?"}{" "}
+              {isSignUp ? <T>Already have an account?</T> : <T>Don't have an account?</T>}{" "}
               <button
                 onClick={handleSwitch}
                 className="text-secondary font-semibold hover:underline"
               >
-                {isSignUp ? "Sign In" : "Sign Up"}
+                {isSignUp ? <T>Sign In</T> : <T>Sign Up</T>}
               </button>
             </p>
           </div>

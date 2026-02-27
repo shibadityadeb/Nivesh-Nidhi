@@ -1,5 +1,6 @@
 import React from "react";
 import { Shield, AlertTriangle, CheckCircle, Info } from "lucide-react";
+import { T } from "@/context/LanguageContext";
 
 export function GroupRiskCard({ report }) {
   if (!report) return null;
@@ -36,8 +37,8 @@ export function GroupRiskCard({ report }) {
             <Shield className="w-5 h-5 text-primary" />
           </div>
           <div>
-            <h3 className="font-heading font-bold text-lg text-foreground">AI Risk Analysis</h3>
-            <p className="text-xs text-muted-foreground">{confidence}% confidence</p>
+            <h3 className="font-heading font-bold text-lg text-foreground"><T>AI Risk Analysis</T></h3>
+            <p className="text-xs text-muted-foreground">{confidence}% <T>confidence</T></p>
           </div>
         </div>
         <span className={`px-4 py-1.5 rounded-xl text-sm font-bold ${badgeColor} border ${borderColor}`}>
@@ -49,9 +50,9 @@ export function GroupRiskCard({ report }) {
       <div className="mb-4">
         <div className="flex items-center gap-2 mb-2">
           <Info className="w-4 h-4 text-primary" />
-          <span className="font-semibold text-sm text-foreground">Summary</span>
+          <span className="font-semibold text-sm text-foreground"><T>Summary</T></span>
         </div>
-        <p className="text-sm text-muted-foreground pl-6">{summary}</p>
+        <p className="text-sm text-muted-foreground pl-6"><T>{summary}</T></p>
       </div>
 
       {/* Warning Flags */}
@@ -59,13 +60,13 @@ export function GroupRiskCard({ report }) {
         <div className="mb-4">
           <div className="flex items-center gap-2 mb-2">
             <AlertTriangle className="w-4 h-4 text-red-600" />
-            <span className="font-semibold text-sm text-foreground">Warning Flags</span>
+            <span className="font-semibold text-sm text-foreground"><T>Warning Flags</T></span>
           </div>
           <ul className="space-y-1 pl-6">
             {warningFlags.map((f, i) => (
               <li key={i} className="text-sm text-red-700 flex items-start gap-2">
                 <span className="text-red-500 mt-1">•</span>
-                <span>{f}</span>
+                <span><T>{f}</T></span>
               </li>
             ))}
           </ul>
@@ -77,13 +78,13 @@ export function GroupRiskCard({ report }) {
         <div className="mb-4">
           <div className="flex items-center gap-2 mb-2">
             <CheckCircle className="w-4 h-4 text-emerald-600" />
-            <span className="font-semibold text-sm text-foreground">Positive Signals</span>
+            <span className="font-semibold text-sm text-foreground"><T>Positive Signals</T></span>
           </div>
           <ul className="space-y-1 pl-6">
             {positiveSignals.map((f, i) => (
               <li key={i} className="text-sm text-emerald-700 flex items-start gap-2">
                 <span className="text-emerald-500 mt-1">•</span>
-                <span>{f}</span>
+                <span><T>{f}</T></span>
               </li>
             ))}
           </ul>
@@ -94,9 +95,9 @@ export function GroupRiskCard({ report }) {
       <div className="pt-4 border-t ${borderColor}">
         <div className="flex items-center gap-2 mb-2">
           {icon}
-          <span className="font-semibold text-sm text-foreground">Recommendation</span>
+          <span className="font-semibold text-sm text-foreground"><T>Recommendation</T></span>
         </div>
-        <p className="text-sm text-foreground font-medium pl-6">{recommendation}</p>
+        <p className="text-sm text-foreground font-medium pl-6"><T>{recommendation}</T></p>
       </div>
     </div>
   );

@@ -1,6 +1,7 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { CheckCircle2, AlertCircle, Users, Building2 } from "lucide-react";
+import { T } from "@/context/LanguageContext";
 
 const EligibilityCriteria = () => {
   const individualCriteria = [
@@ -68,13 +69,13 @@ const EligibilityCriteria = () => {
           <div className="container mx-auto px-4 text-center">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 mb-4">
               <CheckCircle2 className="w-4 h-4 text-primary" />
-              <span className="text-sm font-semibold text-primary">Membership Requirements</span>
+              <span className="text-sm font-semibold text-primary"><T>Membership Requirements</T></span>
             </div>
             <h1 className="font-bold text-3xl md:text-4xl text-gray-900 mb-3">
-              Eligibility Criteria
+              <T>Eligibility Criteria</T>
             </h1>
             <p className="text-gray-600 text-base max-w-2xl mx-auto">
-              Check if you meet the requirements to join a chit group and start your financial journey.
+              <T>Check if you meet the requirements to join a chit group and start your financial journey.</T>
             </p>
           </div>
         </section>
@@ -84,7 +85,7 @@ const EligibilityCriteria = () => {
           <div className="container mx-auto px-4">
             <h2 className="font-heading font-bold text-3xl mb-8 text-primary flex items-center gap-3">
               <Users className="w-8 h-8" />
-              For Individual Members
+              <T>For Individual Members</T>
             </h2>
             <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto mb-12">
               {individualCriteria.map((item, index) => (
@@ -96,10 +97,10 @@ const EligibilityCriteria = () => {
                     <CheckCircle2 className="w-5 h-5 text-secondary flex-shrink-0 mt-1" />
                     <div>
                       <h3 className="font-semibold text-primary mb-1">
-                        {item.criterion}
+                        <T>{item.criterion}</T>
                       </h3>
                       <p className="text-gray-600 text-sm">
-                        {item.details}
+                        <T>{item.details}</T>
                       </p>
                     </div>
                   </div>
@@ -114,7 +115,7 @@ const EligibilityCriteria = () => {
           <div className="container mx-auto px-4">
             <h2 className="font-heading font-bold text-3xl mb-8 text-primary flex items-center gap-3">
               <Building2 className="w-8 h-8" />
-              For Business Entities
+              <T>For Business Entities</T>
             </h2>
             <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto mb-12">
               {businessCriteria.map((item, index) => (
@@ -126,10 +127,10 @@ const EligibilityCriteria = () => {
                     <CheckCircle2 className="w-5 h-5 text-secondary flex-shrink-0 mt-1" />
                     <div>
                       <h3 className="font-semibold text-primary mb-1">
-                        {item.criterion}
+                        <T>{item.criterion}</T>
                       </h3>
                       <p className="text-gray-600 text-sm">
-                        {item.details}
+                        <T>{item.details}</T>
                       </p>
                     </div>
                   </div>
@@ -147,16 +148,16 @@ const EligibilityCriteria = () => {
                 <AlertCircle className="w-6 h-6 text-red-600 flex-shrink-0 mt-0.5" />
                 <div>
                   <h2 className="font-heading font-bold text-2xl text-red-900 mb-4">
-                    Disqualifying Factors
+                    <T>Disqualifying Factors</T>
                   </h2>
                   <p className="text-red-800 mb-4">
-                    You may not be eligible if any of the following apply:
+                    <T>You may not be eligible if any of the following apply:</T>
                   </p>
                   <ul className="space-y-3">
                     {disqualifyingFactors.map((factor, index) => (
                       <li key={index} className="flex gap-3">
                         <span className="text-red-600 font-bold">•</span>
-                        <span className="text-red-800">{factor}</span>
+                        <span className="text-red-800"><T>{factor}</T></span>
                       </li>
                     ))}
                   </ul>
@@ -170,7 +171,7 @@ const EligibilityCriteria = () => {
         <section className="py-16 bg-gray-50 relative z-10">
           <div className="container mx-auto px-4">
             <h2 className="font-heading font-bold text-3xl mb-12 text-center text-primary">
-              Special Categories & Programs
+              <T>Special Categories & Programs</T>
             </h2>
             <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
               {nicheEligibility.map((item, index) => (
@@ -179,19 +180,19 @@ const EligibilityCriteria = () => {
                   className="bg-white rounded-lg border border-border shadow-sm hover:shadow-md transition-shadow p-6"
                 >
                   <h3 className="font-heading font-bold text-lg text-primary mb-3">
-                    {item.category}
+                    <T>{item.category}</T>
                   </h3>
                   <div className="space-y-4">
                     <div>
-                      <p className="text-sm font-semibold text-gray-700 mb-1">Benefits:</p>
+                      <p className="text-sm font-semibold text-gray-700 mb-1"><T>Benefits:</T></p>
                       <p className="text-gray-600 text-sm">
-                        {item.benefits}
+                        <T>{item.benefits}</T>
                       </p>
                     </div>
                     <div>
-                      <p className="text-sm font-semibold text-gray-700 mb-1">Requirements:</p>
+                      <p className="text-sm font-semibold text-gray-700 mb-1"><T>Requirements:</T></p>
                       <p className="text-gray-600 text-sm">
-                        {item.requirements}
+                        <T>{item.requirements}</T>
                       </p>
                     </div>
                   </div>
@@ -205,7 +206,7 @@ const EligibilityCriteria = () => {
         <section className="py-16 relative z-10">
           <div className="container mx-auto px-4">
             <h2 className="font-heading font-bold text-3xl mb-12 text-center text-primary">
-              Next Steps
+              <T>Next Steps</T>
             </h2>
             <div className="max-w-3xl mx-auto">
               <div className="space-y-6">
@@ -215,10 +216,10 @@ const EligibilityCriteria = () => {
                   </div>
                   <div>
                     <h3 className="font-semibold text-lg text-primary mb-2">
-                      Check Your Eligibility
+                      <T>Check Your Eligibility</T>
                     </h3>
                     <p className="text-gray-600">
-                      Verify that you meet all the criteria mentioned above for your category.
+                      <T>Verify that you meet all the criteria mentioned above for your category.</T>
                     </p>
                   </div>
                 </div>
@@ -228,10 +229,10 @@ const EligibilityCriteria = () => {
                   </div>
                   <div>
                     <h3 className="font-semibold text-lg text-primary mb-2">
-                      Gather Documents
+                      <T>Gather Documents</T>
                     </h3>
                     <p className="text-gray-600">
-                      Collect all required documents as per your category and keep them ready.
+                      <T>Collect all required documents as per your category and keep them ready.</T>
                     </p>
                   </div>
                 </div>
@@ -241,10 +242,10 @@ const EligibilityCriteria = () => {
                   </div>
                   <div>
                     <h3 className="font-semibold text-lg text-primary mb-2">
-                      Register on Platform
+                      <T>Register on Platform</T>
                     </h3>
                     <p className="text-gray-600">
-                      Sign up on our platform and complete your basic profile information.
+                      <T>Sign up on our platform and complete your basic profile information.</T>
                     </p>
                   </div>
                 </div>
@@ -254,10 +255,10 @@ const EligibilityCriteria = () => {
                   </div>
                   <div>
                     <h3 className="font-semibold text-lg text-primary mb-2">
-                      Submit Documents & Complete KYC
+                      <T>Submit Documents & Complete KYC</T>
                     </h3>
                     <p className="text-gray-600">
-                      Upload documents and complete the KYC verification process.
+                      <T>Upload documents and complete the KYC verification process.</T>
                     </p>
                   </div>
                 </div>
@@ -267,10 +268,10 @@ const EligibilityCriteria = () => {
                   </div>
                   <div>
                     <h3 className="font-semibold text-lg text-primary mb-2">
-                      Choose Your Chit Group
+                      <T>Choose Your Chit Group</T>
                     </h3>
                     <p className="text-gray-600">
-                      Browse available groups and select the one that matches your requirements.
+                      <T>Browse available groups and select the one that matches your requirements.</T>
                     </p>
                   </div>
                 </div>

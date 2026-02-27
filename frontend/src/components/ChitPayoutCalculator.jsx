@@ -1,3 +1,18 @@
+import React, { useState, useEffect } from "react";
+import { T } from "@/context/LanguageContext";
+
+export default function ChitPayoutCalculator({
+  totalMembers,
+  monthlyContribution,
+  durationMonths,
+  foremanCommissionPercent,
+  minDiscount,
+  maxDiscount,
+  onCalculate
+}) {
+  const [discount, setDiscount] = useState(minDiscount || 0);
+  const [month, setMonth] = useState(1);
+  const [results, setResults] = useState({});
 import React, { useEffect, useMemo, useState } from "react";
 import { Loader2 } from "lucide-react";
 import { chitGroups as chitGroupsApi } from "@/lib/api";
@@ -148,6 +163,8 @@ export default function ChitPayoutCalculator({ groupId, onCalculate }) {
     }
   };
 
+  if (!totalMembers || !monthlyContribution || !durationMonths) {
+    return <div className="text-muted-foreground"><T>Please select a group to view calculator.</T></div>;
   useEffect(() => {
     if (!isValid) {
       setResult(null);
@@ -179,6 +196,24 @@ export default function ChitPayoutCalculator({ groupId, onCalculate }) {
   }
 
   return (
+    <div className="space-y-6">
+      {/* Input Parameters */}
+      <div className="grid grid-cols-2 gap-4">
+        <div className="bg-secondary/5 rounded-lg p-3">
+          <p className="text-xs text-muted-foreground mb-1"><T>Monthly Contribution</T></p>
+          <p className="text-lg font-bold text-foreground">₹{monthlyContribution.toLocaleString('en-IN')}</p>
+        </div>
+        <div className="bg-secondary/5 rounded-lg p-3">
+          <p className="text-xs text-muted-foreground mb-1"><T>Total Members</T></p>
+          <p className="text-lg font-bold text-foreground">{totalMembers}</p>
+        </div>
+        <div className="bg-secondary/5 rounded-lg p-3">
+          <p className="text-xs text-muted-foreground mb-1"><T>Duration</T></p>
+          <p className="text-lg font-bold text-foreground">{durationMonths} months</p>
+        </div>
+        <div className="bg-secondary/5 rounded-lg p-3">
+          <p className="text-xs text-muted-foreground mb-1"><T>Commission</T></p>
+          <p className="text-lg font-bold text-foreground">{foremanCommissionPercent}%</p>
     <div className="space-y-5">
       <div className="grid md:grid-cols-2 gap-4">
         <div>
@@ -209,6 +244,11 @@ export default function ChitPayoutCalculator({ groupId, onCalculate }) {
           {inlineErrors.durationMonths && <p className="text-xs text-red-600 mt-1">{inlineErrors.durationMonths}</p>}
         </div>
 
+      {/* Discount Slider */}
+      <div>
+        <div className="flex justify-between items-center mb-2">
+          <label className="text-sm font-medium text-foreground"><T>Discount Percentage</T></label>
+          <span className="text-lg font-bold text-secondary">{discount}%</span>
         <div>
           <label className="text-sm font-medium text-foreground">Number of Members</label>
           <input
@@ -237,6 +277,11 @@ export default function ChitPayoutCalculator({ groupId, onCalculate }) {
           {inlineErrors.commissionRate && <p className="text-xs text-red-600 mt-1">{inlineErrors.commissionRate}</p>}
         </div>
 
+      {/* Month Slider */}
+      <div>
+        <div className="flex justify-between items-center mb-2">
+          <label className="text-sm font-medium text-foreground"><T>Simulate Month</T></label>
+          <span className="text-lg font-bold text-primary">{month}</span>
         <div>
           <label className="text-sm font-medium text-foreground">Interest Rate (%)</label>
           <input
@@ -271,6 +316,36 @@ export default function ChitPayoutCalculator({ groupId, onCalculate }) {
 
       {result && (
         <div className="bg-primary/5 rounded-lg p-4 space-y-3">
+          <h4 className="font-semibold text-foreground mb-3"><T>Estimated Results</T></h4>
+          <div className="grid grid-cols-2 gap-3 text-sm">
+            <div>
+              <p className="text-muted-foreground"><T>Monthly Pool</T></p>
+              <p className="font-semibold text-foreground">₹{results.monthlyPool?.toLocaleString('en-IN')}</p>
+            </div>
+            <div>
+              <p className="text-muted-foreground"><T>Commission</T></p>
+              <p className="font-semibold text-foreground">₹{results.commission?.toLocaleString('en-IN')}</p>
+            </div>
+            <div>
+              <p className="text-muted-foreground"><T>Discount Amount</T></p>
+              <p className="font-semibold text-foreground">₹{results.discountAmount?.toLocaleString('en-IN')}</p>
+            </div>
+            <div>
+              <p className="text-muted-foreground"><T>Winning Amount</T></p>
+              <p className="font-semibold text-secondary">₹{results.estimatedWinning?.toLocaleString('en-IN')}</p>
+            </div>
+            <div>
+              <p className="text-muted-foreground"><T>Total Payable</T></p>
+              <p className="font-semibold text-foreground">₹{results.totalPayable?.toLocaleString('en-IN')}</p>
+            </div>
+            <div>
+              <p className="text-muted-foreground"><T>Profit/Loss</T></p>
+              <p className={`font-semibold ${results.profitLoss >= 0 ? 'text-green-600' : 'text-red-600'}`}>₹{results.profitLoss?.toLocaleString('en-IN')}</p>
+            </div>
+          </div>
+          <div className="pt-3 border-t border-border">
+            <p className="text-muted-foreground text-sm">Payout if win in month {month}</p>
+            <p className="font-bold text-xl text-secondary">₹{results.monthPayout?.toLocaleString('en-IN')}</p>
           <h4 className="font-semibold text-foreground">Calculation Breakdown</h4>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             <div className="bg-white rounded-lg border border-border p-3">

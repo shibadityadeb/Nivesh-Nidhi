@@ -1,6 +1,7 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { FileText, CheckCircle2, AlertCircle, Users } from "lucide-react";
+import { T } from "@/context/LanguageContext";
 
 const DocumentsRequired = () => {
   const individualDocs = [
@@ -58,13 +59,13 @@ const DocumentsRequired = () => {
           <div className="container mx-auto px-4 text-center">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 mb-4">
               <FileText className="w-4 h-4 text-primary" />
-              <span className="text-sm font-semibold text-primary">Document Checklist</span>
+              <span className="text-sm font-semibold text-primary"><T>Document Checklist</T></span>
             </div>
             <h1 className="font-bold text-3xl md:text-4xl text-gray-900 mb-3">
-              Documents Required for Chits
+              <T>Documents Required for Chits</T>
             </h1>
             <p className="text-gray-600 text-base max-w-2xl mx-auto">
-              Get a complete checklist of documents needed to join a chit group and start your journey.
+              <T>Get a complete checklist of documents needed to join a chit group and start your journey.</T>
             </p>
           </div>
         </section>
@@ -74,7 +75,7 @@ const DocumentsRequired = () => {
           <div className="container mx-auto px-4">
             <h2 className="font-heading font-bold text-3xl mb-8 text-primary flex items-center gap-3">
               <Users className="w-8 h-8" />
-              Documents for Individual Members
+              <T>Documents for Individual Members</T>
             </h2>
             <div className="max-w-3xl mx-auto space-y-4">
               {individualDocs.map((item, index) => (
@@ -94,10 +95,10 @@ const DocumentsRequired = () => {
                     </div>
                     <div className="flex-grow">
                       <h3 className="font-semibold text-lg text-primary mb-1">
-                        {item.doc}
+                        <T>{item.doc}</T>
                       </h3>
                       <p className="text-gray-600 text-sm">
-                        {item.note}
+                        <T>{item.note}</T>
                       </p>
                     </div>
                   </div>
@@ -112,7 +113,7 @@ const DocumentsRequired = () => {
           <div className="container mx-auto px-4">
             <h2 className="font-heading font-bold text-3xl mb-8 text-primary flex items-center gap-3">
               <FileText className="w-8 h-8" />
-              Additional Documents for Business Entities
+              <T>Additional Documents for Business Entities</T>
             </h2>
             <div className="max-w-3xl mx-auto space-y-4">
               {businessDocs.map((item, index) => (
@@ -132,10 +133,10 @@ const DocumentsRequired = () => {
                     </div>
                     <div className="flex-grow">
                       <h3 className="font-semibold text-lg text-primary mb-1">
-                        {item.doc}
+                        <T>{item.doc}</T>
                       </h3>
                       <p className="text-gray-600 text-sm">
-                        {item.note}
+                        <T>{item.note}</T>
                       </p>
                     </div>
                   </div>
@@ -149,7 +150,7 @@ const DocumentsRequired = () => {
         <section className="py-16 relative z-10">
           <div className="container mx-auto px-4">
             <h2 className="font-heading font-bold text-3xl mb-12 text-center text-primary">
-              Verification Process
+              <T>Verification Process</T>
             </h2>
             <div className="max-w-3xl mx-auto">
               {processSteps.map((item) => (
@@ -161,10 +162,10 @@ const DocumentsRequired = () => {
                   </div>
                   <div className="flex-grow">
                     <h3 className="font-semibold text-lg text-primary mb-2">
-                      {item.title}
+                      <T>{item.title}</T>
                     </h3>
                     <p className="text-gray-600">
-                      {item.description}
+                      <T>{item.description}</T>
                     </p>
                   </div>
                 </div>
@@ -181,12 +182,12 @@ const DocumentsRequired = () => {
                 <div className="flex gap-4">
                   <AlertCircle className="w-6 h-6 text-yellow-600 flex-shrink-0 mt-0.5" />
                   <div>
-                    <h3 className="font-semibold text-yellow-900 mb-2">Important Notes</h3>
+                    <h3 className="font-semibold text-yellow-900 mb-2"><T>Important Notes</T></h3>
                     <ul className="space-y-2 text-yellow-800 text-sm">
-                      <li>• All documents must be original or notarized copies</li>
-                      <li>• Documents must be recent (not older than 6 months)</li>
-                      <li>• Information on documents must match across all proofs</li>
-                      <li>• Digital copies accepted in PDF or JPG format</li>
+                      <li>• <T>All documents must be original or notarized copies</T></li>
+                      <li>• <T>Documents must be recent (not older than 6 months)</T></li>
+                      <li>• <T>Information on documents must match across all proofs</T></li>
+                      <li>• <T>Digital copies accepted in PDF or JPG format</T></li>
                     </ul>
                   </div>
                 </div>
@@ -196,13 +197,13 @@ const DocumentsRequired = () => {
                 <div className="flex gap-4">
                   <CheckCircle2 className="w-6 h-6 text-blue-600 flex-shrink-0 mt-0.5" />
                   <div>
-                    <h3 className="font-semibold text-blue-900 mb-2">Why These Documents?</h3>
+                    <h3 className="font-semibold text-blue-900 mb-2"><T>Why These Documents?</T></h3>
                     <ul className="space-y-2 text-blue-800 text-sm">
-                      <li>• KYC compliance with RBI regulations</li>
-                      <li>• Fraud prevention and member verification</li>
-                      <li>• Secure fund disbursement</li>
-                      <li>• Tax compliance and record keeping</li>
-                      <li>• Risk assessment and credit evaluation</li>
+                      <li>• <T>KYC compliance with RBI regulations</T></li>
+                      <li>• <T>Fraud prevention and member verification</T></li>
+                      <li>• <T>Secure fund disbursement</T></li>
+                      <li>• <T>Tax compliance and record keeping</T></li>
+                      <li>• <T>Risk assessment and credit evaluation</T></li>
                     </ul>
                   </div>
                 </div>
