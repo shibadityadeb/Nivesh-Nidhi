@@ -1,77 +1,80 @@
-import { Smartphone, FileSearch, Network, FileCheck, HandshakeIcon, Calendar, Headphones } from "lucide-react";
-
 const WhyNiveshNidhi = () => {
-  const features = [
+  const advantages = [
     {
-      icon: Smartphone,
-      title: "Chit Kart – Your All-in-One Chit Fund App",
-      description: "With our user-friendly Chit Kart app, managing your account has never been easier. You can effortlessly track payments, bids, transactions, and your balance in real time. Available on both Android and iOS, the app ensures a seamless and secure digital experience."
+      image: "https://thumbs.dreamstime.com/b/escrow-text-written-orange-vintage-stamp-round-rubber-247120676.jpg",
+      title: "2 min Onboarding",
+      subtitle: "& 24 hr Payout",
+      titleColor: "text-secondary",
+      subtitleColor: "text-primary"
     },
     {
-      icon: FileSearch,
-      title: "100% Transparency, Total Control",
-      description: "Nivesh Nidhi is committed to full transparency, giving you clear access to all records and transactions. Our plans are tailored to suit both individuals and businesses. What you see is exactly what you get — with absolutely no hidden charges."
+      image: "https://mypaisaa.com/assets/images/2_eAuction.svg",
+      title: "In-App live",
+      subtitle: "e-auctions",
+      titleColor: "text-primary",
+      subtitleColor: "text-secondary"
     },
     {
-      icon: Network,
-      title: "Multiple Payment Options for Convenience",
-      description: "We support payments through UPI, Net Banking, and offline modes, giving you the flexibility to choose what works best. All digital transactions are encrypted and secure. Our goal is to make your payment process smooth and convenient."
+      image: "https://mypaisaa.com/assets/images/3_4auctions.svg",
+      title: "4-10 Auctions",
+      subtitle: "per month",
+      titleColor: "text-secondary",
+      subtitleColor: "text-foreground/70"
     },
     {
-      icon: FileCheck,
-      title: "Fully Compliant with the Chit Funds Act",
-      description: "Nivesh Nidhi strictly operates under the guidelines of the Government of India and adheres to the Chit Fund Rules. With thousands of satisfied subscribers, our credibility and compliance are hallmarks of trust and reliability."
+      image: "https://mypaisaa.com/assets/images/5_24x7support.svg",
+      title: "24/7 customer",
+      subtitle: "support",
+      titleColor: "text-secondary",
+      subtitleColor: "text-foreground/70"
     },
     {
-      icon: HandshakeIcon,
-      title: "End-to-End Online Services",
-      description: "From joining a chit to bidding and receiving funds – everything can be done on your phone. Our instant disbursement process ensures you get your funds right after winning a bid. The entire journey is fully digital and paperless."
+      image: "https://mypaisaa.com/assets/images/6_fullycomplaint.svg",
+      title: "Fully Compliant as",
+      subtitle: "per chit act",
+      titleColor: "text-secondary",
+      subtitleColor: "text-foreground/70"
     },
     {
-      icon: FileCheck,
-      title: "Secure E-Agreements at Your Fingertips",
-      description: "All your agreements are legally valid, digitally signed, and stored securely. Say goodbye to paperwork, as everything is handled online. You can access or download your agreements anytime directly from the app."
-    },
-    {
-      icon: HandshakeIcon,
-      title: "Dedicated Relationship Manager",
-      description: "Each subscriber is assigned a relationship manager to ensure a personalized experience. From planning your chit to resolving queries or assisting with payments, your dedicated point of contact is always ready to support you."
-    },
-    {
-      icon: Calendar,
-      title: "Never Miss a Due Date",
-      description: "Stay updated with automated SMS alerts, app notifications, and email reminders. Our system helps you make timely payments and place bids without fail, supporting your journey toward better financial discipline."
-    },
-    {
-      icon: Headphones,
-      title: "Responsive Customer Support",
-      description: "Our trained support team provides quick resolutions and speaks your language — with multi-lingual assistance available. Whether it's through the app, a call, or WhatsApp, help is always just a click away."
+      image: "https://mypaisaa.com/assets/images/7_everyone.svg",
+      title: "Chit Plans for",
+      subtitle: "everyone",
+      titleColor: "text-foreground/70",
+      subtitleColor: "text-secondary"
     }
   ];
 
   return (
-    <section className="py-16 lg:py-24 bg-background">
+    <section className="py-16 lg:py-20 bg-gradient-to-b from-background to-muted/30">
       <div className="container mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-12">
-          <h2 className="font-heading font-bold text-3xl md:text-4xl lg:text-5xl text-primary mb-2">
-            Why Nivesh Nidhi Chits?
+          <h2 className="font-heading font-bold text-3xl md:text-4xl lg:text-5xl mb-3">
+            <span className="text-primary">Nivesh Nidhi</span>
+            <span className="text-secondary"> Advantage</span>
           </h2>
-          <p className="text-foreground/60 text-lg">Trusted, transparent, and technology-driven chit fund solutions</p>
+          <p className="text-foreground/70 text-base md:text-lg max-w-3xl mx-auto">
+            Our digital savings app offers you a superior experience through quick and easy payouts,
+            transparent transactions and customer-first processes.
+          </p>
         </div>
 
-        {/* Features Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
-          {features.map((feature, index) => (
-            <div key={index} className="bg-white rounded-xl p-6 border border-border hover:shadow-lg transition-shadow">
-              <div className="w-16 h-16 rounded-lg bg-secondary/10 flex items-center justify-center mb-4">
-                <feature.icon className="w-8 h-8 text-secondary" />
+        {/* Advantages Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12 max-w-6xl mx-auto">
+          {advantages.map((advantage, index) => (
+            <div key={index} className="flex flex-col items-center text-center group">
+              <div className="w-40 h-40 md:w-48 md:h-48 rounded-full bg-white shadow-lg flex items-center justify-center mb-5 group-hover:shadow-xl transition-shadow">
+                <img 
+                  src={advantage.image} 
+                  alt={advantage.title}
+                  className="w-32 h-32 md:w-36 md:h-36 object-contain"
+                />
               </div>
-              <h3 className="font-heading font-bold text-lg text-foreground mb-3">
-                {feature.title}
+              <h3 className={`font-heading font-semibold text-lg md:text-xl ${advantage.titleColor}`}>
+                {advantage.title}
               </h3>
-              <p className="text-muted-foreground text-sm leading-relaxed">
-                {feature.description}
+              <p className={`font-heading font-semibold text-lg md:text-xl ${advantage.subtitleColor}`}>
+                {advantage.subtitle}
               </p>
             </div>
           ))}
