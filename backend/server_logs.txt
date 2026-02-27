@@ -1,0 +1,11 @@
+
+> nivesh-nidhi-backend@1.0.0 start
+> node src/server.js
+
+Database connected successfully via Prisma
+Server running on port 3000
+Environment: development
+SIGNUP ERROR: Error: secretOrPrivateKey must have a value
+    at module.exports [as sign] (/Users/parthtandalwade/Desktop/NiveshNidhi/backend/node_modules/jsonwebtoken/sign.js:111:20)
+    at generateToken (/Users/parthtandalwade/Desktop/NiveshNidhi/backend/src/utils/token.js:4:14)
+    at signup (/Users/parthtandalwade/Desktop/NiveshNidhi/backend/src/controllers/auth.controller.js:27:19)
