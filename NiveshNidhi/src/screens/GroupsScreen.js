@@ -222,6 +222,9 @@ export default function GroupsScreen({ navigation }) {
                     contentContainerStyle={styles.list}
                     showsVerticalScrollIndicator={false}
                     ListEmptyComponent={renderEmpty}
+                    refreshControl={
+                        <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={colors.primary} />
+                    }
                 />
             )}
         </SafeAreaView>

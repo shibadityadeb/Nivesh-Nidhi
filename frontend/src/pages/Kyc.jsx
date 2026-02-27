@@ -275,17 +275,27 @@ export default function Kyc() {
                       name="citySearch"
                       type="text"
                       required
-                      disabled={!form.state}
                       value={cityQuery}
                       onChange={(e) => {
+                        if (!form.state) {
+                          toast.error("Please select a state first");
+                          return;
+                        }
                         setCityQuery(e.target.value);
                         setForm((prev) => ({ ...prev, city: "" }));
                         setShowCityOptions(true);
                       }}
-                      onFocus={() => setShowCityOptions(true)}
-                      onBlur={() => setTimeout(() => setShowCityOptions(false), 120)}
+                      onFocus={(e) => {
+                        if (!form.state) {
+                          toast.error("Please select a state first");
+                          e.target.blur();
+                        } else {
+                          setShowCityOptions(true);
+                        }
+                      }}
+                      onBlur={() => setTimeout(() => setShowCityOptions(false), 200)}
                       className="flex h-11 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary transition-all disabled:opacity-50"
-                      placeholder={form.state ? "Search" : "Select state"}
+                      placeholder={form.state ? "Search" : "Select state first"}
                     />
                     {showCityOptions && form.state && filteredCities.length > 0 && (
                       <div className="absolute z-20 mt-1 w-full max-h-48 overflow-auto rounded-lg border border-border bg-card shadow-xl">

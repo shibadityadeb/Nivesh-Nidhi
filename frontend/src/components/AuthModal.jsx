@@ -156,8 +156,7 @@ const AuthModal = () => {
               disabled={loading}
               className="w-full py-3 rounded-xl gradient-navy text-primary-foreground font-heading font-semibold text-sm shadow-md hover:shadow-lg transition-all hover:scale-[1.01] disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              {locationLoading ? <T>Fetching your location...</T> : loading ? <T>Please wait...</T> : isSignUp ? <T>Create Account</T> : <T>Sign In</T>}
-              {loading ? "Please wait..." : isSignUp ? "Create Account" : "Sign In"}
+              {loading ? <T>Please wait...</T> : isSignUp ? <T>Create Account</T> : <T>Sign In</T>}
             </button>
           </form>
 

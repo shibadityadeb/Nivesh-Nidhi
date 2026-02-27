@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TextInput, TouchableOpacity, ActivityIndicator, Alert, Platform } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TextInput, TouchableOpacity, ActivityIndicator, Alert, Platform, DeviceEventEmitter } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ShieldCheck } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
@@ -121,6 +121,7 @@ export default function KycScreen({ navigation }) {
 
       const res = await kyc.verify(payload);
       if (res.data?.success) {
+        DeviceEventEmitter.emit('kyc_completed');
         Alert.alert('KYC Verified', 'Your KYC has been verified successfully.', [
           {
             text: 'OK',
@@ -230,16 +231,12 @@ export default function KycScreen({ navigation }) {
               style={styles.input}
               onFocus={() => setShowStateOptions(true)}
               onBlur={() => {
-                if (Platform.OS === 'android') {
-                  setTimeout(() => setShowStateOptions(false), 120);
-                } else {
-                  setShowStateOptions(false);
-                }
+                setTimeout(() => setShowStateOptions(false), 200);
               }}
             />
             {showStateOptions && filteredStates.length > 0 && (
               <View style={styles.dropdown}>
-                <ScrollView nestedScrollEnabled style={{ maxHeight: 220 }}>
+                <ScrollView nestedScrollEnabled keyboardShouldPersistTaps="handled" style={{ maxHeight: 220 }}>
                   {filteredStates.map((st) => (
                     <TouchableOpacity
                       key={st}
@@ -265,23 +262,29 @@ export default function KycScreen({ navigation }) {
             <TextInput
               value={cityQuery}
               onChangeText={(text) => {
+                if (!state) {
+                  Alert.alert('State Required', 'Please select a state first');
+                  return;
+                }
                 setCityQuery(text);
                 setCity('');
                 setShowCityOptions(true);
               }}
               placeholder={state ? 'Search city' : 'Select state first'}
-              editable={!!state}
+              editable={true}
               style={[
                 styles.input,
                 !state && { backgroundColor: colors.surface, opacity: 0.6 },
               ]}
-              onFocus={() => state && setShowCityOptions(true)}
-              onBlur={() => {
-                if (Platform.OS === 'android') {
-                  setTimeout(() => setShowCityOptions(false), 120);
+              onFocus={() => {
+                if (!state) {
+                  Alert.alert('State Required', 'Please select a state first');
                 } else {
-                  setShowCityOptions(false);
+                  setShowCityOptions(true);
                 }
+              }}
+              onBlur={() => {
+                setTimeout(() => setShowCityOptions(false), 200);
               }}
             />
             {loadingCities && (
@@ -289,7 +292,7 @@ export default function KycScreen({ navigation }) {
             )}
             {showCityOptions && state && filteredCities.length > 0 && (
               <View style={styles.dropdown}>
-                <ScrollView nestedScrollEnabled style={{ maxHeight: 200 }}>
+                <ScrollView nestedScrollEnabled keyboardShouldPersistTaps="handled" style={{ maxHeight: 200 }}>
                   {filteredCities.map((c) => (
                     <TouchableOpacity
                       key={c}
