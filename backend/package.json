@@ -4,8 +4,7 @@
   "main": "server.js",
   "scripts": {
     "build": "npx prisma generate && npx prisma db push",
-    "prestart": "npm run build",
-    "start": "node server.js",
+    "start": "npm run build && node server.js",
     "dev": "nodemon server.js"
   },
   "keywords": [
