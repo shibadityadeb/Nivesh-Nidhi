@@ -106,6 +106,7 @@ const Chatbot = () => {
   if (!isOpen) {
     return (
       <button
+        id="aiAssistantBtn"
         onClick={() => setIsOpen(true)}
         className="fixed bottom-20 right-6 rounded-full bg-transparent p-0 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 z-50 border-0"
         aria-label="Open Nidhi AI Chatbot"

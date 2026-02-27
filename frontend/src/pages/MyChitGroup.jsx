@@ -375,6 +375,7 @@ const MyChitGroup = () => {
             </div>
             {selectedOrg && isApproved && (
               <a
+                id="createChitBtn"
                 href="/apply-organizer"
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-xl gradient-saffron text-saffron-foreground font-semibold text-sm shadow-lg hover:shadow-xl transition-all hover:scale-105"
               >

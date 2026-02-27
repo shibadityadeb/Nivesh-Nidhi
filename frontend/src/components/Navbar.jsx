@@ -5,6 +5,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { user as userApi } from "@/lib/api";
 import LanguageSelector from "@/components/LanguageSelector";
 import { T } from "@/context/LanguageContext";
+import { startAppTutorial } from "@/utils/tutorial";
 
 
 
@@ -21,13 +22,14 @@ const navItems = [
   },
   {
     label: "CHIT GROUP",
+    buttonId: "auctionBtnMobile",
     submenu: [
-      { label: "New Chits Available", href: "/chit-groups" },
+      { label: "New Chits Available", href: "/chit-groups", id: "exploreChitsBtnMobile" },
       { label: "Ongoing Chits Available", href: "/chit-groups" },
       { label: "Planning Amount", href: "#" },
       { label: "My Chits", href: "#" },
       { label: "Bid Offer Submission", href: "#" },
-      { label: "Join Live Auction", href: "#" },
+      { label: "Join Live Auction", href: "/chit-groups", id: "auctionBtn" },
     ],
   },
   {
@@ -144,6 +146,16 @@ const Navbar = () => {
     }
   };
 
+  const handleRestartTutorial = () => {
+    localStorage.removeItem("hasSeenTutorial");
+    setActiveMenu(null);
+    setMobileOpen(false);
+    setTimeout(() => {
+      startAppTutorial();
+      localStorage.setItem("hasSeenTutorial", "true");
+    }, 150);
+  };
+
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 w-full">
       <div className="h-1 gradient-tricolor" />
@@ -169,7 +181,10 @@ const Navbar = () => {
                   onMouseEnter={() => handleMouseEnter(item.label)}
                   onMouseLeave={handleMouseLeave}
                 >
-                  <button className={`flex items-center gap-1 text-sm font-medium transition-colors ${activeMenu === item.label ? "text-primary" : "text-foreground hover:text-primary"}`}>
+                  <button
+                    id={item.label === "CHIT GROUP" ? "auctionBtn" : undefined}
+                    className={`flex items-center gap-1 text-sm font-medium transition-colors ${activeMenu === item.label ? "text-primary" : "text-foreground hover:text-primary"}`}
+                  >
                     <T>{item.label}</T>
                     <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${activeMenu === item.label ? "rotate-180" : ""}`} />
                   </button>
@@ -179,6 +194,7 @@ const Navbar = () => {
                       {item.submenu.map((sub) => (
                         <a
                           key={sub.label}
+                          id={sub.id}
                           href={sub.href}
                           className="block px-4 py-2.5 text-sm text-card-foreground hover:bg-muted hover:text-primary rounded-lg transition-colors"
                         >
@@ -202,6 +218,7 @@ const Navbar = () => {
             <div className="flex items-center gap-3">
               <div className="relative">
                 <button
+                  id="bellBtn"
                   type="button"
                   onClick={handleNotificationBell}
                   className="relative w-10 h-10 rounded-full bg-primary/10 items-center justify-center border border-primary/20 transition-colors hover:bg-primary/15 flex"
@@ -280,6 +297,7 @@ const Navbar = () => {
                     <button
                       type="button"
                       onClick={handleProfileClick}
+                      id="profileBtn"
                       className="hidden sm:flex w-10 h-10 rounded-full bg-secondary/10 items-center justify-center border border-secondary/30 transition-colors"
                     >
                       <User className="w-5 h-5 text-secondary" />
@@ -294,7 +312,7 @@ const Navbar = () => {
                         </a>
                       )}
                       {(user.role === "ORGANIZER" || user.role === "ADMIN") && (
-                        <a href="/my-chit-group" className="block px-4 py-2.5 text-sm font-medium text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors mb-1">
+                        <a id="createChitBtn" href="/my-chit-group" className="block px-4 py-2.5 text-sm font-medium text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors mb-1">
                           <T>My Chit Group</T>
                         </a>
                       )}
@@ -317,6 +335,12 @@ const Navbar = () => {
                         </button>
                       )}
                       <button
+                        onClick={handleRestartTutorial}
+                        className="w-full text-left px-4 py-2.5 text-sm font-medium text-card-foreground hover:bg-muted hover:text-primary rounded-lg transition-colors mb-1"
+                      >
+                        <T>Restart Tutorial</T>
+                      </button>
+                      <button
                         onClick={logoutUser}
                         className="w-full text-left px-4 py-2.5 text-sm font-medium text-destructive hover:bg-destructive/10 rounded-lg transition-colors flex items-center gap-2"
                       >
@@ -337,6 +361,7 @@ const Navbar = () => {
               )}
               <LanguageSelector />
               <button
+                id="profileBtnMobile"
                 className="lg:hidden p-2 rounded-lg hover:bg-muted transition-colors"
                 onClick={() => setMobileOpen(!mobileOpen)}
               >
@@ -371,6 +396,7 @@ const Navbar = () => {
                     )}
                     {(user.role === "ORGANIZER" || user.role === "ADMIN") && (
                       <a
+                        id="createChitBtnMobile"
                         href="/my-chit-group"
                         className="w-full mt-2 flex items-center justify-center gap-2 px-5 py-3 rounded-lg border border-indigo-500 text-indigo-600 font-medium text-sm"
                       >
@@ -384,6 +410,12 @@ const Navbar = () => {
                       <User className="w-4 h-4" />
                       <T>My Dashboard</T>
                     </a>
+                    <button
+                      onClick={handleRestartTutorial}
+                      className="w-full mt-2 flex items-center justify-center gap-2 px-5 py-3 rounded-lg border border-input text-foreground font-medium text-sm"
+                    >
+                      <T>Restart Tutorial</T>
+                    </button>
                     <button
                       onClick={logoutUser}
                       className="w-full mt-2 flex items-center justify-center gap-2 px-5 py-3 rounded-lg border border-input text-foreground font-medium text-sm"
@@ -415,6 +447,7 @@ const MobileNavItem = ({ item }) => {
   return (
     <div>
       <button
+        id={item.buttonId}
         onClick={() => setOpen(!open)}
         className="w-full flex items-center justify-between px-4 py-3 font-medium text-foreground hover:text-primary rounded-lg hover:bg-muted transition-colors"
       >
@@ -426,6 +459,7 @@ const MobileNavItem = ({ item }) => {
           {item.submenu.map((sub) => (
             <a
               key={sub.label}
+              id={sub.id}
               href={sub.href}
               className="block px-4 py-2 text-sm text-muted-foreground hover:text-primary rounded-lg hover:bg-muted transition-colors"
             >

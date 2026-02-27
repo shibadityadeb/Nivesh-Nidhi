@@ -30,6 +30,7 @@ const HeroSection = () => {
 
           <div className="flex flex-wrap gap-4 mb-16">
             <a
+              id="exploreChitsBtn"
               href="/chit-groups"
               className="flex items-center gap-2 px-7 py-3.5 rounded-full gradient-saffron text-saffron-foreground font-heading font-semibold shadow-lg hover:shadow-xl transition-all hover:scale-[1.02]"
             >
@@ -37,6 +38,7 @@ const HeroSection = () => {
               <ArrowRight className="w-4 h-4" />
             </a>
             <a
+              id="becomeOrganizerBtn"
               href="/apply-organizer"
               className="flex items-center gap-2 px-7 py-3.5 rounded-full border-2 border-primary-foreground/30 text-primary-foreground font-heading font-semibold hover:bg-primary-foreground/10 transition-all border-amber-300"
             >
