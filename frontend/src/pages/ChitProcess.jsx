@@ -1,6 +1,6 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-
+import { T } from "@/context/LanguageContext";
 const steps = [
   {
     step: "01",
@@ -54,14 +54,14 @@ const ChitProcess = () => {
         <section className="pt-28 pb-16 border-b border-gray-100">
           <div className="container mx-auto px-6 lg:px-16 max-w-5xl">
             <p className="text-xs font-semibold tracking-widest uppercase text-orange-500 mb-4">
-              How it works
+              <T>How it works</T>
             </p>
             <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
               <h1 className="font-heading font-extrabold text-5xl md:text-6xl text-gray-900 leading-tight max-w-lg">
-                The Chit Fund Process
+                <T>The Chit Fund Process</T>
               </h1>
               <p className="text-gray-400 text-base max-w-xs leading-relaxed">
-                From registration to completion — a clear, step-by-step walkthrough of how chit funds work.
+                <T>From registration to completion — a clear, step-by-step walkthrough of how chit funds work.</T>
               </p>
             </div>
           </div>
@@ -83,8 +83,8 @@ const ChitProcess = () => {
 
                   {/* Content */}
                   <div className="flex-1 pt-2">
-                    <h3 className="font-heading font-bold text-xl text-gray-900 mb-2">{item.title}</h3>
-                    <p className="text-gray-500 leading-relaxed max-w-xl">{item.description}</p>
+                    <h3 className="font-heading font-bold text-xl text-gray-900 mb-2"><T>{item.title}</T></h3>
+                    <p className="text-gray-500 leading-relaxed max-w-xl"><T>{item.description}</T></p>
                   </div>
 
                   {/* Right accent */}
@@ -105,12 +105,12 @@ const ChitProcess = () => {
             <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-12">
               <div>
                 <p className="text-xs font-semibold tracking-widest uppercase text-orange-500 mb-3">
-                  Worked example
+                  <T>Worked example</T>
                 </p>
-                <h2 className="font-heading font-extrabold text-4xl text-gray-900">See it in numbers</h2>
+                <h2 className="font-heading font-extrabold text-4xl text-gray-900"><T>See it in numbers</T></h2>
               </div>
               <p className="text-gray-400 text-sm max-w-xs">
-                A 20-member chit group with a ₹1,00,000 value over 20 months.
+                <T>A 20-member chit group with a ₹1,00,000 value over 20 months.</T>
               </p>
             </div>
 
@@ -125,21 +125,21 @@ const ChitProcess = () => {
                       : ""
                   }`}
                 >
-                  <p className="text-xs text-gray-400 mb-1.5 uppercase tracking-wide">{d.label}</p>
-                  <p className="font-extrabold text-xl text-gray-900">{d.value}</p>
+                  <p className="text-xs text-gray-400 mb-1.5 uppercase tracking-wide"><T>{d.label}</T></p>
+                  <p className="font-extrabold text-xl text-gray-900"><T>{d.value}</T></p>
                 </div>
               ))}
 
               {/* Summary callout in last cell */}
               <div className="bg-orange-500 px-6 py-5 flex flex-col justify-between">
-                <p className="text-xs text-orange-200 uppercase tracking-wide mb-1.5">Net benefit</p>
-                <p className="font-extrabold text-xl text-white">₹500/mo saved</p>
+                <p className="text-xs text-orange-200 uppercase tracking-wide mb-1.5"><T>Net benefit</T></p>
+                <p className="font-extrabold text-xl text-white"><T>₹500/mo saved</T></p>
               </div>
             </div>
 
             {/* Note */}
             <p className="text-xs text-gray-400 mt-5 leading-relaxed max-w-lg">
-              * Actual dividend varies each month based on the winning bid amount. Higher competition = higher dividend for all members.
+              <T>* Actual dividend varies each month based on the winning bid amount. Higher competition = higher dividend for all members.</T>
             </p>
           </div>
         </section>
@@ -148,15 +148,15 @@ const ChitProcess = () => {
         <section className="py-16 border-t border-gray-100">
           <div className="container mx-auto px-6 lg:px-16 max-w-5xl flex flex-col sm:flex-row items-center justify-between gap-6">
             <div>
-              <h3 className="font-heading font-bold text-2xl text-gray-900 mb-1">Ready to join a chit group?</h3>
-              <p className="text-gray-400 text-sm">Browse active groups and find the right fit for your savings goal.</p>
+              <h3 className="font-heading font-bold text-2xl text-gray-900 mb-1"><T>Ready to join a chit group?</T></h3>
+              <p className="text-gray-400 text-sm"><T>Browse active groups and find the right fit for your savings goal.</T></p>
             </div>
             <a
               href="/chit-groups"
               className="inline-flex items-center gap-2 px-6 py-3 rounded-lg text-white font-semibold text-sm whitespace-nowrap hover:opacity-90 transition-opacity"
               style={{ background: "linear-gradient(135deg, #ea580c, #f59e0b)" }}
             >
-              Explore Chit Groups →
+              <T>Explore Chit Groups →</T>
             </a>
           </div>
         </section>

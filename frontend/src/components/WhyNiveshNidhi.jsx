@@ -1,4 +1,5 @@
 import { Smartphone, FileSearch, Network, FileCheck, HandshakeIcon, Calendar, Headphones } from "lucide-react";
+import { T } from "@/context/LanguageContext";
 
 const WhyNiveshNidhi = () => {
   const features = [
@@ -55,9 +56,9 @@ const WhyNiveshNidhi = () => {
         {/* Header */}
         <div className="text-center mb-12">
           <h2 className="font-heading font-bold text-3xl md:text-4xl lg:text-5xl text-primary mb-2">
-            Why Nivesh Nidhi Chits?
+            <T>Why Nivesh Nidhi Chits?</T>
           </h2>
-          <p className="text-foreground/60 text-lg">Trusted, transparent, and technology-driven chit fund solutions</p>
+          <p className="text-foreground/60 text-lg"><T>Trusted, transparent, and technology-driven chit fund solutions</T></p>
         </div>
 
         {/* Features Grid */}
@@ -68,10 +69,10 @@ const WhyNiveshNidhi = () => {
                 <feature.icon className="w-8 h-8 text-secondary" />
               </div>
               <h3 className="font-heading font-bold text-lg text-foreground mb-3">
-                {feature.title}
+                <T>{feature.title}</T>
               </h3>
               <p className="text-muted-foreground text-sm leading-relaxed">
-                {feature.description}
+                <T>{feature.description}</T>
               </p>
             </div>
           ))}

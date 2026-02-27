@@ -1,6 +1,7 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { TrendingUp, Users, Target, Award, Zap, DollarSign } from "lucide-react";
+import { T } from "@/context/LanguageContext";
 
 const BenefitsOfChits = () => {
   const benefits = [
@@ -70,13 +71,13 @@ const BenefitsOfChits = () => {
           <div className="container mx-auto px-4 text-center">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 mb-4">
               <Award className="w-4 h-4 text-primary" />
-              <span className="text-sm font-semibold text-primary">Why Chit Funds</span>
+              <span className="text-sm font-semibold text-primary"><T>Why Chit Funds</T></span>
             </div>
             <h1 className="font-bold text-3xl md:text-4xl text-gray-900 mb-3">
-              Benefits of Chits
+              <T>Benefits of Chits</T>
             </h1>
             <p className="text-gray-600 text-base max-w-2xl mx-auto">
-              Discover why chits are an excellent financial instrument for savings, investments, and achieving your financial goals.
+              <T>Discover why chits are an excellent financial instrument for savings, investments, and achieving your financial goals.</T>
             </p>
           </div>
         </section>
@@ -85,7 +86,7 @@ const BenefitsOfChits = () => {
         <section className="py-16 relative z-10">
           <div className="container mx-auto px-4">
             <h2 className="font-heading font-bold text-3xl mb-12 text-center text-primary">
-              Key Advantages
+              <T>Key Advantages</T>
             </h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {benefits.map((benefit, index) => (
@@ -97,10 +98,10 @@ const BenefitsOfChits = () => {
                     {benefit.icon}
                   </div>
                   <h3 className="font-semibold text-lg text-primary mb-2">
-                    {benefit.title}
+                    <T>{benefit.title}</T>
                   </h3>
                   <p className="text-gray-600">
-                    {benefit.description}
+                    <T>{benefit.description}</T>
                   </p>
                 </div>
               ))}
@@ -112,7 +113,7 @@ const BenefitsOfChits = () => {
         <section className="py-16 bg-gray-50 relative z-10">
           <div className="container mx-auto px-4">
             <h2 className="font-heading font-bold text-3xl mb-12 text-center text-primary">
-              Perfect For
+              <T>Perfect For</T>
             </h2>
             <div className="grid md:grid-cols-2 gap-8">
               {scenarios.map((scenario, index) => (
@@ -121,10 +122,10 @@ const BenefitsOfChits = () => {
                   className="bg-white rounded-lg border border-border shadow-sm p-6"
                 >
                   <h3 className="font-semibold text-lg text-primary mb-3">
-                    {scenario.title}
+                    <T>{scenario.title}</T>
                   </h3>
                   <p className="text-gray-600">
-                    {scenario.description}
+                    <T>{scenario.description}</T>
                   </p>
                 </div>
               ))}
@@ -136,7 +137,7 @@ const BenefitsOfChits = () => {
         <section className="py-16 relative z-10">
           <div className="container mx-auto px-4">
             <h2 className="font-heading font-bold text-3xl mb-12 text-center text-primary">
-              Why Choose Chits?
+              <T>Why Choose Chits?</T>
             </h2>
             <div className="max-w-3xl mx-auto bg-white rounded-lg border border-border p-8">
               <div className="space-y-6">
@@ -147,8 +148,8 @@ const BenefitsOfChits = () => {
                     </svg>
                   </div>
                   <div>
-                    <h4 className="font-semibold text-primary mb-1">Minimal Documentation</h4>
-                    <p className="text-gray-600">Faster approval compared to bank loans with simple KYC requirements.</p>
+                    <h4 className="font-semibold text-primary mb-1"><T>Minimal Documentation</T></h4>
+                    <p className="text-gray-600"><T>Faster approval compared to bank loans with simple KYC requirements.</T></p>
                   </div>
                 </div>
                 <div className="flex gap-4">
@@ -158,8 +159,8 @@ const BenefitsOfChits = () => {
                     </svg>
                   </div>
                   <div>
-                    <h4 className="font-semibold text-primary mb-1">No Collateral Required</h4>
-                    <p className="text-gray-600">Access funds without pledging property or valuables.</p>
+                    <h4 className="font-semibold text-primary mb-1"><T>No Collateral Required</T></h4>
+                    <p className="text-gray-600"><T>Access funds without pledging property or valuables.</T></p>
                   </div>
                 </div>
                 <div className="flex gap-4">
@@ -169,8 +170,8 @@ const BenefitsOfChits = () => {
                     </svg>
                   </div>
                   <div>
-                    <h4 className="font-semibold text-primary mb-1">Flexible Tenure</h4>
-                    <p className="text-gray-600">Choose group cycles ranging from 12 to 60 months based on your needs.</p>
+                    <h4 className="font-semibold text-primary mb-1"><T>Flexible Tenure</T></h4>
+                    <p className="text-gray-600"><T>Choose group cycles ranging from 12 to 60 months based on your needs.</T></p>
                   </div>
                 </div>
                 <div className="flex gap-4">
@@ -180,8 +181,8 @@ const BenefitsOfChits = () => {
                     </svg>
                   </div>
                   <div>
-                    <h4 className="font-semibold text-primary mb-1">Transparent Process</h4>
-                    <p className="text-gray-600">All terms are clear and agreed upon before joining the group.</p>
+                    <h4 className="font-semibold text-primary mb-1"><T>Transparent Process</T></h4>
+                    <p className="text-gray-600"><T>All terms are clear and agreed upon before joining the group.</T></p>
                   </div>
                 </div>
               </div>

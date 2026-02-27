@@ -2,7 +2,7 @@ import { ExternalLink } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import AuthModal from "@/components/AuthModal";
-
+import { T } from "@/context/LanguageContext";
 const schemes = [
   {
     name: "Pradhan Mantri Jan Dhan Yojana (PMJDY)",
@@ -79,9 +79,9 @@ const GovSchemes = () => {
         
         <div className="container mx-auto px-4 relative z-10">
           <div className="text-center mb-12">
-            <h1 className="font-heading font-bold text-4xl text-primary mb-4">Government Schemes</h1>
+            <h1 className="font-heading font-bold text-4xl text-primary mb-4"><T>Government Schemes</T></h1>
             <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              Explore various government financial schemes designed to empower citizens with savings, loans, and pension benefits.
+              <T>Explore various government financial schemes designed to empower citizens with savings, loans, and pension benefits.</T>
             </p>
           </div>
 
@@ -97,20 +97,20 @@ const GovSchemes = () => {
                   />
                 </div>
 
-                <h3 className="font-heading font-bold text-lg text-foreground mb-1">{scheme.name}</h3>
-                <p className="text-xs text-muted-foreground mb-3">{scheme.ministry}</p>
+                <h3 className="font-heading font-bold text-lg text-foreground mb-1"><T>{scheme.name}</T></h3>
+                <p className="text-xs text-muted-foreground mb-3"><T>{scheme.ministry}</T></p>
 
                 <div className="inline-block px-3 py-1 bg-secondary/10 text-secondary text-xs font-medium rounded-full mb-4">
-                  {scheme.category}
+                  <T>{scheme.category}</T>
                 </div>
 
-                <p className="text-sm text-muted-foreground mb-4">{scheme.description}</p>
+                <p className="text-sm text-muted-foreground mb-4"><T>{scheme.description}</T></p>
 
                 <ul className="space-y-2 mb-6">
                   {scheme.features.map((feature, idx) => (
                     <li key={idx} className="text-sm text-foreground flex items-start gap-2">
                       <span className="text-secondary mt-1">•</span>
-                      <span>{feature}</span>
+                      <span><T>{feature}</T></span>
                     </li>
                   ))}
                 </ul>
@@ -122,7 +122,7 @@ const GovSchemes = () => {
                     rel="noopener noreferrer"
                     className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg gradient-saffron text-saffron-foreground font-medium text-sm hover:shadow-lg transition-all"
                   >
-                    Apply Now
+                    <T>Apply Now</T>
                     <ExternalLink className="w-4 h-4" />
                   </a>
                   <a
@@ -131,7 +131,7 @@ const GovSchemes = () => {
                     rel="noopener noreferrer"
                     className="px-4 py-2.5 rounded-lg border border-input text-foreground font-medium text-sm hover:bg-muted transition-colors"
                   >
-                    Details
+                    <T>Details</T>
                   </a>
                 </div>
               </div>

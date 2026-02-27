@@ -6,6 +6,7 @@ import { user as userApi } from "@/lib/api";
 import { toast } from "sonner";
 import { IndianRupee, ShieldCheck, Link2, ExternalLink, Calendar, Loader2, ArrowRight } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
+import { T } from "@/context/LanguageContext";
 
 export default function UserDashboard() {
     const { user, isAuthenticated } = useAuth();
@@ -52,27 +53,27 @@ export default function UserDashboard() {
             <main className="container mx-auto px-4 py-24 pb-12 flex-grow">
                 <div className="mb-10">
                     <h1 className="font-heading font-bold text-3xl md:text-4xl text-foreground mb-3">
-                        My Dashboard
+                        <T>My Dashboard</T>
                     </h1>
                     <p className="text-muted-foreground">
-                        Track your Chit Fund investments, view your Escrow locks, and verify blockchain transactions.
+                        <T>Track your Chit Fund investments, view your Escrow locks, and verify blockchain transactions.</T>
                     </p>
                 </div>
 
                 {loading ? (
                     <div className="flex justify-center items-center py-20">
                         <Loader2 className="w-8 h-8 animate-spin text-primary" />
-                        <span className="ml-3 text-muted-foreground">Loading your portfolio...</span>
+                        <span className="ml-3 text-muted-foreground"><T>Loading your portfolio...</T></span>
                     </div>
                 ) : transactions.length === 0 ? (
                     <div className="text-center py-20 bg-card rounded-2xl border border-border">
                         <ShieldCheck className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-50" />
-                        <h3 className="text-lg font-medium text-foreground">No Investments Found</h3>
+                        <h3 className="text-lg font-medium text-foreground"><T>No Investments Found</T></h3>
                         <p className="text-muted-foreground mt-1 mb-6">
-                            You haven't joined any Chit Groups yet.
+                            <T>You haven't joined any Chit Groups yet.</T>
                         </p>
                         <Link to="/chit-groups" className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-primary text-primary-foreground font-semibold hover:bg-primary/90 transition-colors">
-                            Browse Chit Groups <ArrowRight className="w-4 h-4" />
+                            <T>Browse Chit Groups</T> <ArrowRight className="w-4 h-4" />
                         </Link>
                     </div>
                 ) : (
@@ -81,7 +82,7 @@ export default function UserDashboard() {
                         <section>
                             <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
                                 <ShieldCheck className="w-6 h-6 text-primary" />
-                                My Active Chit Funds
+                                <T>My Active Chit Funds</T>
                             </h2>
                             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                                 {Array.from(new Set(transactions.map(t => t.escrow_account?.chit_group?.id)))
@@ -100,20 +101,20 @@ export default function UserDashboard() {
                                                     </div>
                                                     <div className="space-y-3 mb-6">
                                                         <div className="flex justify-between items-center text-sm">
-                                                            <span className="text-muted-foreground">Chit Value</span>
+                                                            <span className="text-muted-foreground"><T>Chit Value</T></span>
                                                             <span className="font-semibold">₹{Number(group.chit_value).toLocaleString('en-IN')}</span>
                                                         </div>
                                                         <div className="flex justify-between items-center text-sm">
-                                                            <span className="text-muted-foreground">Duration</span>
+                                                            <span className="text-muted-foreground"><T>Duration</T></span>
                                                             <span className="font-medium">{group.duration_months} Months</span>
                                                         </div>
                                                         <div className="flex justify-between items-center text-sm">
-                                                            <span className="text-muted-foreground">Members</span>
+                                                            <span className="text-muted-foreground"><T>Members</T></span>
                                                             <span className="font-medium">{group.current_members} / {group.member_capacity}</span>
                                                         </div>
                                                     </div>
                                                     <div className="w-full py-2.5 bg-primary/5 text-primary text-center rounded-lg font-medium text-sm group-hover:bg-primary group-hover:text-white transition-colors">
-                                                        View Group Dashboard
+                                                        <T>View Group Dashboard</T>
                                                     </div>
                                                 </div>
                                             </Link>
@@ -126,7 +127,7 @@ export default function UserDashboard() {
                         <section>
                             <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
                                 <Link2 className="w-6 h-6 text-primary" />
-                                Payment Ledger
+                                <T>Payment Ledger</T>
                             </h2>
                             <div className="grid gap-6">
                                 {transactions.map((tx) => {
@@ -158,10 +159,10 @@ export default function UserDashboard() {
                                                 {/* Right Tech details */}
                                                 <div className="bg-gray-50/50 flex-1 md:max-w-md rounded-xl p-4 border border-gray-100 space-y-3">
                                                     <div>
-                                                        <p className="text-xs text-muted-foreground font-medium mb-1">Escrow Status</p>
+                                                        <p className="text-xs text-muted-foreground font-medium mb-1"><T>Escrow Status</T></p>
                                                         <div className="flex items-center gap-2 text-sm text-green-700 bg-green-50 px-3 py-1.5 rounded-lg border border-green-100 w-fit">
                                                             <ShieldCheck className="w-4 h-4" />
-                                                            Funds Locked Safely
+                                                            <T>Funds Locked Safely</T>
                                                         </div>
                                                     </div>
 

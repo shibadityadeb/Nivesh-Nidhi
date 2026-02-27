@@ -1,4 +1,5 @@
 
+import { T } from "@/context/LanguageContext";
 
 const Footer = () => {
   return (
@@ -12,17 +13,17 @@ const Footer = () => {
 
           {/* Links */}
           <div className="flex flex-wrap items-center justify-center gap-6 text-sm">
-            <a href="#" className="text-muted-foreground hover:text-primary transition-colors">About</a>
-            <a href="#" className="text-muted-foreground hover:text-primary transition-colors">How It Works</a>
-            <a href="#" className="text-muted-foreground hover:text-primary transition-colors">Govt. Schemes</a>
-            <a href="#" className="text-muted-foreground hover:text-primary transition-colors">Contact</a>
+            <a href="#" className="text-muted-foreground hover:text-primary transition-colors"><T>About</T></a>
+            <a href="#" className="text-muted-foreground hover:text-primary transition-colors"><T>How It Works</T></a>
+            <a href="#" className="text-muted-foreground hover:text-primary transition-colors"><T>Govt. Schemes</T></a>
+            <a href="#" className="text-muted-foreground hover:text-primary transition-colors"><T>Contact</T></a>
           </div>
 
           {/* Digital India Logo */}
           <div className="flex items-center gap-4">
             <img src="https://upload.wikimedia.org/wikipedia/en/thumb/9/95/Digital_India_logo.svg/1280px-Digital_India_logo.svg.png" alt="Digital India" className="h-8" />
             <div className="text-xs text-muted-foreground">
-              © 2026 Nivesh Nidhi. All rights reserved.
+              <T>© 2026 Nivesh Nidhi. All rights reserved.</T>
             </div>
           </div>
         </div>

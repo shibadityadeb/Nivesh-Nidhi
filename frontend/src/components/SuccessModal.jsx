@@ -1,4 +1,5 @@
 import { CheckCircle } from "lucide-react";
+import { T } from "@/context/LanguageContext";
 
 const SuccessModal = ({ show, onClose, userName }) => {
   if (!show) return null;
@@ -20,10 +21,10 @@ const SuccessModal = ({ show, onClose, userName }) => {
 
           {/* Success Message */}
           <h2 className="font-heading font-bold text-2xl text-foreground mb-2">
-            Registration Successful
+            <T>Registration Successful</T>
           </h2>
           <p className="text-base text-muted-foreground mb-6">
-            Welcome, <span className="font-semibold text-foreground">{userName}</span>! Your account has been created.
+            <T>Welcome,</T>{" "}<span className="font-semibold text-foreground">{userName}</span><T>! Your account has been created.</T>
           </p>
 
           {/* Continue Button */}
@@ -31,7 +32,7 @@ const SuccessModal = ({ show, onClose, userName }) => {
             onClick={onClose}
             className="w-full py-3 rounded-xl gradient-navy text-primary-foreground font-semibold text-sm shadow-md hover:shadow-lg transition-all"
           >
-            Continue
+            <T>Continue</T>
           </button>
         </div>
       </div>

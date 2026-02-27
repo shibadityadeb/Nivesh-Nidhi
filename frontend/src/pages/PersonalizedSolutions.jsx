@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import AuthModal from "@/components/AuthModal";
-
+import { T } from "@/context/LanguageContext";
 const personas = [
   {
     title: "Beginners",
@@ -119,13 +119,13 @@ const PersonalizedSolutions = () => {
           {/* Page Header */}
           <div className="text-center mb-20">
             <span className="inline-block text-xs font-semibold tracking-widest uppercase text-orange-500 bg-orange-50 border border-orange-100 rounded-full px-4 py-1.5 mb-4">
-              Built for everyone
+              <T>Built for everyone</T>
             </span>
             <h1 className="font-heading font-bold text-4xl md:text-5xl text-foreground mb-5 leading-tight">
-              Personalized Financial Solutions
+              <T>Personalized Financial Solutions</T>
             </h1>
             <p className="text-muted-foreground text-lg max-w-2xl mx-auto leading-relaxed">
-              A unique financial solution that encourages systematic saving and allows easy borrowing — for everyone.
+              <T>A unique financial solution that encourages systematic saving and allows easy borrowing — for everyone.</T>
             </p>
           </div>
 
@@ -166,13 +166,13 @@ const PersonalizedSolutions = () => {
                         className="inline-block text-xs font-bold tracking-widest uppercase rounded-full px-3 py-1 mb-3"
                         style={{ color: persona.accent, backgroundColor: `${persona.accent}15` }}
                       >
-                        {persona.tag}
+                        <T>{persona.tag}</T>
                       </span>
                       <h2 className="font-heading font-bold text-3xl md:text-4xl text-foreground mb-4 leading-snug">
-                        {persona.title}
+                        <T>{persona.title}</T>
                       </h2>
                       <p className="text-muted-foreground text-base leading-relaxed mb-6 max-w-md">
-                        {persona.subtitle}
+                        <T>{persona.subtitle}</T>
                       </p>
                       <div
                         className="h-1 w-12 rounded-full"
@@ -194,8 +194,8 @@ const PersonalizedSolutions = () => {
                         >
                           <CheckCircle2 className="w-4 h-4" style={{ color: persona.accent }} />
                         </div>
-                        <h3 className="font-semibold text-foreground text-sm mb-1.5">{item.q}</h3>
-                        <p className="text-xs text-muted-foreground leading-relaxed">{item.a}</p>
+                        <h3 className="font-semibold text-foreground text-sm mb-1.5"><T>{item.q}</T></h3>
+                        <p className="text-xs text-muted-foreground leading-relaxed"><T>{item.a}</T></p>
                       </div>
                     ))}
                   </div>
@@ -212,13 +212,13 @@ const PersonalizedSolutions = () => {
           {/* CTA */}
           <div className="mt-24 text-center">
             <div className="inline-flex flex-col items-center gap-4">
-              <p className="text-muted-foreground text-sm">Find a chit group tailored to your needs</p>
+              <p className="text-muted-foreground text-sm"><T>Find a chit group tailored to your needs</T></p>
               <a
                 href="/chit-groups"
                 className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl font-semibold text-white shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200"
                 style={{ background: "linear-gradient(135deg, #f97316, #fb923c)" }}
               >
-                Find Your Perfect Chit Group
+                <T>Find Your Perfect Chit Group</T>
                 <ArrowRight className="w-4 h-4" />
               </a>
             </div>

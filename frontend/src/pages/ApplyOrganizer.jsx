@@ -14,6 +14,7 @@ import {
     AlertCircle,
     Shield
 } from "lucide-react";
+import { T } from "@/context/LanguageContext";
 
 export default function ApplyOrganizer() {
     const { user, isAuthenticated } = useAuth();
@@ -176,11 +177,11 @@ export default function ApplyOrganizer() {
             <div className="w-full max-w-4xl">
                 <div className="mb-8 pl-2">
                     <Link to="/" className="text-sm font-medium text-primary/60 hover:text-primary mb-4 inline-flex items-center gap-2">
-                        <ArrowLeft className="w-4 h-4" /> Back to Home
+                        <ArrowLeft className="w-4 h-4" /> <T>Back to Home</T>
                     </Link>
-                    <h1 className="text-3xl font-heading font-bold mt-2">Become an Organizer</h1>
+                    <h1 className="text-3xl font-heading font-bold mt-2"><T>Become an Organizer</T></h1>
                     <p className="text-muted-foreground mt-2">
-                        Submit your business profile for administrative review to host chit funds.
+                        <T>Submit your business profile for administrative review to host chit funds.</T>
                     </p>
                 </div>
 
@@ -211,7 +212,7 @@ export default function ApplyOrganizer() {
                                 className={`text-xs mt-2 font-medium ${step >= s.num ? "text-primary" : "text-muted-foreground"
                                     }`}
                             >
-                                {s.label}
+                                <T>{s.label}</T>
                             </span>
                         </div>
                     ))}
@@ -222,7 +223,7 @@ export default function ApplyOrganizer() {
                         {/* STEP 1: TYPE */}
                         {step === 1 && (
                             <div className="space-y-6 animate-in slide-in-from-right-4 fade-in duration-300">
-                                <h2 className="text-2xl font-bold font-heading mb-6">Select Organizer Category</h2>
+                                <h2 className="text-2xl font-bold font-heading mb-6"><T>Select Organizer Category</T></h2>
                                 <div className="grid md:grid-cols-3 gap-6">
                                     {/* NEW */}
                                     <label
@@ -239,8 +240,8 @@ export default function ApplyOrganizer() {
                                             onChange={handleChange}
                                             className="sr-only"
                                         />
-                                        <div className="font-bold text-lg mb-2">New Organizer</div>
-                                        <p className="text-sm text-muted-foreground">No prior history. Strict review queue. Limited initial group sizes.</p>
+                                        <div className="font-bold text-lg mb-2"><T>New Organizer</T></div>
+                                        <p className="text-sm text-muted-foreground"><T>No prior history. Strict review queue. Limited initial group sizes.</T></p>
                                     </label>
 
                                     {/* EXISTING */}
@@ -258,8 +259,8 @@ export default function ApplyOrganizer() {
                                             onChange={handleChange}
                                             className="sr-only"
                                         />
-                                        <div className="font-bold text-lg mb-2 text-blue-700">Existing Business</div>
-                                        <p className="text-sm text-muted-foreground">Running offline chits. Verified license required. Medium trust tier.</p>
+                                        <div className="font-bold text-lg mb-2 text-blue-700"><T>Existing Business</T></div>
+                                        <p className="text-sm text-muted-foreground"><T>Running offline chits. Verified license required. Medium trust tier.</T></p>
                                     </label>
 
                                     {/* MIGRATING */}
@@ -270,7 +271,7 @@ export default function ApplyOrganizer() {
                                             }`}
                                     >
                                         <div className="absolute top-0 right-0 bg-amber-500 text-white text-[10px] font-bold px-2 py-1 rounded-bl-lg flex items-center gap-1">
-                                            <AlertCircle className="w-3 h-3" /> HIGH PRIORITY
+                                            <AlertCircle className="w-3 h-3" /> <T>HIGH PRIORITY</T>
                                         </div>
                                         <input
                                             type="radio"
@@ -280,8 +281,8 @@ export default function ApplyOrganizer() {
                                             onChange={handleChange}
                                             className="sr-only"
                                         />
-                                        <div className="font-bold text-lg mb-2 text-amber-700 mt-2">Migrating Platform</div>
-                                        <p className="text-sm text-muted-foreground">Bringing existing large-scale operations. Fast-tracked priority review queue.</p>
+                                        <div className="font-bold text-lg mb-2 text-amber-700 mt-2"><T>Migrating Platform</T></div>
+                                        <p className="text-sm text-muted-foreground"><T>Bringing existing large-scale operations. Fast-tracked priority review queue.</T></p>
                                     </label>
                                 </div>
                             </div>
@@ -290,10 +291,10 @@ export default function ApplyOrganizer() {
                         {/* STEP 2: BUSINESS */}
                         {step === 2 && (
                             <div className="space-y-6 animate-in slide-in-from-right-4 fade-in duration-300">
-                                <h2 className="text-2xl font-bold font-heading mb-6">Business Identity</h2>
+                                <h2 className="text-2xl font-bold font-heading mb-6"><T>Business Identity</T></h2>
                                 <div className="grid md:grid-cols-2 gap-6">
                                     <div className="space-y-2">
-                                        <label className="text-sm font-semibold">Company Name *</label>
+                                        <label className="text-sm font-semibold"><T>Company Name *</T></label>
                                         <input
                                             required
                                             name="company_name"
@@ -304,7 +305,7 @@ export default function ApplyOrganizer() {
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-sm font-semibold">Legal Structure</label>
+                                        <label className="text-sm font-semibold"><T>Legal Structure</T></label>
                                         <select
                                             name="legal_structure"
                                             value={formData.legal_structure}
@@ -318,7 +319,7 @@ export default function ApplyOrganizer() {
                                         </select>
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-sm font-semibold">Chit License Number</label>
+                                        <label className="text-sm font-semibold"><T>Chit License Number</T></label>
                                         <input
                                             name="chit_license_number"
                                             value={formData.chit_license_number}
@@ -328,7 +329,7 @@ export default function ApplyOrganizer() {
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-sm font-semibold">Years of Operation *</label>
+                                        <label className="text-sm font-semibold"><T>Years of Operation *</T></label>
                                         <input
                                             required
                                             type="number"
@@ -343,10 +344,10 @@ export default function ApplyOrganizer() {
                                 </div>
 
                                 <div className="border-t pt-6 mt-2">
-                                    <h3 className="text-lg font-semibold mb-4">Personal Information</h3>
+                                    <h3 className="text-lg font-semibold mb-4"><T>Personal Information</T></h3>
                                     <div className="grid md:grid-cols-2 gap-6">
                                         <div className="space-y-2">
-                                            <label className="text-sm font-semibold">Date of Birth *</label>
+                                            <label className="text-sm font-semibold"><T>Date of Birth *</T></label>
                                             <input
                                                 required
                                                 type="date"
@@ -357,7 +358,7 @@ export default function ApplyOrganizer() {
                                             />
                                         </div>
                                         <div className="space-y-2">
-                                            <label className="text-sm font-semibold">Age *</label>
+                                            <label className="text-sm font-semibold"><T>Age *</T></label>
                                             <input
                                                 readOnly
                                                 name="age"
@@ -367,14 +368,14 @@ export default function ApplyOrganizer() {
                                             />
                                         </div>
                                         <div className="space-y-2 md:col-span-2">
-                                            <label className="text-sm font-semibold">Marital Status (Optional)</label>
+                                            <label className="text-sm font-semibold"><T>Marital Status (Optional)</T></label>
                                             <select
                                                 name="marital_status"
                                                 value={formData.marital_status}
                                                 onChange={handleChange}
                                                 className="flex h-12 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm"
                                             >
-                                                <option value="">Select marital status</option>
+                                                <option value=""><T>Select marital status</T></option>
                                                 <option value="Single">Single</option>
                                                 <option value="Married">Married</option>
                                                 <option value="Divorced">Divorced</option>
@@ -385,10 +386,10 @@ export default function ApplyOrganizer() {
                                 </div>
 
                                 <div className="border-t pt-6 mt-2">
-                                    <h3 className="text-lg font-semibold mb-4">Professional Information</h3>
+                                    <h3 className="text-lg font-semibold mb-4"><T>Professional Information</T></h3>
                                     <div className="grid md:grid-cols-2 gap-6">
                                         <div className="space-y-2">
-                                            <label className="text-sm font-semibold">Occupation *</label>
+                                            <label className="text-sm font-semibold"><T>Occupation *</T></label>
                                             <select
                                                 required
                                                 name="occupation"
@@ -396,7 +397,7 @@ export default function ApplyOrganizer() {
                                                 onChange={handleChange}
                                                 className="flex h-12 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm"
                                             >
-                                                <option value="">Select occupation</option>
+                                                <option value=""><T>Select occupation</T></option>
                                                 <option value="Business Owner">Business Owner</option>
                                                 <option value="Salaried">Salaried</option>
                                                 <option value="Self-Employed">Self-Employed</option>
@@ -408,7 +409,7 @@ export default function ApplyOrganizer() {
 
                                         {needsBusinessName && (
                                             <div className="space-y-2">
-                                                <label className="text-sm font-semibold">Company/Business Name *</label>
+                                                <label className="text-sm font-semibold"><T>Company/Business Name *</T></label>
                                                 <input
                                                     required={needsBusinessName}
                                                     name="company_or_business_name"
@@ -421,7 +422,7 @@ export default function ApplyOrganizer() {
                                         )}
 
                                         <div className="space-y-2">
-                                            <label className="text-sm font-semibold">Years of Experience *</label>
+                                            <label className="text-sm font-semibold"><T>Years of Experience *</T></label>
                                             <input
                                                 required={!isStudent}
                                                 type="number"
@@ -442,13 +443,13 @@ export default function ApplyOrganizer() {
                         {/* STEP 3: LOCATION */}
                         {step === 3 && (
                             <div className="space-y-6 animate-in slide-in-from-right-4 fade-in duration-300">
-                                <h2 className="text-2xl font-bold font-heading mb-6">Operational Geography</h2>
+                                <h2 className="text-2xl font-bold font-heading mb-6"><T>Operational Geography</T></h2>
                                 <p className="text-sm text-muted-foreground mb-4">
-                                    This determines your local discovery ranking algorithm positioning.
+                                    <T>This determines your local discovery ranking algorithm positioning.</T>
                                 </p>
                                 <div className="grid md:grid-cols-2 gap-6">
                                     <div className="space-y-2">
-                                        <label className="text-sm font-semibold">City *</label>
+                                        <label className="text-sm font-semibold"><T>City *</T></label>
                                         <input
                                             required
                                             name="city"
@@ -459,7 +460,7 @@ export default function ApplyOrganizer() {
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-sm font-semibold">State *</label>
+                                        <label className="text-sm font-semibold"><T>State *</T></label>
                                         <input
                                             required
                                             name="state"
@@ -470,7 +471,7 @@ export default function ApplyOrganizer() {
                                         />
                                     </div>
                                     <div className="space-y-2 md:col-span-2">
-                                        <label className="text-sm font-semibold">Pincode *</label>
+                                        <label className="text-sm font-semibold"><T>Pincode *</T></label>
                                         <input
                                             required
                                             name="pincode"
@@ -487,18 +488,18 @@ export default function ApplyOrganizer() {
                         {/* STEP 4: FINANCIALS & MIGRATION */}
                         {step === 4 && (
                             <div className="space-y-6 animate-in slide-in-from-right-4 fade-in duration-300">
-                                <h2 className="text-2xl font-bold font-heading mb-6">Financial Declarations</h2>
+                                <h2 className="text-2xl font-bold font-heading mb-6"><T>Financial Declarations</T></h2>
 
                                 <div className="bg-secondary/10 border border-secondary/20 p-4 rounded-lg mb-6 flex gap-3">
                                     <Shield className="w-6 h-6 text-secondary shrink-0 mt-0.5" />
                                     <p className="text-sm text-secondary font-medium">
-                                        All funds will be secured in the platform Escrow. You will never hold member deposits directly.
+                                        <T>All funds will be secured in the platform Escrow. You will never hold member deposits directly.</T>
                                     </p>
                                 </div>
 
                                 <div className="grid md:grid-cols-2 gap-6">
                                     <div className="space-y-2">
-                                        <label className="text-sm font-semibold">Proposed Max Chit Size (₹)</label>
+                                        <label className="text-sm font-semibold"><T>Proposed Max Chit Size (₹)</T></label>
                                         <input
                                             type="number"
                                             name="proposed_chit_size"
@@ -509,7 +510,7 @@ export default function ApplyOrganizer() {
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-sm font-semibold">Past 3 Yr Turnover (₹)</label>
+                                        <label className="text-sm font-semibold"><T>Past 3 Yr Turnover (₹)</T></label>
                                         <input
                                             type="number"
                                             name="past_3_yr_turnover"
@@ -523,7 +524,7 @@ export default function ApplyOrganizer() {
                                     {formData.type === "MIGRATING" && (
                                         <>
                                             <div className="space-y-2">
-                                                <label className="text-sm font-semibold text-amber-600">Existing Groups Count *</label>
+                                                <label className="text-sm font-semibold text-amber-600"><T>Existing Groups Count *</T></label>
                                                 <input
                                                     required
                                                     type="number"
@@ -534,7 +535,7 @@ export default function ApplyOrganizer() {
                                                 />
                                             </div>
                                             <div className="space-y-2">
-                                                <label className="text-sm font-semibold text-amber-600">Total Active Members *</label>
+                                                <label className="text-sm font-semibold text-amber-600"><T>Total Active Members *</T></label>
                                                 <input
                                                     required
                                                     type="number"
@@ -549,10 +550,10 @@ export default function ApplyOrganizer() {
                                 </div>
 
                                 <div className="border-t pt-6 mt-2">
-                                    <h3 className="text-lg font-semibold mb-4">Income Information</h3>
+                                    <h3 className="text-lg font-semibold mb-4"><T>Income Information</T></h3>
                                     <div className="grid md:grid-cols-2 gap-6">
                                         <div className="space-y-2">
-                                            <label className="text-sm font-semibold">Monthly Income Range *</label>
+                                            <label className="text-sm font-semibold"><T>Monthly Income Range *</T></label>
                                             <select
                                                 required
                                                 name="monthly_income_range"
@@ -560,7 +561,7 @@ export default function ApplyOrganizer() {
                                                 onChange={handleChange}
                                                 className="flex h-12 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm"
                                             >
-                                                <option value="">Select income range</option>
+                                                <option value=""><T>Select income range</T></option>
                                                 <option value="< ₹25k">&lt; ₹25k</option>
                                                 <option value="₹25k – ₹50k">₹25k – ₹50k</option>
                                                 <option value="₹50k – ₹1L">₹50k – ₹1L</option>
@@ -568,7 +569,7 @@ export default function ApplyOrganizer() {
                                             </select>
                                         </div>
                                         <div className="space-y-2">
-                                            <label className="text-sm font-semibold">Primary Income Source *</label>
+                                            <label className="text-sm font-semibold"><T>Primary Income Source *</T></label>
                                             <input
                                                 required
                                                 name="primary_income_source"
@@ -582,10 +583,10 @@ export default function ApplyOrganizer() {
                                 </div>
 
                                 <div className="border-t pt-6 mt-2">
-                                    <h3 className="text-lg font-semibold mb-4">Purpose & Intent</h3>
+                                    <h3 className="text-lg font-semibold mb-4"><T>Purpose & Intent</T></h3>
                                     <div className="grid md:grid-cols-2 gap-6">
                                         <div className="space-y-2 md:col-span-2">
-                                            <label className="text-sm font-semibold">Reason for Opening This Fund *</label>
+                                            <label className="text-sm font-semibold"><T>Reason for Opening This Fund *</T></label>
                                             <textarea
                                                 required
                                                 minLength={50}
@@ -600,7 +601,7 @@ export default function ApplyOrganizer() {
                                             </p>
                                         </div>
                                         <div className="space-y-2">
-                                            <label className="text-sm font-semibold">Expected Members Count *</label>
+                                            <label className="text-sm font-semibold"><T>Expected Members Count *</T></label>
                                             <input
                                                 required
                                                 min="1"
@@ -613,7 +614,7 @@ export default function ApplyOrganizer() {
                                             />
                                         </div>
                                         <div className="space-y-2">
-                                            <label className="text-sm font-semibold">Target Monthly Contribution (₹) *</label>
+                                            <label className="text-sm font-semibold"><T>Target Monthly Contribution (₹) *</T></label>
                                             <input
                                                 required
                                                 min="1"
@@ -638,7 +639,7 @@ export default function ApplyOrganizer() {
                                 disabled={step === 1}
                                 className="px-6 py-2.5 rounded-full border border-input bg-background hover:bg-accent hover:text-accent-foreground disabled:opacity-50 disabled:cursor-not-allowed font-medium transition-colors"
                             >
-                                Previous
+                                <T>Previous</T>
                             </button>
 
                             {step < 4 ? (
@@ -646,7 +647,7 @@ export default function ApplyOrganizer() {
                                     type="submit"
                                     className="px-6 flex items-center gap-2 py-2.5 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 font-medium transition-colors"
                                 >
-                                    Continue <ArrowRight className="w-4 h-4" />
+                                    <T>Continue</T> <ArrowRight className="w-4 h-4" />
                                 </button>
                             ) : (
                                 <button
@@ -654,7 +655,7 @@ export default function ApplyOrganizer() {
                                     disabled={isSubmitting}
                                     className="px-8 flex flex-row items-center gap-2 py-3 rounded-full gradient-saffron text-saffron-foreground font-bold shadow-lg hover:shadow-xl hover:scale-105 transition-all text-lg disabled:opacity-75 disabled:scale-100"
                                 >
-                                    {isSubmitting ? "Submitting..." : "Submit Application"}
+                                    {isSubmitting ? <T>Submitting...</T> : <T>Submit Application</T>}
                                     {!isSubmitting && <CheckCircle className="w-5 h-5" />}
                                 </button>
                             )}

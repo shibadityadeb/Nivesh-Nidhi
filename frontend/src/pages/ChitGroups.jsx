@@ -6,6 +6,7 @@ import AuthModal from "@/components/AuthModal";
 import { chitGroups as chitGroupsApi } from "@/lib/api";
 import { toast } from "sonner";
 import { MapPin, Users, Calendar, IndianRupee, ShieldCheck, Loader2 } from "lucide-react";
+import { T } from "@/context/LanguageContext";
 
 const ChitGroups = () => {
   const [chitGroups, setChitGroups] = useState([]);
@@ -40,27 +41,27 @@ const ChitGroups = () => {
       <main className="container mx-auto px-4 py-12 pt-24">
         <div className="text-center mb-10">
           <span className="inline-block px-4 py-1 rounded-full bg-secondary/10 text-secondary font-medium text-sm mb-4">
-            Browse Groups
+            <T>Browse Groups</T>
           </span>
           <h1 className="font-heading font-bold text-3xl md:text-4xl text-foreground mb-3">
-            Chit Fund Groups Near You
+            <T>Chit Fund Groups Near You</T>
           </h1>
           <p className="text-muted-foreground max-w-lg mx-auto">
-            Discover registered and verified chit fund groups operating in your area.
+            <T>Discover registered and verified chit fund groups operating in your area.</T>
           </p>
         </div>
 
         {loading ? (
           <div className="flex justify-center items-center py-20">
             <Loader2 className="w-8 h-8 animate-spin text-primary" />
-            <span className="ml-3 text-muted-foreground">Loading chit groups...</span>
+            <span className="ml-3 text-muted-foreground"><T>Loading chit groups...</T></span>
           </div>
         ) : chitGroups.length === 0 ? (
           <div className="text-center py-20 bg-card rounded-2xl border border-border max-w-xl mx-auto shadow-sm">
             <Users className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-50" />
-            <h3 className="text-lg font-medium text-foreground">No Chit Groups Available Yet</h3>
+            <h3 className="text-lg font-medium text-foreground"><T>No Chit Groups Available Yet</T></h3>
             <p className="text-muted-foreground mt-1">
-              Check back later — approved organizers will list their chit funds here.
+              <T>Check back later — approved organizers will list their chit funds here.</T>
             </p>
           </div>
         ) : (
@@ -99,18 +100,18 @@ const ChitGroups = () => {
                   {group.organization?.is_verified && (
                     <div className="flex items-center gap-2 mt-4 text-green-600 bg-green-50 p-2 rounded-lg text-xs font-semibold border border-green-100">
                       <ShieldCheck className="w-4 h-4" />
-                      Verified Organization
+                      <T>Verified Organization</T>
                     </div>
                   )}
                 </div>
 
                 <div className="mt-4 pt-4 border-t border-border flex justify-between items-center mb-5">
                   <div>
-                    <p className="text-xs text-muted-foreground mb-1">Organized by</p>
+                    <p className="text-xs text-muted-foreground mb-1"><T>Organized by</T></p>
                     <p className="text-sm font-semibold text-foreground">{group.organization?.name}</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-xs text-muted-foreground mb-1">Monthly EMI</p>
+                    <p className="text-xs text-muted-foreground mb-1"><T>Monthly EMI</T></p>
                     <p className="text-sm font-bold text-primary">₹{(Number(group.chit_value) / group.duration_months).toLocaleString("en-IN")}</p>
                   </div>
                 </div>
@@ -119,7 +120,7 @@ const ChitGroups = () => {
                   to={`/chit-groups/${group.id}`}
                   className="w-full py-3 rounded-xl font-semibold text-sm transition-colors shadow-sm text-center bg-primary text-primary-foreground hover:bg-primary/90"
                 >
-                  View Details
+                  <T>View Details</T>
                 </Link>
               </div>
             ))}

@@ -1,4 +1,5 @@
 import { useRef } from "react";
+import { T } from "@/context/LanguageContext";
 import solBeginners from "@/assets/sol-beginners.jpg";
 import solExperienced from "@/assets/sol-experienced.jpg";
 import solSeniors from "@/assets/sol-seniors.jpg";
@@ -42,7 +43,7 @@ const SolutionCardComponent = ({ card, aspectRatio = "aspect-[4/3]" }) => {
       <div className="absolute inset-0 bg-gradient-to-t from-primary/80 via-primary/30 to-transparent" />
       <div className="absolute bottom-0 left-0 right-0 p-5">
         <h3 className="font-heading font-semibold text-primary-foreground text-base lg:text-lg leading-snug">
-          {card.title}
+          <T>{card.title}</T>
         </h3>
       </div>
       <div className="absolute inset-0 border-2 border-transparent group-hover:border-secondary/50 rounded-2xl transition-colors" />
@@ -64,15 +65,15 @@ const SolutionsSection = () => {
     <section className="py-16 lg:py-24 bg-background">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
-          <h2 className="font-heading font-bold text-3xl md:text-4xl lg:text-5xl text-primary mb-2">Our Solutions</h2>
-          <p className="text-foreground/60 text-lg">Tailored financial solutions for every need</p>
+          <h2 className="font-heading font-bold text-3xl md:text-4xl lg:text-5xl text-primary mb-2"><T>Our Solutions</T></h2>
+          <p className="text-foreground/60 text-lg"><T>Tailored financial solutions for every need</T></p>
         </div>
 
         {/* Personalised Solutions - Grid */}
         <div className="mb-16">
           <h2 className="font-heading font-bold text-2xl md:text-3xl text-center text-foreground mb-8 relative inline-block w-full">
             <span className="relative inline-block">
-              Personalised Financial Solutions
+              <T>Personalised Financial Solutions</T>
               <svg className="absolute -bottom-2 left-0 w-full" height="12" viewBox="0 0 300 12" preserveAspectRatio="none">
                 <path d="M0,7 Q75,2 150,7 T300,7" stroke="#f97316" strokeWidth="3" fill="none" strokeLinecap="round"/>
               </svg>
@@ -89,7 +90,7 @@ const SolutionsSection = () => {
         <div className="mb-16">
           <h2 className="font-heading font-bold text-2xl md:text-3xl text-center text-foreground mb-8 relative inline-block w-full">
             <span className="relative inline-block">
-              Goal Based Solutions
+              <T>Goal Based Solutions</T>
               <svg className="absolute -bottom-2 left-0 w-full" height="12" viewBox="0 0 300 12" preserveAspectRatio="none">
                 <path d="M0,7 Q75,2 150,7 T300,7" stroke="#f97316" strokeWidth="3" fill="none" strokeLinecap="round"/>
               </svg>
