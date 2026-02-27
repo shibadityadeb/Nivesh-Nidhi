@@ -55,24 +55,8 @@ const Navbar = () => {
     timeoutRef.current = setTimeout(() => setActiveMenu(null), 200);
   };
 
-  const handleProfileClick = async () => {
-    if (!user || profileLoading) return;
-
-    setProfileLoading(true);
-
-    try {
-      const { data } = await userApi.getMe();
-      const latestUser = data?.data?.user;
-
-      if (latestUser) {
-        updateUser(latestUser);
-        setActiveMenu((prev) => (prev === "profile" ? null : "profile"));
-      }
-    } catch {
-      setActiveMenu((prev) => (prev === "profile" ? null : "profile"));
-    } finally {
-      setProfileLoading(false);
-    }
+  const handleProfileClick = () => {
+    setActiveMenu((prev) => (prev === "profile" ? null : "profile"));
   };
 
   return (
@@ -143,8 +127,7 @@ const Navbar = () => {
                     <button
                       type="button"
                       onClick={handleProfileClick}
-                      disabled={profileLoading}
-                      className={`hidden sm:flex w-10 h-10 rounded-full bg-secondary/10 items-center justify-center border border-secondary/30 transition-colors ${profileLoading ? "opacity-60 cursor-not-allowed" : ""}`}
+                      className="hidden sm:flex w-10 h-10 rounded-full bg-secondary/10 items-center justify-center border border-secondary/30 transition-colors"
                     >
                       <User className="w-5 h-5 text-secondary" />
                     </button>
