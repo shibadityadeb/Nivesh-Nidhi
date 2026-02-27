@@ -2,32 +2,26 @@ const bcrypt = require('bcryptjs');
 const { prisma } = require('../config/db');
 
 const User = {
-  // Create a new user
   create: async (userData) => {
     const { name, email, phone, password } = userData;
 
-    // Validate required fields
     if (!name || !email || !phone || !password) {
       throw new Error('All fields are required');
     }
 
-    // Validate email format
     if (!email || typeof email !== 'string' || !email.includes('@')) {
       throw new Error('Please provide a valid email');
     }
 
-    // Validate phone format (Indian) - ensure it is a string first
     const phoneStr = String(phone).trim();
     if (!/^[6-9]\d{9}$/.test(phoneStr)) {
       throw new Error('Please provide a valid Indian phone number');
     }
 
-    // Validate password length
     if (password.length < 8) {
       throw new Error('Password must be at least 8 characters');
     }
 
-    // Hash password
     const hashedPassword = await bcrypt.hash(password, 12);
 
     try {
@@ -37,20 +31,19 @@ const User = {
           email: email.toLowerCase().trim(),
           phone: phoneStr,
           password: hashedPassword,
-          role: 'user',
-          is_kyc_verified: false,
+          role: 'USER',
+          isKycVerified: false,
         }
       });
       return newUser;
     } catch (error) {
-      if (error.code === 'P2002') { // Prisma Unique constraint violation
+      if (error.code === 'P2002') {
         throw new Error('Email already registered');
       }
       throw error;
     }
   },
 
-  // Find user by email (with password for login)
   findByEmail: async (email, includePassword = false) => {
     const selectFields = includePassword
       ? undefined
@@ -59,13 +52,12 @@ const User = {
         name: true,
         email: true,
         phone: true,
-        aadhaar_number: true,
-        aadhaar_name: true,
-        aadhaar_dob: true,
-        aadhaar_address: true,
-        is_kyc_verified: true,
+        aadhaarNumber: true,
+        age: true,
+        address: true,
+        isKycVerified: true,
         role: true,
-        created_at: true
+        createdAt: true
       };
 
     const user = await prisma.user.findUnique({
@@ -76,7 +68,6 @@ const User = {
     return user;
   },
 
-  // Find user by ID
   findById: async (id) => {
     const user = await prisma.user.findUnique({
       where: { id },
@@ -85,22 +76,20 @@ const User = {
         name: true,
         email: true,
         phone: true,
-        aadhaar_number: true,
-        aadhaar_name: true,
-        aadhaar_dob: true,
-        aadhaar_address: true,
-        is_kyc_verified: true,
+        aadhaarNumber: true,
+        age: true,
+        address: true,
+        isKycVerified: true,
         role: true,
-        created_at: true
+        createdAt: true
       }
     });
 
     return user;
   },
 
-  // Find user by Aadhaar number
   findByAadhaar: async (aadhaarNumber, excludeId = null) => {
-    let whereClause = { aadhaar_number: aadhaarNumber };
+    let whereClause = { aadhaarNumber };
     if (excludeId) {
       whereClause.id = { not: excludeId };
     }
@@ -109,14 +98,17 @@ const User = {
       where: whereClause,
       select: {
         id: true,
-        aadhaar_number: true
+        aadhaarNumber: true
       }
     });
 
     return user;
   },
 
-  // Update user by ID
+  findByAadhaarHash: async (aadhaarHash, excludeId = null) => {
+    return User.findByAadhaar(aadhaarHash, excludeId);
+  },
+
   updateById: async (id, updateData) => {
     const updatedUser = await prisma.user.update({
       where: { id },
@@ -126,12 +118,10 @@ const User = {
     return updatedUser;
   },
 
-  // Compare password for login
   comparePassword: async (candidatePassword, hashedPassword) => {
     return await bcrypt.compare(candidatePassword, hashedPassword);
   },
 
-  // Validate user data
   validate: (userData) => {
     const errors = [];
 
