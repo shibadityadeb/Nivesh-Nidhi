@@ -9,7 +9,7 @@ Built with a hackathon mindset: practical, fast, and easy to understand.
 
 Make chit funds safer, more transparent, and easier for everyone, including first-time users.
 
-## Real-World Validation (Photo Section)
+## Real-World Validation
 
 
 ![Real-World Validation](assets/data.jpeg)
