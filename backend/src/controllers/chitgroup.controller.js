@@ -207,7 +207,28 @@ const deleteChitGroup = async (req, res, next) => {
             return res.status(400).json({ success: false, message: 'Cannot delete an active group' });
         }
 
-        await prisma.chitGroup.delete({ where: { id } });
+        await prisma.$transaction(async (tx) => {
+            if (tx.auctionBid?.deleteMany && tx.auctionRequest?.deleteMany) {
+                try {
+                    await tx.auctionBid.deleteMany({
+                        where: {
+                            auction: {
+                                group_id: id
+                            }
+                        }
+                    });
+                    await tx.auctionRequest.deleteMany({
+                        where: { group_id: id }
+                    });
+                } catch (error) {
+                    if (!isMissingTableError(error, 'auction_requests')) {
+                        throw error;
+                    }
+                }
+            }
+
+            await tx.chitGroup.delete({ where: { id } });
+        });
 
         res.status(200).json({ success: true, message: 'Chit group deleted' });
     } catch (error) {
@@ -288,7 +309,8 @@ const getChitGroupDetails = async (req, res, next) => {
             escrow_enabled: organizerProfile?.escrow_enabled
         };
         // Group info
-        let aiReport = group.ai_risk_report || null;
+        const supportsAiRiskReportColumn = Object.prototype.hasOwnProperty.call(group, 'ai_risk_report');
+        let aiReport = supportsAiRiskReportColumn ? group.ai_risk_report : null;
         const isHeuristicReport = aiReport?.source === 'heuristic'
             || aiReport?.summary === 'Unable to reach AI service, using heuristic.';
         const groupInfo = {
@@ -325,7 +347,7 @@ const getChitGroupDetails = async (req, res, next) => {
                 };
                 const report = await analyzeGroup(groupData);
                 aiReport = report;
-                if (report?.source === 'ai') {
+                if (report?.source === 'ai' && supportsAiRiskReportColumn) {
                     prisma.chitGroup.update({ where: { id: group.id }, data: { ai_risk_report: report } }).catch(err => {
                         console.error('[AI Risk] db save failed', err);
                     });
@@ -383,8 +405,12 @@ const getChitGroupDetails = async (req, res, next) => {
         let applyStatus = null;
         let joinRequestStatus = null;
         let isMember = false;
+        let isOrganizer = false;
         if (req.user) {
             const userId = req.user.id;
+            if (organizerUser?.id === userId) {
+                isOrganizer = true;
+            }
             const member = await prisma.chitGroupMember.findFirst({
                 where: { chit_group_id: id, user_id: userId, status: 'ACTIVE' }
             });
@@ -426,7 +452,8 @@ const getChitGroupDetails = async (req, res, next) => {
                 calcInputs,
                 applyStatus,
                 joinRequestStatus,
-                isMember
+                isMember,
+                isOrganizer
             }
         });
     } catch (error) {

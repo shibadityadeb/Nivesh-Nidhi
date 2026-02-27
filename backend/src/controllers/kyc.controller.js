@@ -24,7 +24,7 @@ const verifyKyc = async (req, res) => {
     }
 
     const aadhaarHash = crypto.createHash('sha256').update(aadhaarNumber).digest('hex');
-    const existingAadhaar = await User.findByAadhaarHash(aadhaarHash, req.user.id);
+    const existingAadhaar = await User.findByAadhaar(aadhaarHash, req.user.id);
 
     if (existingAadhaar) {
       return res.status(409).json({

@@ -65,6 +65,17 @@ export const chitGroups = {
     delete: (id) => api.delete(`/chit-groups/${id}`),
 };
 
+export const auctions = {
+    list: (groupId) => api.get(`/chit-groups/${groupId}/auctions`),
+    create: (groupId, payload) => api.post(`/chit-groups/${groupId}/auctions`, payload),
+    placeBid: (groupId, auctionId, payload) => api.post(`/chit-groups/${groupId}/auctions/${auctionId}/bids`, payload),
+    close: (groupId, auctionId) => api.post(`/chit-groups/${groupId}/auctions/${auctionId}/close`),
+    declareWinner: (groupId, auctionId, payload = {}) => api.post(`/chit-groups/${groupId}/auctions/${auctionId}/winner`, payload),
+    reopen: (groupId, auctionId) => api.post(`/chit-groups/${groupId}/auctions/${auctionId}/reopen`),
+    proceedPayment: (groupId, auctionId) => api.post(`/chit-groups/${groupId}/auctions/${auctionId}/proceed-payment`),
+    confirmPayment: (groupId, auctionId, payload) => api.post(`/chit-groups/${groupId}/auctions/${auctionId}/confirm-payment`, payload),
+};
+
 export const organizerRequests = {
     getPending: (groupId) =>
         api.get('/organizer/requests', {

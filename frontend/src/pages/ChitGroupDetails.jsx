@@ -1,14 +1,20 @@
 import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
-import { chitGroups as chitGroupsApi, escrow } from "@/lib/api";
+import { auctions as auctionsApi, chitGroups as chitGroupsApi, escrow } from "@/lib/api";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { Loader2, Users, Calendar, IndianRupee } from "lucide-react";
+import { Loader2, Users, Calendar, IndianRupee, Gavel, Clock3, Trophy, XCircle } from "lucide-react";
 import { RiskAssessmentCard } from "@/components/RiskAssessmentCard";
 import { GroupRiskCard } from "@/components/GroupRiskCard";
 import ChitPayoutCalculator from "@/components/ChitPayoutCalculator";
 import { toast } from "sonner";
 import { useAuth } from "@/context/AuthContext";
+
+const statusClassMap = {
+  ACTIVE: "bg-green-100 text-green-700",
+  CLOSED: "bg-yellow-100 text-yellow-700",
+  WON: "bg-blue-100 text-blue-700",
+};
 
 export default function ChitGroupDetails() {
   const { id } = useParams();
@@ -17,13 +23,42 @@ export default function ChitGroupDetails() {
   const [group, setGroup] = useState(null);
   const [joinRequestStatus, setJoinRequestStatus] = useState(null);
   const [isMember, setIsMember] = useState(false);
+  const [isOrganizer, setIsOrganizer] = useState(false);
   const [calcSnapshot, setCalcSnapshot] = useState(null);
   const [applyLoading, setApplyLoading] = useState(false);
   const [paymentLoading, setPaymentLoading] = useState(false);
 
+  const [auctions, setAuctions] = useState([]);
+  const [auctionsLoading, setAuctionsLoading] = useState(false);
+  const [showCreateAuctionModal, setShowCreateAuctionModal] = useState(false);
+  const [createAuctionLoading, setCreateAuctionLoading] = useState(false);
+  const [createAuctionForm, setCreateAuctionForm] = useState({
+    bidAmount: "",
+    reason: "",
+    roundNumber: "",
+  });
+  const [bidInputs, setBidInputs] = useState({});
+  const [bidLoadingId, setBidLoadingId] = useState(null);
+  const [organizerActionLoadingId, setOrganizerActionLoadingId] = useState(null);
+  const [winnerPaymentLoadingId, setWinnerPaymentLoadingId] = useState(null);
+
   useEffect(() => {
     fetchGroupDetails();
   }, [id, isAuthenticated]);
+
+  useEffect(() => {
+    if (!isAuthenticated || (!isMember && !isOrganizer)) {
+      setAuctions([]);
+      return;
+    }
+
+    fetchAuctions();
+    const interval = setInterval(() => {
+      fetchAuctions({ silent: true });
+    }, 15000);
+
+    return () => clearInterval(interval);
+  }, [id, isAuthenticated, isMember, isOrganizer]);
 
   const fetchGroupDetails = async () => {
     setLoading(true);
@@ -34,6 +69,7 @@ export default function ChitGroupDetails() {
         setGroup(payload);
         setJoinRequestStatus(payload.joinRequestStatus || null);
         setIsMember(Boolean(payload.isMember));
+        setIsOrganizer(Boolean(payload.isOrganizer));
       } else {
         toast.error(res.data.message || "Group not found");
       }
@@ -41,6 +77,26 @@ export default function ChitGroupDetails() {
       toast.error(error.response?.data?.message || "Failed to load group details");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchAuctions = async ({ silent = false } = {}) => {
+    if (!silent) {
+      setAuctionsLoading(true);
+    }
+    try {
+      const res = await auctionsApi.list(id);
+      if (res.data.success) {
+        setAuctions(res.data.data || []);
+      }
+    } catch (error) {
+      if (!silent) {
+        toast.error(error.response?.data?.message || "Failed to load auctions");
+      }
+    } finally {
+      if (!silent) {
+        setAuctionsLoading(false);
+      }
     }
   };
 
@@ -164,6 +220,197 @@ export default function ChitGroupDetails() {
     }
   };
 
+  const handleCreateAuction = async () => {
+    if (!isMember) {
+      toast.error("Only approved members can create auctions.");
+      return;
+    }
+
+    const bidAmount = Number(createAuctionForm.bidAmount);
+    if (!Number.isFinite(bidAmount) || bidAmount <= 0) {
+      toast.error("Enter a valid bid amount.");
+      return;
+    }
+
+    setCreateAuctionLoading(true);
+    try {
+      const res = await auctionsApi.create(id, {
+        bidAmount,
+        reason: createAuctionForm.reason || undefined,
+        roundNumber: createAuctionForm.roundNumber ? Number(createAuctionForm.roundNumber) : undefined,
+      });
+
+      if (res.data.success) {
+        toast.success("Auction created successfully");
+        setShowCreateAuctionModal(false);
+        setCreateAuctionForm({ bidAmount: "", reason: "", roundNumber: "" });
+        await fetchAuctions();
+      } else {
+        toast.error(res.data.message || "Failed to create auction");
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to create auction");
+    } finally {
+      setCreateAuctionLoading(false);
+    }
+  };
+
+  const handlePlaceBid = async (auctionId) => {
+    const bidAmount = Number(bidInputs[auctionId]);
+    if (!Number.isFinite(bidAmount) || bidAmount <= 0) {
+      toast.error("Enter a valid bid amount.");
+      return;
+    }
+
+    setBidLoadingId(auctionId);
+    try {
+      const res = await auctionsApi.placeBid(id, auctionId, { bidAmount });
+      if (res.data.success) {
+        toast.success("Bid placed successfully");
+        setBidInputs((prev) => ({ ...prev, [auctionId]: "" }));
+        await fetchAuctions({ silent: true });
+      } else {
+        toast.error(res.data.message || "Failed to place bid");
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to place bid");
+    } finally {
+      setBidLoadingId(null);
+    }
+  };
+
+  const handleCloseAuction = async (auctionId) => {
+    setOrganizerActionLoadingId(auctionId);
+    try {
+      const res = await auctionsApi.close(id, auctionId);
+      if (res.data.success) {
+        toast.success(res.data.message || "Auction closed");
+        await fetchAuctions({ silent: true });
+      } else {
+        toast.error(res.data.message || "Failed to close auction");
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to close auction");
+    } finally {
+      setOrganizerActionLoadingId(null);
+    }
+  };
+
+  const handleDeclareWinner = async (auctionId) => {
+    setOrganizerActionLoadingId(auctionId);
+    try {
+      const res = await auctionsApi.declareWinner(id, auctionId, {});
+      if (res.data.success) {
+        toast.success("Winner declared successfully");
+        await fetchAuctions({ silent: true });
+      } else {
+        toast.error(res.data.message || "Failed to declare winner");
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to declare winner");
+    } finally {
+      setOrganizerActionLoadingId(null);
+    }
+  };
+
+  const handleReopenAuction = async (auctionId) => {
+    setOrganizerActionLoadingId(auctionId);
+    try {
+      const res = await auctionsApi.reopen(id, auctionId);
+      if (res.data.success) {
+        toast.success("Auction reopened");
+        await fetchAuctions({ silent: true });
+      } else {
+        toast.error(res.data.message || "Failed to reopen auction");
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to reopen auction");
+    } finally {
+      setOrganizerActionLoadingId(null);
+    }
+  };
+
+  const handleWinnerPayment = async (auction) => {
+    if (!window.Razorpay) {
+      toast.error("Payment gateway is not available right now.");
+      return;
+    }
+
+    setWinnerPaymentLoadingId(auction.id);
+    try {
+      const startRes = await auctionsApi.proceedPayment(id, auction.id);
+      if (!startRes.data.success) {
+        throw new Error(startRes.data.message || "Failed to initialize payment");
+      }
+
+      const { razorpay_order_id, transaction_id, amount } = startRes.data;
+
+      const options = {
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID || "rzp_test_SKVpiqvO8UAmrn",
+        amount: amount * 100,
+        currency: "INR",
+        name: "Nivesh Nidhi",
+        description: `Auction winner payment - ${group?.group?.name || "Chit Group"}`,
+        order_id: razorpay_order_id,
+        handler: async function (response) {
+          try {
+            const verifyRes = await escrow.verifyWebhook({
+              transaction_id,
+              payload: {
+                payment: {
+                  entity: {
+                    id: response.razorpay_payment_id,
+                    notes: { transaction_id },
+                  },
+                },
+              },
+            });
+
+            if (!verifyRes.data.success) {
+              throw new Error("Payment verification failed");
+            }
+
+            const confirmRes = await auctionsApi.confirmPayment(id, auction.id, { transaction_id });
+            if (confirmRes.data.success) {
+              toast.success("Winner payment completed and linked to auction.");
+              await fetchAuctions({ silent: true });
+            } else {
+              toast.error(confirmRes.data.message || "Payment confirmed but auction update failed");
+            }
+          } catch (err) {
+            toast.error(err.response?.data?.message || "Payment verification failed.");
+          }
+        },
+        prefill: {
+          name: user?.name || "User",
+          email: user?.email || "",
+          contact: user?.phone || "",
+        },
+        theme: {
+          color: "#1d4ed8",
+        },
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.on("payment.failed", async function (response) {
+        toast.error(`Payment Failed: ${response.error.description}`);
+        try {
+          await escrow.webhookFailed({
+            transaction_id,
+            error_description: response.error.description,
+          });
+        } catch (err) {
+          // no-op
+        }
+      });
+      rzp.open();
+    } catch (error) {
+      toast.error(error.response?.data?.message || error.message || "Could not initiate winner payment");
+    } finally {
+      setWinnerPaymentLoadingId(null);
+    }
+  };
+
   const actionButton = useMemo(() => {
     if (!group) return null;
 
@@ -202,7 +449,6 @@ export default function ChitGroupDetails() {
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
-      {/* Gradient Splashes */}
       <div className="fixed inset-0 pointer-events-none z-0">
         <div className="absolute top-40 right-40 w-[550px] h-[550px] bg-gradient-to-br from-primary/10 to-transparent rounded-full blur-3xl" />
         <div className="absolute bottom-20 left-20 w-[450px] h-[450px] bg-gradient-to-tr from-secondary/10 to-transparent rounded-full blur-3xl" />
@@ -290,6 +536,133 @@ export default function ChitGroupDetails() {
                     />
                   </div>
                 )}
+
+                {(isMember || isOrganizer) && (
+                  <div className="bg-white rounded-xl p-6 border border-border space-y-4">
+                    <div className="flex items-center justify-between gap-3">
+                      <h2 className="font-heading font-bold text-xl flex items-center gap-2">
+                        <Gavel className="w-5 h-5 text-primary" />
+                        Live Auctions
+                      </h2>
+                      {isMember && (
+                        <button
+                          className="px-4 py-2 rounded-lg bg-primary text-primary-foreground font-semibold hover:bg-primary/90 transition-colors"
+                          onClick={() => setShowCreateAuctionModal(true)}
+                        >
+                          Create Auction
+                        </button>
+                      )}
+                    </div>
+
+                    {auctionsLoading ? (
+                      <div className="flex items-center py-4">
+                        <Loader2 className="w-5 h-5 animate-spin text-primary" />
+                        <span className="ml-2 text-sm text-muted-foreground">Loading auctions...</span>
+                      </div>
+                    ) : auctions.length === 0 ? (
+                      <p className="text-sm text-muted-foreground">No auctions in this group yet.</p>
+                    ) : (
+                      <div className="space-y-3">
+                        {auctions.map((auction) => {
+                          const isCreator = user?.id && auction.createdBy === user.id;
+                          const canBid = isMember && !isOrganizer && !isCreator && auction.status === "ACTIVE";
+                          const canOrganizerAct = isOrganizer;
+                          const dueText = auction.winnerPaymentDueAt
+                            ? new Date(auction.winnerPaymentDueAt).toLocaleString()
+                            : null;
+
+                          return (
+                            <div key={auction.id} className="border border-border rounded-lg p-4 space-y-3">
+                              <div className="flex flex-wrap items-center justify-between gap-2">
+                                <div>
+                                  <p className="font-semibold text-foreground">Highest Bid: ₹{Number(auction.highestBid).toLocaleString("en-IN")}</p>
+                                  <p className="text-xs text-muted-foreground">Bidder: {auction.winnerName || auction.bids?.[0]?.bidderName || auction.createdByName}</p>
+                                </div>
+                                <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${statusClassMap[auction.status] || "bg-muted text-muted-foreground"}`}>
+                                  {auction.status}
+                                </span>
+                              </div>
+
+                              <div className="grid sm:grid-cols-2 gap-2 text-xs text-muted-foreground">
+                                <p className="flex items-center gap-1"><Clock3 className="w-3.5 h-3.5" /> Created: {auction.createdAt ? new Date(auction.createdAt).toLocaleString() : "N/A"}</p>
+                                <p className="flex items-center gap-1"><Users className="w-3.5 h-3.5" /> Total bids: {auction.totalBids}</p>
+                                {auction.winnerName && <p className="flex items-center gap-1"><Trophy className="w-3.5 h-3.5" /> Winner: {auction.winnerName}</p>}
+                                {dueText && <p>Payment due: {dueText}</p>}
+                              </div>
+
+                              {canBid && (
+                                <div className="flex flex-col sm:flex-row gap-2">
+                                  <input
+                                    type="number"
+                                    min="1"
+                                    placeholder="Place higher bid"
+                                    className="flex-1 border border-border rounded-lg px-3 py-2 text-sm"
+                                    value={bidInputs[auction.id] || ""}
+                                    onChange={(e) => setBidInputs((prev) => ({ ...prev, [auction.id]: e.target.value }))}
+                                  />
+                                  <button
+                                    className="px-4 py-2 rounded-lg bg-secondary text-secondary-foreground font-semibold hover:bg-secondary/90 disabled:bg-muted disabled:text-muted-foreground"
+                                    disabled={bidLoadingId === auction.id}
+                                    onClick={() => handlePlaceBid(auction.id)}
+                                  >
+                                    {bidLoadingId === auction.id ? "Placing..." : "Place Higher Bid"}
+                                  </button>
+                                </div>
+                              )}
+
+                              {canOrganizerAct && (
+                                <div className="flex flex-wrap gap-2">
+                                  {auction.status === "ACTIVE" && (
+                                    <>
+                                      <button
+                                        className="px-3 py-1.5 rounded-lg bg-amber-500 text-white text-sm font-semibold hover:bg-amber-600 disabled:opacity-60"
+                                        disabled={organizerActionLoadingId === auction.id}
+                                        onClick={() => handleCloseAuction(auction.id)}
+                                      >
+                                        Close Auction
+                                      </button>
+                                      <button
+                                        className="px-3 py-1.5 rounded-lg bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 disabled:opacity-60"
+                                        disabled={organizerActionLoadingId === auction.id}
+                                        onClick={() => handleDeclareWinner(auction.id)}
+                                      >
+                                        Declare Winner
+                                      </button>
+                                    </>
+                                  )}
+
+                                  {auction.status === "WON" && !auction.winnerPaidAt && auction.winnerPaymentDueAt && new Date(auction.winnerPaymentDueAt).getTime() < Date.now() && (
+                                    <button
+                                      className="px-3 py-1.5 rounded-lg bg-rose-600 text-white text-sm font-semibold hover:bg-rose-700 disabled:opacity-60"
+                                      disabled={organizerActionLoadingId === auction.id}
+                                      onClick={() => handleReopenAuction(auction.id)}
+                                    >
+                                      Reopen Auction
+                                    </button>
+                                  )}
+                                </div>
+                              )}
+
+                              {auction.canCurrentUserProceedPayment && (
+                                <button
+                                  className="px-4 py-2 rounded-lg bg-green-600 text-white font-semibold hover:bg-green-700 disabled:opacity-60"
+                                  disabled={winnerPaymentLoadingId === auction.id}
+                                  onClick={() => handleWinnerPayment(auction)}
+                                >
+                                  {winnerPaymentLoadingId === auction.id ? "Processing..." : "Proceed to Payment"}
+                                </button>
+                              )}
+
+                              {auction.winnerPaidAt && (
+                                <p className="text-xs text-green-700 font-medium">Winner payment completed on {new Date(auction.winnerPaidAt).toLocaleString()}</p>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
 
               <div className="space-y-6">
@@ -320,6 +693,74 @@ export default function ChitGroupDetails() {
           </div>
         )}
       </main>
+
+      {showCreateAuctionModal && (
+        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="w-full max-w-md bg-white rounded-xl border border-border shadow-xl p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-heading font-bold text-lg">Create Auction</h3>
+              <button
+                className="p-1 rounded-md hover:bg-muted"
+                onClick={() => setShowCreateAuctionModal(false)}
+                disabled={createAuctionLoading}
+              >
+                <XCircle className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="space-y-3">
+              <div>
+                <label className="text-sm font-medium text-foreground">Bid Amount</label>
+                <input
+                  type="number"
+                  min="1"
+                  className="w-full mt-1 border border-border rounded-lg px-3 py-2"
+                  value={createAuctionForm.bidAmount}
+                  onChange={(e) => setCreateAuctionForm((prev) => ({ ...prev, bidAmount: e.target.value }))}
+                />
+              </div>
+
+              <div>
+                <label className="text-sm font-medium text-foreground">Reason (optional)</label>
+                <textarea
+                  className="w-full mt-1 border border-border rounded-lg px-3 py-2 min-h-[90px]"
+                  value={createAuctionForm.reason}
+                  onChange={(e) => setCreateAuctionForm((prev) => ({ ...prev, reason: e.target.value }))}
+                />
+              </div>
+
+              <div>
+                <label className="text-sm font-medium text-foreground">Round Number (optional)</label>
+                <input
+                  type="number"
+                  min="1"
+                  className="w-full mt-1 border border-border rounded-lg px-3 py-2"
+                  value={createAuctionForm.roundNumber}
+                  onChange={(e) => setCreateAuctionForm((prev) => ({ ...prev, roundNumber: e.target.value }))}
+                />
+              </div>
+
+              <div className="flex justify-end gap-2 pt-2">
+                <button
+                  className="px-4 py-2 rounded-lg border border-border text-foreground hover:bg-muted"
+                  onClick={() => setShowCreateAuctionModal(false)}
+                  disabled={createAuctionLoading}
+                >
+                  Cancel
+                </button>
+                <button
+                  className="px-4 py-2 rounded-lg bg-primary text-primary-foreground font-semibold hover:bg-primary/90 disabled:bg-muted disabled:text-muted-foreground"
+                  onClick={handleCreateAuction}
+                  disabled={createAuctionLoading}
+                >
+                  {createAuctionLoading ? "Creating..." : "Create Auction"}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       <Footer />
     </div>
   );

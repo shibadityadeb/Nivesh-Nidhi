@@ -27,6 +27,18 @@ const createEscrowAccount = async (req, res, next) => {
 const addContribution = async (req, res, next) => {
     try {
         const { chit_group_id, user_id, amount } = req.body;
+        if (!chit_group_id || !user_id) {
+            return res.status(400).json({
+                success: false,
+                message: 'chit_group_id and user_id are required'
+            });
+        }
+        if (!Number.isFinite(Number(amount)) || Number(amount) <= 0) {
+            return res.status(400).json({
+                success: false,
+                message: 'amount must be a positive number'
+            });
+        }
 
         let account = await prisma.escrowAccount.findUnique({ where: { chit_group_id } });
         if (!account) {

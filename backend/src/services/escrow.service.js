@@ -3,19 +3,38 @@ const crypto = require('crypto');
 
 class EscrowService {
     constructor() {
+        this.keyId = process.env.RAZORPAY_KEY_ID || '';
+        this.keySecret = process.env.RAZORPAY_KEY_SECRET || '';
         this.razorpay = new Razorpay({
-            key_id: process.env.RAZORPAY_KEY_ID || 'dummy',
-            key_secret: process.env.RAZORPAY_KEY_SECRET || 'dummy'
+            key_id: this.keyId || 'dummy',
+            key_secret: this.keySecret || 'dummy'
         });
     }
 
     async createOrder(amount, receiptId) {
+        if (!this.keyId || !this.keySecret || this.keyId === 'dummy' || this.keySecret === 'dummy') {
+            const configError = new Error('Payment gateway is not configured. Set RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET in backend .env');
+            configError.statusCode = 503;
+            throw configError;
+        }
+
         const options = {
             amount: Math.round(Number(amount) * 100), // Razorpay works in paise (must be integer)
             currency: 'INR',
             receipt: receiptId
         };
-        return await this.razorpay.orders.create(options);
+        try {
+            return await this.razorpay.orders.create(options);
+        } catch (error) {
+            const isRazorpayAuthError = error?.statusCode === 401 || error?.status === 401;
+            const wrapped = new Error(
+                isRazorpayAuthError
+                    ? 'Payment gateway authentication failed. Verify Razorpay backend keys.'
+                    : (error?.error?.description || error?.message || 'Failed to create payment order')
+            );
+            wrapped.statusCode = isRazorpayAuthError ? 502 : (error?.statusCode || 500);
+            throw wrapped;
+        }
     }
 
     verifyWebhookSignature(body, signature, secret) {
