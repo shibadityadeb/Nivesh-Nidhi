@@ -42,7 +42,25 @@ async function runTests() {
             years_of_operation: 5,
             chit_license_number: `CHIT-${timestamp}`,
             proposed_chit_size: 5000000,
-            past_3_yr_turnover: 15000000
+            past_3_yr_turnover: 15000000,
+            personalInfo: {
+                dateOfBirth: '1990-01-01',
+                age: 35
+            },
+            professionalInfo: {
+                occupation: 'Business Owner',
+                companyOrBusinessName: 'Superb Chit Funds',
+                yearsOfExperience: 5
+            },
+            incomeInfo: {
+                monthlyIncomeRange: '> ₹1L',
+                primaryIncomeSource: 'Business Revenue'
+            },
+            purposeInfo: {
+                reasonForOpeningFund: 'We have been operating successfully as a traditional chit fund business for 5 years and now wish to strictly transition into the verified digital platform space for modernization.',
+                expectedMembersCount: 50,
+                targetMonthlyContribution: 10000
+            }
         }, {
             headers: { Authorization: `Bearer ${userToken}` }
         });

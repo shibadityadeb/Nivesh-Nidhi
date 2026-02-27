@@ -37,8 +37,8 @@ const User = {
           email: email.toLowerCase().trim(),
           phone: phoneStr,
           password: hashedPassword,
-          role: 'user',
-          is_kyc_verified: false,
+          role: 'USER',
+          isKycVerified: false,
         }
       });
       return newUser;
@@ -59,13 +59,12 @@ const User = {
         name: true,
         email: true,
         phone: true,
-        aadhaar_number: true,
-        aadhaar_name: true,
-        aadhaar_dob: true,
-        aadhaar_address: true,
-        is_kyc_verified: true,
+        phone: true,
+        aadhaarNumber: true,
+        address: true,
+        isKycVerified: true,
         role: true,
-        created_at: true
+        createdAt: true
       };
 
     const user = await prisma.user.findUnique({
@@ -85,13 +84,12 @@ const User = {
         name: true,
         email: true,
         phone: true,
-        aadhaar_number: true,
-        aadhaar_name: true,
-        aadhaar_dob: true,
-        aadhaar_address: true,
-        is_kyc_verified: true,
+        phone: true,
+        aadhaarNumber: true,
+        address: true,
+        isKycVerified: true,
         role: true,
-        created_at: true
+        createdAt: true
       }
     });
 
@@ -100,7 +98,7 @@ const User = {
 
   // Find user by Aadhaar number
   findByAadhaar: async (aadhaarNumber, excludeId = null) => {
-    let whereClause = { aadhaar_number: aadhaarNumber };
+    let whereClause = { aadhaarNumber: aadhaarNumber };
     if (excludeId) {
       whereClause.id = { not: excludeId };
     }
@@ -109,7 +107,7 @@ const User = {
       where: whereClause,
       select: {
         id: true,
-        aadhaar_number: true
+        aadhaarNumber: true
       }
     });
 
