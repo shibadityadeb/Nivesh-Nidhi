@@ -60,6 +60,8 @@ const verifyKyc = async (req, res) => {
         isKycVerified: true,
         aadhaarNumber: aadhaarHash,
         age: Number(age),
+        city: canonicalCity || city,
+        state: canonicalState || state,
         address: normalizedAddress
       }
     });
@@ -76,6 +78,8 @@ const verifyKyc = async (req, res) => {
           role: updatedUser.role,
           isKycVerified: updatedUser.isKycVerified,
           age: updatedUser.age,
+          city: updatedUser.city,
+          state: updatedUser.state,
           address: updatedUser.address
         }
       }

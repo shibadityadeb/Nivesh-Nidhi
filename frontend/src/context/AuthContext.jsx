@@ -2,8 +2,7 @@ import { createContext, useContext, useState } from "react";
 import SuccessModal from "@/components/SuccessModal";
 import TermsModal from "@/components/TermsModal";
 import LoginSuccessModal from "@/components/LoginSuccessModal";
-
-const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
+import { auth as authApi } from "@/lib/api";
 
 const AuthContext = createContext(undefined);
 
@@ -29,12 +28,13 @@ export const AuthProvider = ({ children }) => {
   };
 
   const signupUser = async ({ name, email, phone, password }) => {
-    const res = await fetch(`${API_BASE}/api/auth/signup`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, email, phone, password }),
-    });
-    const data = await res.json();
+    let data;
+    try {
+      const res = await authApi.signup({ name, email, phone, password });
+      data = res.data;
+    } catch (error) {
+      data = error.response?.data || { success: false, message: "Signup failed" };
+    }
 
     if (!data.success) {
       if (data.errors && data.errors.length > 0) {
@@ -56,12 +56,13 @@ export const AuthProvider = ({ children }) => {
   };
 
   const loginUser = async ({ email, password, role = "USER" }) => {
-    const res = await fetch(`${API_BASE}/api/auth/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password, role }),
-    });
-    const data = await res.json();
+    let data;
+    try {
+      const res = await authApi.login({ email, password, role });
+      data = res.data;
+    } catch (error) {
+      data = error.response?.data || { success: false, message: "Login failed" };
+    }
 
     if (!data.success) {
       if (data.errors && data.errors.length > 0) {

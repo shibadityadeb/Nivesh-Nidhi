@@ -36,7 +36,9 @@ const signup = async (req, res) => {
           email: user.email,
           phone: user.phone,
           role: user.role,
-          isKycVerified: user.isKycVerified
+          isKycVerified: user.isKycVerified,
+          city: user.city,
+          state: user.state
         },
         token
       }
@@ -92,7 +94,9 @@ const login = async (req, res) => {
           email: user.email,
           phone: user.phone,
           role: user.role,
-          isKycVerified: user.isKycVerified
+          isKycVerified: user.isKycVerified,
+          city: user.city,
+          state: user.state
         },
         token
       }
@@ -128,6 +132,8 @@ const getProfile = async (req, res) => {
           role: user.role,
           isKycVerified: user.isKycVerified,
           age: user.age,
+          city: user.city,
+          state: user.state,
           address: user.address,
           createdAt: user.createdAt
         }

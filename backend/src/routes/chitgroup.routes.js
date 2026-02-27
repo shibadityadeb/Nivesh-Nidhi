@@ -26,7 +26,7 @@ const {
 const router = express.Router();
 
 // Public route - no auth required
-router.get('/', getAllChitGroups);
+router.get('/', optionalProtect, getAllChitGroups);
 router.get('/my-groups', protect, authorize('ORGANIZER', 'ADMIN'), getMyChitGroups);
 router.get('/active-groups', protect, getMyActiveGroups);
 router.get('/:id', optionalProtect, getChitGroupDetails);

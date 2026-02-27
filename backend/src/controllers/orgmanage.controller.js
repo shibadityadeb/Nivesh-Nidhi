@@ -315,36 +315,16 @@ const createAnnouncement = async (req, res, next) => {
             }
         });
 
-        // Mirror announcements into member notifications for active group members.
-        const members = await prisma.chitGroupMember.findMany({
-            where: {
+        // Mirror announcement into a broadcast notification for all active members.
+        await prisma.memberNotification.create({
+            data: {
                 chit_group_id: groupId,
-                status: 'ACTIVE'
-            },
-            select: { user_id: true }
+                user_id: null,
+                title,
+                message,
+                type: 'CUSTOM'
+            }
         });
-
-        if (members.length > 0) {
-            await prisma.memberNotification.createMany({
-                data: members.map((member) => ({
-                    chit_group_id: groupId,
-                    user_id: member.user_id,
-                    title,
-                    message,
-                    type: 'CUSTOM'
-                }))
-            });
-        } else {
-            await prisma.memberNotification.create({
-                data: {
-                    chit_group_id: groupId,
-                    user_id: null,
-                    title,
-                    message,
-                    type: 'CUSTOM'
-                }
-            });
-        }
 
         res.status(201).json({ success: true, message: 'Announcement created', data: announcement });
     } catch (error) {
@@ -424,31 +404,16 @@ const sendNotification = async (req, res, next) => {
                 }
             });
         } else {
-            // Broadcast to all active members
-            const notifData = group.members.map((member) => ({
-                chit_group_id: groupId,
-                user_id: member.user_id,
-                title,
-                message,
-                type: type || 'DUE_REMINDER'
-            }));
-
-            if (notifData.length === 0) {
-                // Still create a broadcast notification
-                notifications = await prisma.memberNotification.create({
-                    data: {
-                        chit_group_id: groupId,
-                        user_id: null,
-                        title,
-                        message,
-                        type: type || 'DUE_REMINDER'
-                    }
-                });
-            } else {
-                notifications = await prisma.memberNotification.createMany({
-                    data: notifData
-                });
-            }
+            // Group-wide notification: single broadcast row visible to all active members.
+            notifications = await prisma.memberNotification.create({
+                data: {
+                    chit_group_id: groupId,
+                    user_id: null,
+                    title,
+                    message,
+                    type: type || 'DUE_REMINDER'
+                }
+            });
         }
 
         res.status(201).json({
