@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { X, Mail, Lock, User, Phone, Eye, EyeOff, AlertCircle } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
+import { getCurrentLocation } from "@/utils/getCurrentLocation";
 
 const AuthModal = () => {
   const { showAuthModal, setShowAuthModal, signupUser, loginUser } = useAuth();
@@ -12,6 +13,7 @@ const AuthModal = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [locationLoading, setLocationLoading] = useState(false);
 
   if (!showAuthModal) return null;
 
@@ -32,11 +34,19 @@ const AuthModal = () => {
       if (isSignUp) {
         await signupUser({ name, email, phone, password });
       } else {
-        await loginUser({ email, password });
+        setLocationLoading(true);
+        const location = await getCurrentLocation();
+        await loginUser({
+          email,
+          password,
+          role: "USER",
+          location,
+        });
       }
     } catch (err) {
       setError(err.message);
     } finally {
+      setLocationLoading(false);
       setLoading(false);
     }
   };
@@ -146,10 +156,10 @@ const AuthModal = () => {
 
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || locationLoading}
               className="w-full py-3 rounded-xl gradient-navy text-primary-foreground font-heading font-semibold text-sm shadow-md hover:shadow-lg transition-all hover:scale-[1.01] disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              {loading ? "Please wait..." : isSignUp ? "Create Account" : "Sign In"}
+              {locationLoading ? "Fetching your location..." : loading ? "Please wait..." : isSignUp ? "Create Account" : "Sign In"}
             </button>
           </form>
 

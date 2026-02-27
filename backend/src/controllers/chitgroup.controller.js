@@ -1,4 +1,8 @@
 const { prisma } = require('../config/db');
+const {
+    getCanonicalState,
+    getCanonicalCity
+} = require('../constants/indiaLocations');
 
 const isMissingTableError = (error, tableName) => {
     if (!error || error.code !== 'P2021') return false;
@@ -106,7 +110,7 @@ const getMyChitGroups = async (req, res, next) => {
 const createChitGroup = async (req, res, next) => {
     try {
         const userId = req.user.id;
-        const { organization_id, name, chit_value, duration_months, member_capacity } = req.body;
+        const { organization_id, name, state, city, chit_value, duration_months, member_capacity } = req.body;
 
         // Verify ownership
         const org = await prisma.organization.findFirst({
@@ -120,10 +124,21 @@ const createChitGroup = async (req, res, next) => {
             return res.status(403).json({ success: false, message: 'Not authorized for this organization' });
         }
 
+        const canonicalState = getCanonicalState(state);
+        if (!canonicalState) {
+            return res.status(400).json({ success: false, message: 'Invalid state selection' });
+        }
+        const canonicalCity = getCanonicalCity(canonicalState, city);
+        if (!canonicalCity) {
+            return res.status(400).json({ success: false, message: 'Invalid city for selected state' });
+        }
+
         const chitGroup = await prisma.chitGroup.create({
             data: {
                 organization_id,
                 name,
+                state: canonicalState,
+                city: canonicalCity,
                 chit_value: parseFloat(chit_value),
                 duration_months: parseInt(duration_months),
                 member_capacity: parseInt(member_capacity),
@@ -150,7 +165,7 @@ const updateChitGroup = async (req, res, next) => {
     try {
         const userId = req.user.id;
         const { id } = req.params;
-        const { name, chit_value, duration_months, member_capacity, status } = req.body;
+        const { name, state, city, chit_value, duration_months, member_capacity, status } = req.body;
 
         const group = await prisma.chitGroup.findFirst({
             where: {
@@ -165,10 +180,28 @@ const updateChitGroup = async (req, res, next) => {
             return res.status(403).json({ success: false, message: 'Not authorized or group not found' });
         }
 
+        let canonicalState = group.state;
+        let canonicalCity = group.city;
+        if (typeof state !== 'undefined' || typeof city !== 'undefined') {
+            const resolvedState = typeof state !== 'undefined' ? state : group.state;
+            const resolvedCity = typeof city !== 'undefined' ? city : group.city;
+
+            canonicalState = getCanonicalState(resolvedState);
+            if (!canonicalState) {
+                return res.status(400).json({ success: false, message: 'Invalid state selection' });
+            }
+            canonicalCity = getCanonicalCity(canonicalState, resolvedCity);
+            if (!canonicalCity) {
+                return res.status(400).json({ success: false, message: 'Invalid city for selected state' });
+            }
+        }
+
         const updated = await prisma.chitGroup.update({
             where: { id },
             data: {
                 name: name || group.name,
+                state: canonicalState,
+                city: canonicalCity,
                 chit_value: chit_value ? parseFloat(chit_value) : group.chit_value,
                 duration_months: duration_months ? parseInt(duration_months) : group.duration_months,
                 member_capacity: member_capacity ? parseInt(member_capacity) : group.member_capacity,
@@ -316,6 +349,8 @@ const getChitGroupDetails = async (req, res, next) => {
         const groupInfo = {
             id: group.id,
             name: group.name,
+            state: group.state,
+            city: group.city,
             chit_value: group.chit_value,
             duration_months: group.duration_months,
             member_capacity: group.member_capacity,
@@ -630,6 +665,8 @@ const getMyActiveGroups = async (req, res, next) => {
         const groups = memberships.map((member) => ({
             id: member.chit_group.id,
             name: member.chit_group.name,
+            state: member.chit_group.state,
+            city: member.chit_group.city,
             status: member.chit_group.status,
             chit_value: member.chit_group.chit_value,
             duration_months: member.chit_group.duration_months,

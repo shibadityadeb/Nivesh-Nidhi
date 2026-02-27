@@ -191,6 +191,8 @@ model ChitGroup {
   organization    Organization @relation(fields: [organization_id], references: [id])
 
   name            String  @db.VarChar(255)
+  state           String  @db.VarChar(100)
+  city            String  @db.VarChar(100)
   chit_value      Decimal @db.Decimal(12, 2)
   duration_months Int
   member_capacity Int
@@ -395,6 +397,8 @@ model AuctionRequest {
   id                   String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   group_id             String       @db.Uuid
   group                ChitGroup    @relation(fields: [group_id], references: [id], onDelete: Cascade)
+  state                String       @db.VarChar(100)
+  city                 String       @db.VarChar(100)
   created_by           String       @db.Uuid
   created_by_user      User         @relation("AuctionCreator", fields: [created_by], references: [id])
   highest_bid          Decimal      @db.Decimal(12, 2)

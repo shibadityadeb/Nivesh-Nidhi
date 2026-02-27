@@ -6,6 +6,7 @@ import AuthModal from "@/components/AuthModal";
 import { chitGroups as chitGroupsApi, user as userApi } from "@/lib/api";
 import { useAuth } from "@/context/AuthContext";
 import { toast } from "sonner";
+import { STATE_CITY_MAP, STATES } from "@/constants/indiaLocations";
 import {
   MapPin,
   Users,
@@ -61,10 +62,14 @@ const MyChitFundGroup = () => {
   const [form, setForm] = useState({
     organization_id: "",
     name: "",
+    state: "",
+    city: "",
     chit_value: "",
     duration_months: "",
     member_capacity: "",
   });
+  const [cityQuery, setCityQuery] = useState("");
+  const [showCityOptions, setShowCityOptions] = useState(false);
 
   useEffect(() => {
     if (!user) {
@@ -116,14 +121,22 @@ const MyChitFundGroup = () => {
     setForm({
       organization_id: organizations.length === 1 ? organizations[0].id : "",
       name: "",
+      state: "",
+      city: "",
       chit_value: "",
       duration_months: "",
       member_capacity: "",
     });
+    setCityQuery("");
+    setShowCityOptions(false);
   };
 
   const handleCreate = async (e) => {
     e.preventDefault();
+    if (!form.state || !form.city) {
+      toast.error("Please select both state and city");
+      return;
+    }
     setSubmitting(true);
     try {
       const res = await chitGroupsApi.create(form);
@@ -145,19 +158,28 @@ const MyChitFundGroup = () => {
     setForm({
       organization_id: group.organization_id,
       name: group.name,
+      state: group.state || "",
+      city: group.city || "",
       chit_value: group.chit_value,
       duration_months: group.duration_months,
       member_capacity: group.member_capacity,
     });
+    setCityQuery(group.city || "");
     setShowEditModal(true);
   };
 
   const handleUpdate = async (e) => {
     e.preventDefault();
+    if (!form.state || !form.city) {
+      toast.error("Please select both state and city");
+      return;
+    }
     setSubmitting(true);
     try {
       const res = await chitGroupsApi.update(editingGroup.id, {
         name: form.name,
+        state: form.state,
+        city: form.city,
         chit_value: form.chit_value,
         duration_months: form.duration_months,
         member_capacity: form.member_capacity,
@@ -190,6 +212,10 @@ const MyChitFundGroup = () => {
   };
 
   const activeTab = "groups"; // Can extend to tabs later
+  const availableCities = form.state ? (STATE_CITY_MAP[form.state] || []) : [];
+  const filteredCities = availableCities.filter((city) =>
+    city.toLowerCase().includes(cityQuery.toLowerCase())
+  );
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
@@ -436,7 +462,7 @@ const MyChitFundGroup = () => {
                           </div>
                           <div className="flex items-center gap-2">
                             <MapPin className="w-4 h-4 text-secondary" />
-                            {group.organization?.city}, {group.organization?.state}
+                            {group.city}, {group.state}
                           </div>
                           <div className="flex items-center gap-2">
                             <Users className="w-4 h-4 text-accent" />
@@ -538,6 +564,63 @@ const MyChitFundGroup = () => {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
+                  <label className="block text-sm font-medium text-foreground mb-1">State</label>
+                  <select
+                    value={form.state}
+                    onChange={(e) => {
+                      const nextState = e.target.value;
+                      setForm({ ...form, state: nextState, city: "" });
+                      setCityQuery("");
+                      setShowCityOptions(false);
+                    }}
+                    className="w-full px-4 py-2.5 rounded-xl border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+                    required
+                  >
+                    <option value="">Select state</option>
+                    {STATES.map((state) => (
+                      <option key={state} value={state}>{state}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="relative">
+                  <label className="block text-sm font-medium text-foreground mb-1">City</label>
+                  <input
+                    type="text"
+                    value={cityQuery}
+                    onChange={(e) => {
+                      setCityQuery(e.target.value);
+                      setForm({ ...form, city: "" });
+                      setShowCityOptions(true);
+                    }}
+                    onFocus={() => setShowCityOptions(true)}
+                    onBlur={() => setTimeout(() => setShowCityOptions(false), 120)}
+                    placeholder={form.state ? "Search city" : "Select state first"}
+                    className="w-full px-4 py-2.5 rounded-xl border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 disabled:opacity-60"
+                    disabled={!form.state}
+                    required
+                  />
+                  {showCityOptions && form.state && filteredCities.length > 0 && (
+                    <div className="absolute z-20 mt-1 w-full max-h-44 overflow-auto rounded-lg border border-border bg-card shadow-lg">
+                      {filteredCities.map((city) => (
+                        <button
+                          key={city}
+                          type="button"
+                          onClick={() => {
+                            setForm({ ...form, city });
+                            setCityQuery(city);
+                            setShowCityOptions(false);
+                          }}
+                          className="w-full text-left px-3 py-2 text-sm hover:bg-muted"
+                        >
+                          {city}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
                   <label className="block text-sm font-medium text-foreground mb-1">Chit Value (₹)</label>
                   <input
                     type="number"
@@ -621,6 +704,63 @@ const MyChitFundGroup = () => {
                   className="w-full px-4 py-2.5 rounded-xl border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
                   required
                 />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-1">State</label>
+                  <select
+                    value={form.state}
+                    onChange={(e) => {
+                      const nextState = e.target.value;
+                      setForm({ ...form, state: nextState, city: "" });
+                      setCityQuery("");
+                      setShowCityOptions(false);
+                    }}
+                    className="w-full px-4 py-2.5 rounded-xl border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+                    required
+                  >
+                    <option value="">Select state</option>
+                    {STATES.map((state) => (
+                      <option key={state} value={state}>{state}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="relative">
+                  <label className="block text-sm font-medium text-foreground mb-1">City</label>
+                  <input
+                    type="text"
+                    value={cityQuery}
+                    onChange={(e) => {
+                      setCityQuery(e.target.value);
+                      setForm({ ...form, city: "" });
+                      setShowCityOptions(true);
+                    }}
+                    onFocus={() => setShowCityOptions(true)}
+                    onBlur={() => setTimeout(() => setShowCityOptions(false), 120)}
+                    placeholder={form.state ? "Search city" : "Select state first"}
+                    className="w-full px-4 py-2.5 rounded-xl border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 disabled:opacity-60"
+                    disabled={!form.state}
+                    required
+                  />
+                  {showCityOptions && form.state && filteredCities.length > 0 && (
+                    <div className="absolute z-20 mt-1 w-full max-h-44 overflow-auto rounded-lg border border-border bg-card shadow-lg">
+                      {filteredCities.map((city) => (
+                        <button
+                          key={city}
+                          type="button"
+                          onClick={() => {
+                            setForm({ ...form, city });
+                            setCityQuery(city);
+                            setShowCityOptions(false);
+                          }}
+                          className="w-full text-left px-3 py-2 text-sm hover:bg-muted"
+                        >
+                          {city}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>

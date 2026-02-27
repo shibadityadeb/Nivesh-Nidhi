@@ -25,6 +25,8 @@ const serializeAuction = (auction, currentUserId) => {
   return {
     id: auction.id,
     groupId: auction.group_id,
+    state: auction.state,
+    city: auction.city,
     createdBy: auction.created_by,
     createdByName: auction.created_by_user?.name || 'Unknown',
     highestBid: toNumber(auction.highest_bid),
@@ -174,6 +176,8 @@ const createAuction = async (req, res, next) => {
       const createdAuction = await tx.auctionRequest.create({
         data: {
           group_id: groupId,
+          state: access.group.state,
+          city: access.group.city,
           created_by: userId,
           highest_bid: normalizedBid,
           reason: reason?.trim() || null,
