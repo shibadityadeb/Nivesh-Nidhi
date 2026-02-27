@@ -1,12 +1,14 @@
+import { useEffect, useRef } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { AuthProvider } from "@/context/AuthContext";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { AuthProvider, useAuth } from "@/context/AuthContext";
 import { LanguageProvider } from "@/context/LanguageContext";
 import PageTransition from "@/components/PageTransition";
 import Chatbot from "@/components/Chatbot";
+import { startAppTutorial } from "@/utils/tutorial";
 import Index from "./pages/Index";
 import ChitGroups from "./pages/ChitGroups";
 import ChitGroupDetails from "./pages/ChitGroupDetails";
@@ -27,6 +29,34 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
+const TutorialBootstrap = () => {
+  const { user, isAuthenticated } = useAuth();
+  const location = useLocation();
+  const lastAttemptRef = useRef("");
+
+  useEffect(() => {
+    if (!isAuthenticated) return;
+
+    const storageKey = "hasSeenTutorial";
+    if (localStorage.getItem(storageKey)) return;
+
+    const attemptKey = `global:${location.pathname}`;
+    if (lastAttemptRef.current === attemptKey) return;
+    lastAttemptRef.current = attemptKey;
+
+    const timer = setTimeout(() => {
+      const started = startAppTutorial();
+      if (started) {
+        localStorage.setItem(storageKey, "true");
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [isAuthenticated, location.pathname]);
+
+  return null;
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
@@ -35,6 +65,7 @@ const App = () => (
           <Toaster />
           <Sonner />
           <BrowserRouter>
+            <TutorialBootstrap />
             <PageTransition>
               <Routes>
                 <Route path="/" element={<Index />} />
