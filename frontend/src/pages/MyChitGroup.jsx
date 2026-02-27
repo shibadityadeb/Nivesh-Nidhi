@@ -356,7 +356,7 @@ const MyChitGroup = () => {
         <div className="absolute top-40 right-40 w-[600px] h-[600px] bg-gradient-to-br from-primary/8 to-transparent rounded-full blur-3xl" />
         <div className="absolute bottom-20 left-40 w-[500px] h-[500px] bg-gradient-to-tr from-accent/8 to-transparent rounded-full blur-3xl" />
       </div>
-      
+
       <Navbar />
       <main className="container mx-auto px-4 py-24 pb-12 relative z-10">
         {/* Modern Page Header */}
@@ -427,17 +427,15 @@ const MyChitGroup = () => {
                           key={tab.key}
                           onClick={() => !disabled && setActiveTab(tab.key)}
                           disabled={disabled}
-                          className={`w-full flex items-center gap-4 px-5 py-4 rounded-xl text-sm font-semibold transition-all duration-300 ${
-                            activeTab === tab.key
+                          className={`w-full flex items-center gap-4 px-5 py-4 rounded-xl text-sm font-semibold transition-all duration-300 ${activeTab === tab.key
                               ? "bg-gradient-to-r from-primary via-primary/90 to-secondary text-white shadow-lg scale-105"
                               : disabled
-                              ? "text-muted-foreground/30 cursor-not-allowed bg-muted/20"
-                              : "text-foreground hover:bg-gradient-to-r hover:from-muted hover:to-muted/50 hover:scale-102 hover:shadow-md"
-                          }`}
+                                ? "text-muted-foreground/30 cursor-not-allowed bg-muted/20"
+                                : "text-foreground hover:bg-gradient-to-r hover:from-muted hover:to-muted/50 hover:scale-102 hover:shadow-md"
+                            }`}
                         >
-                          <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
-                            activeTab === tab.key ? "bg-white/20" : "bg-primary/10"
-                          }`}>
+                          <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${activeTab === tab.key ? "bg-white/20" : "bg-primary/10"
+                            }`}>
                             <Icon className="w-5 h-5" />
                           </div>
                           <span className="flex-1 text-left"><T>{tab.label}</T></span>
@@ -468,11 +466,10 @@ const MyChitGroup = () => {
                           setSelectedGroup(org.chit_groups?.[0] || null);
                           setActiveTab("overview");
                         }}
-                        className={`w-full text-left p-5 rounded-2xl transition-all duration-300 ${
-                          isActive
+                        className={`w-full text-left p-5 rounded-2xl transition-all duration-300 ${isActive
                             ? "bg-gradient-to-r from-primary/10 to-secondary/10 border-2 border-primary shadow-lg scale-105"
                             : "bg-muted/30 border-2 border-transparent hover:border-primary/20 hover:shadow-md hover:scale-102"
-                        }`}
+                          }`}
                       >
                         <div className="flex items-start justify-between mb-3">
                           <span className="font-bold text-base text-foreground truncate pr-2">{org.name}</span>
@@ -510,11 +507,10 @@ const MyChitGroup = () => {
                       <button
                         key={group.id}
                         onClick={() => setSelectedGroup(group)}
-                        className={`w-full text-left p-5 rounded-2xl transition-all duration-300 ${
-                          selectedGroup?.id === group.id
+                        className={`w-full text-left p-5 rounded-2xl transition-all duration-300 ${selectedGroup?.id === group.id
                             ? "bg-gradient-to-r from-secondary/10 to-accent/10 border-2 border-secondary shadow-lg scale-105"
                             : "bg-muted/30 border-2 border-transparent hover:border-secondary/20 hover:shadow-md hover:scale-102"
-                        }`}
+                          }`}
                       >
                         <span className="font-bold text-base text-foreground block truncate mb-3">{group.name}</span>
                         <div className="grid grid-cols-2 gap-3">
@@ -524,7 +520,7 @@ const MyChitGroup = () => {
                           </div>
                           <div className="flex items-center gap-2 text-xs bg-white/50 rounded-lg px-2 py-1.5">
                             <IndianRupee className="w-3.5 h-3.5 text-emerald-600" />
-                            <span className="font-semibold">₹{(Number(group.chit_value)/1000).toFixed(0)}K</span>
+                            <span className="font-semibold">₹{(Number(group.chit_value) / 1000).toFixed(0)}K</span>
                           </div>
                         </div>
                       </button>
@@ -613,7 +609,7 @@ const MyChitGroup = () => {
                           <T>Organization Overview</T>
                         </h2>
                       </div>
-                      
+
                       <div className="bg-white/80 backdrop-blur-sm border-2 border-white/50 rounded-2xl p-8 shadow-lg">
                         <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-8">
                           <div>
@@ -761,9 +757,8 @@ const MyChitGroup = () => {
                                 {request.user?.email || "No email"} · Contribution ₹{Number(request.contributionAmount || 0).toLocaleString("en-IN")}
                               </p>
                               <div className="mt-2">
-                                <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${
-                                  request.user?.isKycVerified ? "bg-emerald-100 text-emerald-700" : "bg-yellow-100 text-yellow-700"
-                                }`}>
+                                <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${request.user?.isKycVerified ? "bg-emerald-100 text-emerald-700" : "bg-yellow-100 text-yellow-700"
+                                  }`}>
                                   {request.user?.isKycVerified ? <T>KYC Verified</T> : <T>KYC Pending</T>}
                                 </span>
                               </div>
@@ -881,9 +876,8 @@ const MyChitGroup = () => {
                                   </div>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                  <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
-                                    member.status === "ACTIVE" ? "bg-emerald-100 text-emerald-700" : "bg-red-100 text-red-700"
-                                  }`}>
+                                  <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${member.status === "ACTIVE" ? "bg-emerald-100 text-emerald-700" : "bg-red-100 text-red-700"
+                                    }`}>
                                     {member.status}
                                   </span>
                                   {member.status === "ACTIVE" && (
@@ -1061,7 +1055,6 @@ const MyChitGroup = () => {
                   <h2 className="font-heading font-semibold text-lg text-foreground flex items-center gap-2">
                     <Megaphone className="w-5 h-5 text-primary" />
                     <T>Announcements</T>
-                    Announcements & Notifications
                     {selectedGroup && (
                       <span className="text-sm font-normal text-muted-foreground ml-2">— {selectedGroup.name}</span>
                     )}
@@ -1133,12 +1126,11 @@ const MyChitGroup = () => {
                                 <div className="flex-1">
                                   <div className="flex items-center gap-2 mb-1">
                                     <h4 className="font-semibold text-sm text-foreground">{ann.title}</h4>
-                                    <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
-                                      ann.type === "URGENT" ? "bg-red-100 text-red-700"
-                                      : ann.type === "BIDDING" ? "bg-indigo-100 text-indigo-700"
-                                      : ann.type === "PAYMENT" ? "bg-amber-100 text-amber-700"
-                                      : "bg-gray-100 text-gray-600"
-                                    }`}>
+                                    <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${ann.type === "URGENT" ? "bg-red-100 text-red-700"
+                                        : ann.type === "BIDDING" ? "bg-indigo-100 text-indigo-700"
+                                          : ann.type === "PAYMENT" ? "bg-amber-100 text-amber-700"
+                                            : "bg-gray-100 text-gray-600"
+                                      }`}>
                                       {ann.type}
                                     </span>
                                   </div>
@@ -1158,6 +1150,10 @@ const MyChitGroup = () => {
                           ))
                         )}
                       </div>
+                    </>
+                  )}
+                </div>
+              )}
 
               {/* NOTIFICATIONS TAB */}
               {activeTab === "notifications" && isApproved && (
@@ -1169,10 +1165,11 @@ const MyChitGroup = () => {
                       <span className="text-sm font-normal text-muted-foreground ml-2">— {selectedGroup.name}</span>
                     )}
                   </h2>
-                      <h3 className="font-medium text-sm text-foreground flex items-center gap-2 pt-2">
-                        <Bell className="w-4 h-4 text-blue-500" />
-                        Notify Members
-                      </h3>
+
+                  {!selectedGroup ? (
+                    <EmptyState icon={Bell} message="Select a chit group from the sidebar to manage notifications." />
+                  ) : (
+                    <>
 
                       {/* Send Notification Form */}
                       <div className="bg-card border border-border rounded-2xl p-6">
