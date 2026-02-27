@@ -15,7 +15,7 @@
   "license": "ISC",
   "description": "Fintech-grade Chit Fund Digitisation Platform Backend",
   "dependencies": {
-    "@supabase/supabase-js": "^2.97.0",
+    "@prisma/client": "5.16",
     "axios": "^1.6.0",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
@@ -25,7 +25,7 @@
     "form-data": "^4.0.0",
     "jsonwebtoken": "^9.0.2",
     "multer": "^1.4.5-lts.1",
-    "uuid": "^9.0.1"
+    "prisma": "5.16"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"
