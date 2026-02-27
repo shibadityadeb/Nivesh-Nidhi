@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, RefreshControl } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Shield, Users, TrendingUp, ChevronRight, FileText } from 'lucide-react-native';
@@ -10,20 +10,29 @@ export default function HomeScreen({ navigation }) {
     const { t } = useTranslation();
     const [userName, setUserName] = useState("User");
 
-    useEffect(() => {
-        const fetchName = async () => {
-            try {
-                const res = await user.getMe();
-                const fetchedUser = res.data?.data?.user || res.data?.user || res.data?.data || res.data;
-                if (fetchedUser?.name) {
-                    setUserName(fetchedUser.name.split(' ')[0]);
-                }
-            } catch (error) {
-                // Ignore
+    const [refreshing, setRefreshing] = useState(false);
+
+    const fetchName = async () => {
+        try {
+            const res = await user.getMe();
+            const fetchedUser = res.data?.data?.user || res.data?.user || res.data?.data || res.data;
+            if (fetchedUser?.name) {
+                setUserName(fetchedUser.name.split(' ')[0]);
             }
-        };
+        } catch (error) {
+            // Ignore
+        }
+    };
+
+    useEffect(() => {
         fetchName();
     }, []);
+
+    const onRefresh = async () => {
+        setRefreshing(true);
+        await fetchName();
+        setRefreshing(false);
+    };
 
     const stats = [
         { icon: Users, value: "108,000+", label: t('home.happy_subscribers') },
@@ -33,7 +42,11 @@ export default function HomeScreen({ navigation }) {
 
     return (
         <SafeAreaView style={styles.container}>
-            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+            <ScrollView
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={styles.scrollContent}
+                refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />}
+            >
 
                 {/* Header Profile Area */}
                 <View style={styles.header}>

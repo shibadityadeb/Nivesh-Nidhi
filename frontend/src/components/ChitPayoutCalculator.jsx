@@ -1,21 +1,7 @@
-import React, { useState, useEffect } from "react";
-import { T } from "@/context/LanguageContext";
-
-export default function ChitPayoutCalculator({
-  totalMembers,
-  monthlyContribution,
-  durationMonths,
-  foremanCommissionPercent,
-  minDiscount,
-  maxDiscount,
-  onCalculate
-}) {
-  const [discount, setDiscount] = useState(minDiscount || 0);
-  const [month, setMonth] = useState(1);
-  const [results, setResults] = useState({});
 import React, { useEffect, useMemo, useState } from "react";
 import { Loader2 } from "lucide-react";
 import { chitGroups as chitGroupsApi } from "@/lib/api";
+import { T } from "@/context/LanguageContext";
 
 const toNumber = (value) => {
   if (value === "" || value === null || typeof value === "undefined") return null;
@@ -163,8 +149,6 @@ export default function ChitPayoutCalculator({ groupId, onCalculate }) {
     }
   };
 
-  if (!totalMembers || !monthlyContribution || !durationMonths) {
-    return <div className="text-muted-foreground"><T>Please select a group to view calculator.</T></div>;
   useEffect(() => {
     if (!isValid) {
       setResult(null);
@@ -179,14 +163,14 @@ export default function ChitPayoutCalculator({ groupId, onCalculate }) {
   }, [form, isValid]);
 
   if (!groupId) {
-    return <div className="text-muted-foreground">Please select a group to view calculator.</div>;
+    return <div className="text-muted-foreground"><T>Please select a group to view calculator.</T></div>;
   }
 
   if (configLoading) {
     return (
       <div className="flex items-center gap-2 text-muted-foreground">
         <Loader2 className="w-4 h-4 animate-spin" />
-        Loading calculator configuration...
+        <T>Loading calculator configuration...</T>
       </div>
     );
   }
@@ -197,180 +181,124 @@ export default function ChitPayoutCalculator({ groupId, onCalculate }) {
 
   return (
     <div className="space-y-6">
-      {/* Input Parameters */}
-      <div className="grid grid-cols-2 gap-4">
-        <div className="bg-secondary/5 rounded-lg p-3">
-          <p className="text-xs text-muted-foreground mb-1"><T>Monthly Contribution</T></p>
-          <p className="text-lg font-bold text-foreground">₹{monthlyContribution.toLocaleString('en-IN')}</p>
-        </div>
-        <div className="bg-secondary/5 rounded-lg p-3">
-          <p className="text-xs text-muted-foreground mb-1"><T>Total Members</T></p>
-          <p className="text-lg font-bold text-foreground">{totalMembers}</p>
-        </div>
-        <div className="bg-secondary/5 rounded-lg p-3">
-          <p className="text-xs text-muted-foreground mb-1"><T>Duration</T></p>
-          <p className="text-lg font-bold text-foreground">{durationMonths} months</p>
-        </div>
-        <div className="bg-secondary/5 rounded-lg p-3">
-          <p className="text-xs text-muted-foreground mb-1"><T>Commission</T></p>
-          <p className="text-lg font-bold text-foreground">{foremanCommissionPercent}%</p>
-    <div className="space-y-5">
-      <div className="grid md:grid-cols-2 gap-4">
-        <div>
-          <label className="text-sm font-medium text-foreground">Total Chit Amount (₹)</label>
-          <input
-            type="number"
-            min="0"
-            step="0.01"
-            placeholder="e.g., 100000"
-            value={form.totalChitAmount}
-            onChange={(e) => setForm((prev) => ({ ...prev, totalChitAmount: e.target.value }))}
-            className="w-full mt-1 border border-border rounded-lg px-3 py-2"
-          />
-          {inlineErrors.totalChitAmount && <p className="text-xs text-red-600 mt-1">{inlineErrors.totalChitAmount}</p>}
+      <div className="space-y-5">
+        <div className="grid md:grid-cols-2 gap-4">
+          <div>
+            <label className="text-sm font-medium text-foreground"><T>Total Chit Amount (₹)</T></label>
+            <input
+              type="number"
+              min="0"
+              step="0.01"
+              placeholder="e.g., 100000"
+              value={form.totalChitAmount}
+              onChange={(e) => setForm((prev) => ({ ...prev, totalChitAmount: e.target.value }))}
+              className="w-full mt-1 border border-border rounded-lg px-3 py-2"
+            />
+            {inlineErrors.totalChitAmount && <p className="text-xs text-red-600 mt-1">{inlineErrors.totalChitAmount}</p>}
+          </div>
+
+          <div>
+            <label className="text-sm font-medium text-foreground"><T>Duration (Months)</T></label>
+            <input
+              type="number"
+              min="1"
+              step="1"
+              placeholder="e.g., 12"
+              value={form.durationMonths}
+              onChange={(e) => setForm((prev) => ({ ...prev, durationMonths: e.target.value }))}
+              className="w-full mt-1 border border-border rounded-lg px-3 py-2"
+            />
+            {inlineErrors.durationMonths && <p className="text-xs text-red-600 mt-1">{inlineErrors.durationMonths}</p>}
+          </div>
+
+          <div>
+            <label className="text-sm font-medium text-foreground"><T>Number of Members</T></label>
+            <input
+              type="number"
+              min="1"
+              step="1"
+              placeholder="e.g., 10"
+              value={form.numberOfMembers}
+              onChange={(e) => setForm((prev) => ({ ...prev, numberOfMembers: e.target.value }))}
+              className="w-full mt-1 border border-border rounded-lg px-3 py-2"
+            />
+            {inlineErrors.numberOfMembers && <p className="text-xs text-red-600 mt-1">{inlineErrors.numberOfMembers}</p>}
+          </div>
+
+          <div>
+            <label className="text-sm font-medium text-foreground"><T>Commission Rate (%)</T></label>
+            <input
+              type="number"
+              min="0"
+              step="0.01"
+              placeholder="e.g., 5"
+              value={form.commissionRate}
+              onChange={(e) => setForm((prev) => ({ ...prev, commissionRate: e.target.value }))}
+              className="w-full mt-1 border border-border rounded-lg px-3 py-2"
+            />
+            {inlineErrors.commissionRate && <p className="text-xs text-red-600 mt-1">{inlineErrors.commissionRate}</p>}
+          </div>
+
+          <div>
+            <label className="text-sm font-medium text-foreground"><T>Interest Rate (%)</T></label>
+            <input
+              type="number"
+              min="0"
+              step="0.01"
+              placeholder="e.g., 12"
+              value={form.interestRate}
+              onChange={(e) => setForm((prev) => ({ ...prev, interestRate: e.target.value }))}
+              className="w-full mt-1 border border-border rounded-lg px-3 py-2"
+            />
+            {inlineErrors.interestRate && <p className="text-xs text-red-600 mt-1">{inlineErrors.interestRate}</p>}
+          </div>
+
+          <div className="bg-muted/50 rounded-lg p-3 text-xs text-muted-foreground">
+            <p><T>Calculation Type:</T> <span className="font-semibold text-foreground uppercase">{config?.calculationType}</span></p>
+            <p><T>Amount Limits:</T> ₹{Number(config?.minAmount || 0).toLocaleString("en-IN")} - ₹{Number(config?.maxAmount || 0).toLocaleString("en-IN")}</p>
+            <p><T>Allowed Time:</T> {config?.allowedTimePeriod?.min} - {config?.allowedTimePeriod?.max}</p>
+          </div>
         </div>
 
-        <div>
-          <label className="text-sm font-medium text-foreground">Duration (Months)</label>
-          <input
-            type="number"
-            min="1"
-            step="1"
-            placeholder="e.g., 12"
-            value={form.durationMonths}
-            onChange={(e) => setForm((prev) => ({ ...prev, durationMonths: e.target.value }))}
-            className="w-full mt-1 border border-border rounded-lg px-3 py-2"
-          />
-          {inlineErrors.durationMonths && <p className="text-xs text-red-600 mt-1">{inlineErrors.durationMonths}</p>}
-        </div>
+        <button
+          type="button"
+          onClick={triggerCalculation}
+          disabled={!isValid || calculateLoading}
+          className="px-4 py-2 rounded-lg bg-secondary text-secondary-foreground font-semibold disabled:bg-muted disabled:text-muted-foreground"
+        >
+          {calculateLoading ? <T>Calculating...</T> : <T>Calculate</T>}
+        </button>
 
-      {/* Discount Slider */}
-      <div>
-        <div className="flex justify-between items-center mb-2">
-          <label className="text-sm font-medium text-foreground"><T>Discount Percentage</T></label>
-          <span className="text-lg font-bold text-secondary">{discount}%</span>
-        <div>
-          <label className="text-sm font-medium text-foreground">Number of Members</label>
-          <input
-            type="number"
-            min="1"
-            step="1"
-            placeholder="e.g., 10"
-            value={form.numberOfMembers}
-            onChange={(e) => setForm((prev) => ({ ...prev, numberOfMembers: e.target.value }))}
-            className="w-full mt-1 border border-border rounded-lg px-3 py-2"
-          />
-          {inlineErrors.numberOfMembers && <p className="text-xs text-red-600 mt-1">{inlineErrors.numberOfMembers}</p>}
-        </div>
+        {calculateError && <p className="text-sm text-red-600">{calculateError}</p>}
 
-        <div>
-          <label className="text-sm font-medium text-foreground">Commission Rate (%)</label>
-          <input
-            type="number"
-            min="0"
-            step="0.01"
-            placeholder="e.g., 5"
-            value={form.commissionRate}
-            onChange={(e) => setForm((prev) => ({ ...prev, commissionRate: e.target.value }))}
-            className="w-full mt-1 border border-border rounded-lg px-3 py-2"
-          />
-          {inlineErrors.commissionRate && <p className="text-xs text-red-600 mt-1">{inlineErrors.commissionRate}</p>}
-        </div>
-
-      {/* Month Slider */}
-      <div>
-        <div className="flex justify-between items-center mb-2">
-          <label className="text-sm font-medium text-foreground"><T>Simulate Month</T></label>
-          <span className="text-lg font-bold text-primary">{month}</span>
-        <div>
-          <label className="text-sm font-medium text-foreground">Interest Rate (%)</label>
-          <input
-            type="number"
-            min="0"
-            step="0.01"
-            placeholder="e.g., 12"
-            value={form.interestRate}
-            onChange={(e) => setForm((prev) => ({ ...prev, interestRate: e.target.value }))}
-            className="w-full mt-1 border border-border rounded-lg px-3 py-2"
-          />
-          {inlineErrors.interestRate && <p className="text-xs text-red-600 mt-1">{inlineErrors.interestRate}</p>}
-        </div>
-
-        <div className="bg-muted/50 rounded-lg p-3 text-xs text-muted-foreground">
-          <p>Calculation Type: <span className="font-semibold text-foreground uppercase">{config?.calculationType}</span></p>
-          <p>Amount Limits: ₹{Number(config?.minAmount || 0).toLocaleString("en-IN")} - ₹{Number(config?.maxAmount || 0).toLocaleString("en-IN")}</p>
-          <p>Allowed Time: {config?.allowedTimePeriod?.min} - {config?.allowedTimePeriod?.max}</p>
-        </div>
+        {result && (
+          <div className="bg-primary/5 rounded-lg p-4 space-y-3 mt-4">
+            <h4 className="font-semibold text-foreground"><T>Calculation Breakdown</T></h4>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <div className="bg-white rounded-lg border border-border p-3">
+                <p className="text-xs text-muted-foreground"><T>Total Investment</T></p>
+                <p className="font-semibold text-foreground">₹{Number(result.totalInvestment || 0).toLocaleString("en-IN")}</p>
+              </div>
+              <div className="bg-white rounded-lg border border-border p-3">
+                <p className="text-xs text-muted-foreground"><T>Commission Deducted</T></p>
+                <p className="font-semibold text-foreground">₹{Number(result.commissionAmount || 0).toLocaleString("en-IN")}</p>
+              </div>
+              <div className="bg-white rounded-lg border border-border p-3">
+                <p className="text-xs text-muted-foreground"><T>Per Member Contribution</T></p>
+                <p className="font-semibold text-foreground">₹{Number(result.contributionPerMember || 0).toLocaleString("en-IN")}</p>
+              </div>
+              <div className="bg-white rounded-lg border border-border p-3">
+                <p className="text-xs text-muted-foreground"><T>Interest Earned</T></p>
+                <p className="font-semibold text-green-700">₹{Number(result.interestEarned || 0).toLocaleString("en-IN")}</p>
+              </div>
+              <div className="bg-white rounded-lg border border-border p-3">
+                <p className="text-xs text-muted-foreground"><T>Final Amount</T></p>
+                <p className="font-semibold text-secondary">₹{Number(result.finalAmount || 0).toLocaleString("en-IN")}</p>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
-
-      <button
-        type="button"
-        onClick={triggerCalculation}
-        disabled={!isValid || calculateLoading}
-        className="px-4 py-2 rounded-lg bg-secondary text-secondary-foreground font-semibold disabled:bg-muted disabled:text-muted-foreground"
-      >
-        {calculateLoading ? "Calculating..." : "Calculate"}
-      </button>
-
-      {calculateError && <p className="text-sm text-red-600">{calculateError}</p>}
-
-      {result && (
-        <div className="bg-primary/5 rounded-lg p-4 space-y-3">
-          <h4 className="font-semibold text-foreground mb-3"><T>Estimated Results</T></h4>
-          <div className="grid grid-cols-2 gap-3 text-sm">
-            <div>
-              <p className="text-muted-foreground"><T>Monthly Pool</T></p>
-              <p className="font-semibold text-foreground">₹{results.monthlyPool?.toLocaleString('en-IN')}</p>
-            </div>
-            <div>
-              <p className="text-muted-foreground"><T>Commission</T></p>
-              <p className="font-semibold text-foreground">₹{results.commission?.toLocaleString('en-IN')}</p>
-            </div>
-            <div>
-              <p className="text-muted-foreground"><T>Discount Amount</T></p>
-              <p className="font-semibold text-foreground">₹{results.discountAmount?.toLocaleString('en-IN')}</p>
-            </div>
-            <div>
-              <p className="text-muted-foreground"><T>Winning Amount</T></p>
-              <p className="font-semibold text-secondary">₹{results.estimatedWinning?.toLocaleString('en-IN')}</p>
-            </div>
-            <div>
-              <p className="text-muted-foreground"><T>Total Payable</T></p>
-              <p className="font-semibold text-foreground">₹{results.totalPayable?.toLocaleString('en-IN')}</p>
-            </div>
-            <div>
-              <p className="text-muted-foreground"><T>Profit/Loss</T></p>
-              <p className={`font-semibold ${results.profitLoss >= 0 ? 'text-green-600' : 'text-red-600'}`}>₹{results.profitLoss?.toLocaleString('en-IN')}</p>
-            </div>
-          </div>
-          <div className="pt-3 border-t border-border">
-            <p className="text-muted-foreground text-sm">Payout if win in month {month}</p>
-            <p className="font-bold text-xl text-secondary">₹{results.monthPayout?.toLocaleString('en-IN')}</p>
-          <h4 className="font-semibold text-foreground">Calculation Breakdown</h4>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-            <div className="bg-white rounded-lg border border-border p-3">
-              <p className="text-xs text-muted-foreground">Total Investment</p>
-              <p className="font-semibold text-foreground">₹{Number(result.totalInvestment || 0).toLocaleString("en-IN")}</p>
-            </div>
-            <div className="bg-white rounded-lg border border-border p-3">
-              <p className="text-xs text-muted-foreground">Commission Deducted</p>
-              <p className="font-semibold text-foreground">₹{Number(result.commissionAmount || 0).toLocaleString("en-IN")}</p>
-            </div>
-            <div className="bg-white rounded-lg border border-border p-3">
-              <p className="text-xs text-muted-foreground">Per Member Contribution</p>
-              <p className="font-semibold text-foreground">₹{Number(result.contributionPerMember || 0).toLocaleString("en-IN")}</p>
-            </div>
-            <div className="bg-white rounded-lg border border-border p-3">
-              <p className="text-xs text-muted-foreground">Interest Earned</p>
-              <p className="font-semibold text-green-700">₹{Number(result.interestEarned || 0).toLocaleString("en-IN")}</p>
-            </div>
-            <div className="bg-white rounded-lg border border-border p-3">
-              <p className="text-xs text-muted-foreground">Final Amount</p>
-              <p className="font-semibold text-secondary">₹{Number(result.finalAmount || 0).toLocaleString("en-IN")}</p>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

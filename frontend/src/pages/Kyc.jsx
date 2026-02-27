@@ -8,9 +8,8 @@ import AuthModal from "@/components/AuthModal";
 import { useAuth } from "@/context/AuthContext";
 import { kyc, locations } from "@/lib/api";
 import { validateAadhaar } from "@/lib/validateAadhaar";
-import { STATE_CITY_MAP, STATES } from "@/constants/indiaLocations";
-import { T } from "@/context/LanguageContext";
 import { STATES } from "@/constants/indiaLocations";
+import { T } from "@/context/LanguageContext";
 
 const initialForm = {
   aadhaarNumber: "",
@@ -276,17 +275,27 @@ export default function Kyc() {
                       name="citySearch"
                       type="text"
                       required
-                      disabled={!form.state}
                       value={cityQuery}
                       onChange={(e) => {
+                        if (!form.state) {
+                          toast.error("Please select a state first");
+                          return;
+                        }
                         setCityQuery(e.target.value);
                         setForm((prev) => ({ ...prev, city: "" }));
                         setShowCityOptions(true);
                       }}
-                      onFocus={() => setShowCityOptions(true)}
-                      onBlur={() => setTimeout(() => setShowCityOptions(false), 120)}
+                      onFocus={(e) => {
+                        if (!form.state) {
+                          toast.error("Please select a state first");
+                          e.target.blur();
+                        } else {
+                          setShowCityOptions(true);
+                        }
+                      }}
+                      onBlur={() => setTimeout(() => setShowCityOptions(false), 200)}
                       className="flex h-11 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary transition-all disabled:opacity-50"
-                      placeholder={form.state ? "Search" : "Select state"}
+                      placeholder={form.state ? "Search" : "Select state first"}
                     />
                     {showCityOptions && form.state && filteredCities.length > 0 && (
                       <div className="absolute z-20 mt-1 w-full max-h-48 overflow-auto rounded-lg border border-border bg-card shadow-xl">
@@ -306,68 +315,8 @@ export default function Kyc() {
                         ))}
                       </div>
                     )}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <label htmlFor="state" className="text-sm font-semibold">State</label>
-                <select
-                  id="state"
-                  name="state"
-                  required
-                  value={form.state}
-                  onChange={(e) => {
-                    const nextState = e.target.value;
-                    setForm((prev) => ({ ...prev, state: nextState, city: "" }));
-                    setCityQuery("");
-                    setShowCityOptions(false);
-                  }}
-                  className="flex h-12 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                >
-                  <option value="">Select state</option>
-                  {STATES.map((state) => (
-                    <option key={state} value={state}>{state}</option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="space-y-2 relative">
-                <label htmlFor="citySearch" className="text-sm font-semibold">City</label>
-                <input
-                  id="citySearch"
-                  name="citySearch"
-                  type="text"
-                  required
-                  disabled={!form.state}
-                  value={cityQuery}
-                  onChange={(e) => {
-                    setCityQuery(e.target.value);
-                    setForm((prev) => ({ ...prev, city: "" }));
-                    setShowCityOptions(true);
-                  }}
-                  onFocus={() => setShowCityOptions(true)}
-                  onBlur={() => setTimeout(() => setShowCityOptions(false), 120)}
-                  className="flex h-12 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:opacity-60"
-                  placeholder={form.state ? "Search city" : "Select state first"}
-                />
-                {showCityOptions && form.state && filteredCities.length > 0 && (
-                  <div className="absolute z-20 mt-1 w-full max-h-48 overflow-auto rounded-md border border-border bg-card shadow-lg">
-                    {filteredCities.map((city) => (
-                      <button
-                        key={city}
-                        type="button"
-                        onClick={() => {
-                          setForm((prev) => ({ ...prev, city }));
-                          setCityQuery(city);
-                          setShowCityOptions(false);
-                        }}
-                        className="w-full px-3 py-2 text-left text-sm hover:bg-muted"
-                      >
-                        {city}
-                      </button>
-                    ))}
                   </div>
-                )}
-              </div>
-            </div>
+                </div>
 
                 <button
                   type="submit"
@@ -385,9 +334,9 @@ export default function Kyc() {
               <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 border border-blue-200 dark:border-blue-800 rounded-xl p-5">
                 <div className="flex items-center gap-3 mb-3">
                   <div className="w-12 h-12 rounded-lg bg-white flex items-center justify-center flex-shrink-0 shadow-sm">
-                    <img 
-                      src="https://digilocker.gov.in/assets/img/digilocker_logo.png" 
-                      alt="DigiLocker" 
+                    <img
+                      src="https://digilocker.gov.in/assets/img/digilocker_logo.png"
+                      alt="DigiLocker"
                       className="w-10 h-10 object-contain"
                     />
                   </div>

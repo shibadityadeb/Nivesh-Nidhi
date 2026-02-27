@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { View, Text, StyleSheet, ScrollView, ActivityIndicator, Alert, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, ActivityIndicator, Alert, TouchableOpacity, RefreshControl } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRoute } from '@react-navigation/native';
 import { Users, Calendar, IndianRupee, ShieldCheck } from 'lucide-react-native';
@@ -31,6 +31,7 @@ export default function GroupDetailsScreen({ navigation }) {
   const [applyLoading, setApplyLoading] = useState(false);
   const [paymentLoading, setPaymentLoading] = useState(false);
   const [profile, setProfile] = useState(null);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     fetchProfile();
@@ -73,6 +74,12 @@ export default function GroupDetailsScreen({ navigation }) {
     } finally {
       setLoading(false);
     }
+  };
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await fetchGroupDetails();
+    setRefreshing(false);
   };
 
   const ensureKyc = () => {
@@ -353,6 +360,7 @@ export default function GroupDetailsScreen({ navigation }) {
       <ScrollView
         contentContainerStyle={styles.scroll}
         showsVerticalScrollIndicator={false}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />}
       >
         <View style={styles.header}>
           <TouchableOpacity onPress={() => navigation.goBack()}>

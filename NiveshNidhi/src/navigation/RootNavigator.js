@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, View } from 'react-native';
+import { ActivityIndicator, View, DeviceEventEmitter } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -35,6 +35,9 @@ function AppTabs() {
             }
         };
         fetchStatus();
+
+        const subscription = DeviceEventEmitter.addListener('kyc_completed', fetchStatus);
+        return () => subscription.remove();
     }, []);
 
     if (isVerified === null) {
@@ -106,25 +109,37 @@ function AppTabs() {
 
 export default function RootNavigator() {
     const [isFirstLaunch, setIsFirstLaunch] = useState(null);
+    const [isAuthenticated, setIsAuthenticated] = useState(null);
 
     useEffect(() => {
-        AsyncStorage.getItem('hasOnboarded').then(value => {
-            if (value === null) {
-                setIsFirstLaunch(true);
-            } else {
+        const checkAppLaunch = async () => {
+            try {
+                const onboarded = await AsyncStorage.getItem('hasOnboarded');
+                setIsFirstLaunch(onboarded === null);
+
+                const token = await AsyncStorage.getItem('nn_token');
+                setIsAuthenticated(!!token);
+            } catch (e) {
                 setIsFirstLaunch(false);
+                setIsAuthenticated(false);
             }
-        });
+        };
+        checkAppLaunch();
     }, []);
 
-    if (isFirstLaunch === null) return null; // loading
+    if (isFirstLaunch === null || isAuthenticated === null) return null; // loading
+
+    let initialRouteName = 'Auth';
+    if (isFirstLaunch) {
+        initialRouteName = 'Onboarding';
+    } else if (isAuthenticated) {
+        initialRouteName = 'AppLayout';
+    }
 
     return (
         <NavigationContainer>
-            <Stack.Navigator screenOptions={{ headerShown: false }}>
-                {isFirstLaunch && (
-                    <Stack.Screen name="Onboarding" component={OnboardingScreen} />
-                )}
+            <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName={initialRouteName}>
+                <Stack.Screen name="Onboarding" component={OnboardingScreen} />
                 <Stack.Screen name="Auth" component={AuthScreen} />
                 <Stack.Screen name="AppLayout" component={AppTabs} />
                 <Stack.Screen name="GroupDetails" component={GroupDetailsScreen} options={{ headerShown: false }} />

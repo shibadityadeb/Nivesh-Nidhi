@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Switch, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Switch, ActivityIndicator, Alert, RefreshControl } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -12,6 +12,7 @@ export default function ProfileScreen({ navigation }) {
     const [notificationsEnabled, setNotificationsEnabled] = useState(true);
     const [profileData, setProfileData] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [refreshing, setRefreshing] = useState(false);
 
     useEffect(() => {
         fetchProfile();
@@ -28,7 +29,13 @@ export default function ProfileScreen({ navigation }) {
             // Non-critical, just keep as null or empty
         } finally {
             setLoading(false);
+            setRefreshing(false);
         }
+    };
+
+    const onRefresh = () => {
+        setRefreshing(true);
+        fetchProfile();
     };
 
     const changeLanguage = async (lng) => {
@@ -66,7 +73,11 @@ export default function ProfileScreen({ navigation }) {
                 <Text style={styles.headerTitle}>{t('profile.title')}</Text>
             </View>
 
-            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+            <ScrollView
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={styles.scrollContent}
+                refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />}
+            >
 
                 {/* Profile Card */}
                 <View style={styles.profileCard}>

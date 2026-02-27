@@ -169,11 +169,11 @@ export default function ApplyOrganizer() {
 
     return (
         <div className="min-h-screen bg-background flex flex-col items-center pt-24 pb-12 px-4 relative overflow-hidden">
-          {/* Gradient Splashes */}
-          <div className="fixed inset-0 pointer-events-none z-0">
-            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-to-br from-secondary/12 to-transparent rounded-full blur-3xl" />
-            <div className="absolute bottom-0 left-0 w-[450px] h-[450px] bg-gradient-to-tr from-accent/10 to-transparent rounded-full blur-3xl" />
-          </div>
+            {/* Gradient Splashes */}
+            <div className="fixed inset-0 pointer-events-none z-0">
+                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-to-br from-secondary/12 to-transparent rounded-full blur-3xl" />
+                <div className="absolute bottom-0 left-0 w-[450px] h-[450px] bg-gradient-to-tr from-accent/10 to-transparent rounded-full blur-3xl" />
+            </div>
             <div className="w-full max-w-4xl">
                 <div className="mb-8 pl-2">
                     <Link to="/" className="text-sm font-medium text-primary/60 hover:text-primary mb-4 inline-flex items-center gap-2">
@@ -454,7 +454,19 @@ export default function ApplyOrganizer() {
                                             required
                                             name="city"
                                             value={formData.city}
-                                            onChange={handleChange}
+                                            onChange={(e) => {
+                                                if (!formData.state) {
+                                                    toast.error("Please enter a state first");
+                                                    return;
+                                                }
+                                                handleChange(e);
+                                            }}
+                                            onFocus={(e) => {
+                                                if (!formData.state) {
+                                                    toast.error("Please enter a state first");
+                                                    e.target.blur();
+                                                }
+                                            }}
                                             className="flex h-12 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm"
                                             placeholder="e.g. Pune"
                                         />
