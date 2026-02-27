@@ -1,79 +1,145 @@
-const { verifyToken } = require('../utils/token');
 const User = require('../models/User');
+const { generateToken } = require('../utils/token');
+const { validationResult } = require('express-validator');
 
-const protect = async (req, res, next) => {
+const signup = async (req, res) => {
   try {
-    let token;
-    
-    if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
-      token = req.headers.authorization.split(' ')[1];
-    }
-
-    if (!token) {
-      return res.status(401).json({
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
         success: false,
-        message: 'Access denied. No token provided.'
+        message: 'Validation failed',
+        errors: errors.array()
       });
     }
 
-    const decoded = verifyToken(token);
-    const user = await User.findById(decoded.id);
+    const { name, email, phone, password } = req.body;
 
-    if (!user) {
-      return res.status(401).json({
+    const existingUser = await User.findByEmail(email);
+    if (existingUser) {
+      return res.status(409).json({
         success: false,
-        message: 'User no longer exists.'
+        message: 'Email already registered'
       });
     }
 
-    req.user = user;
-    next();
+    const user = await User.create({ name, email, phone, password });
+    const token = generateToken(user.id);
+
+    res.status(201).json({
+      success: true,
+      message: 'User registered successfully',
+      data: {
+        user: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          phone: user.phone,
+          role: user.role,
+          isKycVerified: user.isKycVerified
+        },
+        token
+      }
+    });
   } catch (error) {
-    return res.status(401).json({
+    console.error('SIGNUP ERROR:', error);
+    res.status(500).json({
       success: false,
-      message: 'Invalid or expired token.'
+      message: 'Registration failed',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
     });
   }
 };
 
-const authorize = (...roles) => {
-  return (req, res, next) => {
-    if (!roles.includes(req.user.role)) {
-      return res.status(403).json({
+const login = async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
         success: false,
-        message: 'You are not authorized to access this resource.'
+        message: 'Validation failed',
+        errors: errors.array()
       });
     }
-    next();
-  };
-};
 
-const optionalProtect = async (req, res, next) => {
-  try {
-    let token;
+    const { email, password } = req.body;
 
-    if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
-      token = req.headers.authorization.split(' ')[1];
+    const user = await User.findByEmail(email, true); // Include password for comparison
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid email or password'
+      });
     }
 
-    console.log('[optionalProtect] Token present:', !!token, 'Path:', req.path);
-
-    if (!token) {
-      console.log('[optionalProtect] No token, proceeding as guest');
-      return next();
+    const isMatch = await User.comparePassword(password, user.password);
+    if (!isMatch) {
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid email or password'
+      });
     }
 
-    const decoded = verifyToken(token);
-    const user = await User.findById(decoded.id);
-    if (user) {
-      req.user = user;
-      console.log('[optionalProtect] User found:', user.email);
-    }
-    return next();
+    const token = generateToken(user.id);
+
+    res.status(200).json({
+      success: true,
+      message: 'Login successful',
+      data: {
+        user: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          phone: user.phone,
+          role: user.role,
+          isKycVerified: user.isKycVerified
+        },
+        token
+      }
+    });
   } catch (error) {
-    console.log('[optionalProtect] Error:', error.message);
-    return next();
+    res.status(500).json({
+      success: false,
+      message: 'Login failed',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
 };
 
-module.exports = { protect, authorize, optionalProtect };
+const getProfile = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: {
+        user: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          phone: user.phone,
+          role: user.role,
+          isKycVerified: user.isKycVerified,
+          age: user.age,
+          address: user.address,
+          createdAt: user.createdAt
+        }
+      }
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch profile',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+};
+
+module.exports = { signup, login, getProfile };
