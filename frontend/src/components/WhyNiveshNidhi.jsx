@@ -2,36 +2,36 @@ const WhyNiveshNidhi = () => {
   const advantages = [
     {
       image: "https://thumbs.dreamstime.com/b/escrow-text-written-orange-vintage-stamp-round-rubber-247120676.jpg",
-      title: "2 min Onboarding",
-      subtitle: "& 24 hr Payout",
+      title: "Secure Escrow Payments",
+      subtitle: "& Fast Payouts",
       titleColor: "text-secondary",
       subtitleColor: "text-primary"
     },
     {
       image: "https://mypaisaa.com/assets/images/2_eAuction.svg",
-      title: "In-App live",
+      title: "Transparent Real-Time",
       subtitle: "e-auctions",
       titleColor: "text-primary",
       subtitleColor: "text-secondary"
     },
     {
       image: "https://mypaisaa.com/assets/images/3_4auctions.svg",
-      title: "4-10 Auctions",
-      subtitle: "per month",
+      title: "Structured Monthly",
+      subtitle: "chit cycles",
       titleColor: "text-secondary",
       subtitleColor: "text-foreground/70"
     },
     {
       image: "https://mypaisaa.com/assets/images/5_24x7support.svg",
-      title: "24/7 customer",
-      subtitle: "support",
+      title: "AI Assistant",
+      subtitle: "& guided user support",
       titleColor: "text-secondary",
       subtitleColor: "text-foreground/70"
     },
     {
       image: "https://mypaisaa.com/assets/images/6_fullycomplaint.svg",
-      title: "Fully Compliant as",
-      subtitle: "per chit act",
+      title: "Blockchain Audit",
+      subtitle: "& trust layer",
       titleColor: "text-secondary",
       subtitleColor: "text-foreground/70"
     },
