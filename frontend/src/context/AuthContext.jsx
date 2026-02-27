@@ -83,6 +83,30 @@ export const AuthProvider = ({ children }) => {
     return data.data;
   };
 
+  const googleLoginUser = async (credential) => {
+    let data;
+    try {
+      const res = await authApi.googleLogin(credential);
+      data = res.data;
+    } catch (error) {
+      data = error.response?.data || { success: false, message: "Google login failed" };
+    }
+
+    if (!data.success) {
+      throw new Error(data.message || "Google login failed");
+    }
+
+    localStorage.setItem("nn_token", data.data.token);
+    persistUser(data.data.user);
+    setToken(data.data.token);
+    setShowAuthModal(false);
+
+    setNewUserName(data.data.user.name);
+    setShowLoginSuccessModal(true);
+
+    return data.data;
+  };
+
   const updateUser = (nextUser) => {
     persistUser(nextUser);
   };
@@ -117,6 +141,7 @@ export const AuthProvider = ({ children }) => {
       isAuthenticated: !!user && !!token,
       signupUser,
       loginUser,
+      googleLoginUser,
       updateUser,
       logoutUser
     }}>
