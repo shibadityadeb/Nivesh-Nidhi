@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { X, Mail, Lock, User, Phone, Eye, EyeOff, AlertCircle } from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/context/AuthContext";
 
 const AuthModal = () => {
   const { showAuthModal, setShowAuthModal, signupUser, loginUser } = useAuth();

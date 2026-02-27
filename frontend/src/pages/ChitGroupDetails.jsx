@@ -8,7 +8,7 @@ import { RiskAssessmentCard } from "@/components/RiskAssessmentCard";
 import { GroupRiskCard } from "@/components/GroupRiskCard";
 import ChitPayoutCalculator from "@/components/ChitPayoutCalculator";
 import { toast } from "sonner";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/context/AuthContext";
 
 export default function ChitGroupDetails() {
   const { id } = useParams();

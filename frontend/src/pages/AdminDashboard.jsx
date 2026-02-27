@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/context/AuthContext";
 import { admin as adminApi } from "@/lib/api";
 import { toast } from "sonner";
 import Navbar from "@/components/Navbar";
