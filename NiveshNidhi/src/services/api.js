@@ -1,12 +1,20 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Platform } from 'react-native';
 
-// In Expo, localhost points to the device itself. For Android emulator: 10.0.2.2.
-// Alternatively, replace with your machine's local IP (e.g., 192.168.x.x) if testing on physical device.
-const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://10.158.44.239:3000/api';
+const DEFAULT_DEV_API_URL =
+    Platform.OS === 'android'
+        ? 'http://10.0.2.2:3000/api'
+        : 'http://localhost:3000/api';
+
+// For physical devices, set `EXPO_PUBLIC_API_URL` to your machine's LAN IP
+// e.g. `http://192.168.x.x:3000/api` (must be reachable from the phone).
+export const API_URL = process.env.EXPO_PUBLIC_API_URL || DEFAULT_DEV_API_URL;
 
 const api = axios.create({
     baseURL: API_URL,
+    timeout: 15000,
+    timeoutErrorMessage: 'timeout exceeded',
     headers: {
         'Content-Type': 'application/json',
     },
@@ -22,6 +30,20 @@ api.interceptors.request.use(
         return config;
     },
     (error) => {
+        return Promise.reject(error);
+    }
+);
+
+api.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        // Normalize common axios/react-native error shapes
+        if (error?.code === 'ECONNABORTED') {
+            error.message = 'Request timed out. Please try again.';
+        } else if (!error?.response) {
+            // No response usually means: server unreachable, wrong URL, no internet, SSL/cleartext issues
+            error.message = `Unable to reach server. Check API URL: ${API_URL}`;
+        }
         return Promise.reject(error);
     }
 );
@@ -43,6 +65,16 @@ export const kyc = {
 
 export const organizers = {
     apply: (applicationData) => api.post('/organizers/apply', applicationData),
+};
+
+export const locations = {
+    getCities: (state, query) =>
+        api.get('/locations/cities', {
+            params: {
+                state,
+                q: query ? query.trim() : undefined,
+            },
+        }),
 };
 
 export const admin = {

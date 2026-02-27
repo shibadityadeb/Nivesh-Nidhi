@@ -31,7 +31,7 @@ export default function AuthScreen({ navigation }) {
             if (isSignUp) {
                 res = await auth.signup({ name, email, phone, password });
             } else {
-                res = await auth.login({ email, password });
+                res = await auth.login({ email, password, role: 'USER' });
             }
 
             // Save token
@@ -44,7 +44,9 @@ export default function AuthScreen({ navigation }) {
                 setError("No authentication token received from server.");
             }
         } catch (err) {
-            setError(err.response?.data?.message || err.message || "An authentication error occurred.");
+            const apiMessage = err.response?.data?.message;
+            const msg = apiMessage || err.message || "An authentication error occurred.";
+            setError(msg);
         } finally {
             setLoading(false);
         }

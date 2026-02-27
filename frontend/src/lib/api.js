@@ -42,6 +42,16 @@ export const organizers = {
     apply: (applicationData) => api.post('/organizers/apply', applicationData),
 };
 
+export const locations = {
+    getCities: (state, query) =>
+        api.get('/locations/cities', {
+            params: {
+                state,
+                q: query ? query.trim() : undefined,
+            },
+        }),
+};
+
 export const admin = {
     getPendingApplications: () => api.get('/admin/applications/pending'),
     getMigratingApplications: () => api.get('/admin/applications/migrating'),

@@ -1,22 +1,19 @@
-const STATE_CITY_MAP = {
-  'Andhra Pradesh': ['Visakhapatnam', 'Vijayawada', 'Guntur', 'Tirupati', 'Kurnool'],
-  'Bihar': ['Patna', 'Gaya', 'Muzaffarpur', 'Bhagalpur', 'Purnia'],
-  'Delhi': ['New Delhi', 'North Delhi', 'South Delhi', 'East Delhi', 'West Delhi'],
-  'Goa': ['Panaji', 'Margao', 'Vasco da Gama', 'Mapusa', 'Ponda'],
-  'Gujarat': ['Ahmedabad', 'Surat', 'Vadodara', 'Rajkot', 'Bhavnagar'],
-  'Karnataka': ['Bengaluru', 'Mysuru', 'Mangaluru', 'Hubballi', 'Belagavi'],
-  'Kerala': ['Thiruvananthapuram', 'Kochi', 'Kozhikode', 'Thrissur', 'Kannur'],
-  'Madhya Pradesh': ['Bhopal', 'Indore', 'Jabalpur', 'Gwalior', 'Ujjain'],
-  'Maharashtra': ['Mumbai', 'Pune', 'Nagpur', 'Nashik', 'Aurangabad'],
-  'Rajasthan': ['Jaipur', 'Jodhpur', 'Udaipur', 'Kota', 'Ajmer'],
-  'Tamil Nadu': ['Chennai', 'Coimbatore', 'Madurai', 'Salem', 'Tiruchirappalli'],
-  'Telangana': ['Hyderabad', 'Warangal', 'Nizamabad', 'Karimnagar', 'Khammam'],
-  'Uttar Pradesh': ['Lucknow', 'Kanpur', 'Prayagraj', 'Varanasi', 'Agra'],
-  'West Bengal': ['Kolkata', 'Howrah', 'Durgapur', 'Siliguri', 'Asansol'],
-};
+const { State, City } = require('country-state-city');
 
-const STATES = Object.keys(STATE_CITY_MAP);
+// Get all states for India (IN)
+const allIndianStates = State.getStatesOfCountry('IN');
 
+// Create a map of state names to state codes
+const STATE_MAP = {};
+const STATES = [];
+
+allIndianStates.forEach((state) => {
+  // Store original name and map it to its state code (e.g. 'Maharashtra' -> 'MH')
+  STATE_MAP[state.name] = state.isoCode;
+  STATES.push(state.name);
+});
+
+// For backward compatibility and quick lookups
 const normalize = (value) => String(value || '').trim().toLowerCase();
 
 const getCanonicalState = (value) => {
@@ -24,20 +21,25 @@ const getCanonicalState = (value) => {
   return STATES.find((state) => normalize(state) === target) || null;
 };
 
-const getCitiesByState = (state) => {
-  const canonicalState = getCanonicalState(state);
+const getCitiesByState = (stateName) => {
+  const canonicalState = getCanonicalState(stateName);
   if (!canonicalState) return [];
-  return STATE_CITY_MAP[canonicalState];
+
+  const stateCode = STATE_MAP[canonicalState];
+  if (!stateCode) return [];
+
+  // Fetch cities for this state code using the package
+  const cities = City.getCitiesOfState('IN', stateCode);
+  return cities.map((city) => city.name);
 };
 
-const getCanonicalCity = (state, city) => {
-  const cities = getCitiesByState(state);
-  const target = normalize(city);
-  return cities.find((item) => normalize(item) === target) || null;
+const getCanonicalCity = (stateName, cityName) => {
+  const cities = getCitiesByState(stateName);
+  const target = normalize(cityName);
+  return cities.find((city) => normalize(city) === target) || null;
 };
 
 module.exports = {
-  STATE_CITY_MAP,
   STATES,
   getCanonicalState,
   getCitiesByState,

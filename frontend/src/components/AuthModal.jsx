@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { X, Mail, Lock, User, Phone, Eye, EyeOff, AlertCircle } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
-import { getCurrentLocation } from "@/utils/getCurrentLocation";
 
 const AuthModal = () => {
   const { showAuthModal, setShowAuthModal, signupUser, loginUser } = useAuth();
@@ -34,19 +33,15 @@ const AuthModal = () => {
       if (isSignUp) {
         await signupUser({ name, email, phone, password });
       } else {
-        setLocationLoading(true);
-        const location = await getCurrentLocation();
         await loginUser({
           email,
           password,
           role: "USER",
-          location,
         });
       }
     } catch (err) {
       setError(err.message);
     } finally {
-      setLocationLoading(false);
       setLoading(false);
     }
   };

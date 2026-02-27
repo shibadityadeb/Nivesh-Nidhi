@@ -681,6 +681,8 @@ const applyToJoinChitGroup = async (req, res, next) => {
         const user = await prisma.user.findUnique({ where: { id: userId } });
         if (!user) return res.status(404).json({ success: false, message: 'User not found' });
         if (!user.isKycVerified) return res.status(403).json({ success: false, message: 'KYC required' });
+        if (user.role === 'ADMIN') return res.status(403).json({ success: false, message: 'Admins cannot join chit groups' });
+        if (user.role === 'ORGANIZER') return res.status(403).json({ success: false, message: 'Organizers cannot join chit groups' });
         const group = await prisma.chitGroup.findUnique({
             where: { id },
             include: {

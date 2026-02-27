@@ -1,5 +1,5 @@
 const crypto = require('crypto');
-const User = require('../models/User');
+const { prisma } = require('../config/db');
 const { getCanonicalState, getCanonicalCity } = require('../constants/indiaLocations');
 
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -8,12 +8,16 @@ const randomDelay = () => Math.floor(Math.random() * 1001) + 7000;
 const verifyKyc = async (req, res) => {
   try {
     const { aadhaarNumber, name, age, state, city } = req.body;
-    const user = await User.findById(req.user.id);
+
+    // Fetch the user using Prisma
+    const user = await prisma.user.findUnique({
+      where: { id: req.user.id }
+    });
 
     if (!user) {
       return res.status(404).json({
         success: false,
-        message: 'User not found'
+        message: 'User no longer exist'
       });
     }
 
@@ -24,8 +28,14 @@ const verifyKyc = async (req, res) => {
       });
     }
 
+    // Check if Aadhaar is already in use by someone else
     const aadhaarHash = crypto.createHash('sha256').update(aadhaarNumber).digest('hex');
-    const existingAadhaar = await User.findByAadhaar(aadhaarHash, req.user.id);
+    const existingAadhaar = await prisma.user.findFirst({
+      where: {
+        aadhaarNumber: aadhaarHash,
+        id: { not: req.user.id }
+      }
+    });
 
     if (existingAadhaar) {
       return res.status(409).json({
@@ -34,18 +44,24 @@ const verifyKyc = async (req, res) => {
       });
     }
 
+    // Process valid location strings
     const canonicalState = getCanonicalState(state);
     const canonicalCity = getCanonicalCity(canonicalState, city);
-    const normalizedAddress = `${canonicalCity}, ${canonicalState}`;
+    const normalizedAddress = `${canonicalCity || city}, ${canonicalState || state}`;
 
+    // Simulate third-party delay
     await wait(randomDelay());
 
-    const updatedUser = await User.updateById(req.user.id, {
-      name: name.trim(),
-      isKycVerified: true,
-      aadhaarNumber: aadhaarHash,
-      age: Number(age),
-      address: normalizedAddress
+    // Update the user
+    const updatedUser = await prisma.user.update({
+      where: { id: req.user.id },
+      data: {
+        name: name.trim(),
+        isKycVerified: true,
+        aadhaarNumber: aadhaarHash,
+        age: Number(age),
+        address: normalizedAddress
+      }
     });
 
     return res.status(200).json({

@@ -447,6 +447,22 @@ export default function ChitGroupDetails() {
       };
     }
 
+    if (user?.role === "ADMIN") {
+      return {
+        label: "Admins cannot join groups",
+        disabled: true,
+        action: undefined,
+      };
+    }
+
+    if (user?.role === "ORGANIZER") {
+      return {
+        label: "Organizers cannot join groups",
+        disabled: true,
+        action: undefined,
+      };
+    }
+
     if (isMember || joinRequestStatus === "approved") {
       if (group.hasPaidCurrentMonth) {
         return {

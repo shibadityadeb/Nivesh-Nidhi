@@ -5,9 +5,9 @@ import { ShieldCheck } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
 import { colors } from '../theme/colors';
 import Button from '../components/Button';
-import { kyc } from '../services/api';
-import { STATE_CITY_MAP, STATES } from '../constants/indiaLocations';
-import { validateAadhaar } from '../utils/validateAadhaar';
+import { kyc, locations } from '../services/api';
+import { STATES } from '../constants/indiaLocations';
+import { validateAadhaar, sanitizeAadhaar } from '../utils/validateAadhaar';
 
 export default function KycScreen({ navigation }) {
   const { t } = useTranslation();
@@ -16,9 +16,13 @@ export default function KycScreen({ navigation }) {
   const [name, setName] = useState('');
   const [age, setAge] = useState('');
   const [state, setState] = useState('');
+  const [stateQuery, setStateQuery] = useState('');
   const [cityQuery, setCityQuery] = useState('');
   const [city, setCity] = useState('');
   const [showCityOptions, setShowCityOptions] = useState(false);
+  const [cityOptions, setCityOptions] = useState([]);
+  const [loadingCities, setLoadingCities] = useState(false);
+  const [showStateOptions, setShowStateOptions] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
@@ -30,10 +34,49 @@ export default function KycScreen({ navigation }) {
     setAadhaarStatus(status);
   }, [aadhaarNumber]);
 
-  const availableCities = state ? (STATE_CITY_MAP[state] || []) : [];
-  const filteredCities = availableCities.filter((c) =>
+  const filteredCities = cityOptions.filter((c) =>
     c.toLowerCase().includes(cityQuery.toLowerCase())
   );
+
+  const filteredStates = STATES.filter((s) =>
+    s.toLowerCase().includes(stateQuery.toLowerCase())
+  );
+
+  useEffect(() => {
+    if (!state) {
+      setCityOptions([]);
+      setCity('');
+      setCityQuery('');
+      return;
+    }
+
+    let cancelled = false;
+    const fetchCities = async () => {
+      setLoadingCities(true);
+      try {
+        const res = await locations.getCities(state);
+        const cities =
+          res.data?.data?.cities || res.data?.cities || [];
+        if (!cancelled) {
+          setCityOptions(cities);
+        }
+      } catch (error) {
+        if (!cancelled) {
+          setCityOptions([]);
+        }
+      } finally {
+        if (!cancelled) {
+          setLoadingCities(false);
+        }
+      }
+    };
+
+    fetchCities();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [state]);
 
   const handleSubmit = async () => {
     if (submitting) return;
@@ -68,7 +111,8 @@ export default function KycScreen({ navigation }) {
     setSubmitting(true);
     try {
       const payload = {
-        aadhaarNumber: aadhaarNumber.trim(),
+        // Send Aadhaar without spaces to API
+        aadhaarNumber: sanitizeAadhaar(aadhaarNumber),
         name: name.trim(),
         age: ageNum,
         state,
@@ -122,8 +166,13 @@ export default function KycScreen({ navigation }) {
             <TextInput
               value={aadhaarNumber}
               onChangeText={(text) => {
-                const next = text.replace(/[^\d\s]/g, '').slice(0, 14);
-                setAadhaarNumber(next);
+                // Remove non-digits, then format as 4-4-4 with spaces for display
+                const digitsOnly = text.replace(/\D/g, '').slice(0, 12);
+                const parts = [];
+                for (let i = 0; i < digitsOnly.length; i += 4) {
+                  parts.push(digitsOnly.slice(i, i + 4));
+                }
+                setAadhaarNumber(parts.join(' '));
               }}
               keyboardType="number-pad"
               placeholder="12-digit Aadhaar number"
@@ -168,38 +217,47 @@ export default function KycScreen({ navigation }) {
 
           <View style={styles.field}>
             <Text style={styles.label}>State</Text>
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.chipRow}
-            >
-              {STATES.map((st) => {
-                const active = st === state;
-                return (
-                  <TouchableOpacity
-                    key={st}
-                    onPress={() => {
-                      setState(st);
-                      setCity('');
-                      setCityQuery('');
-                    }}
-                    style={[
-                      styles.chip,
-                      active && { backgroundColor: colors.primaryLight || '#e0e7ff', borderColor: colors.primary },
-                    ]}
-                  >
-                    <Text
-                      style={[
-                        styles.chipText,
-                        active && { color: colors.primary },
-                      ]}
+            <TextInput
+              value={stateQuery}
+              onChangeText={(text) => {
+                setStateQuery(text);
+                setState('');
+                setCity('');
+                setCityQuery('');
+                setShowStateOptions(true);
+              }}
+              placeholder="Search state"
+              style={styles.input}
+              onFocus={() => setShowStateOptions(true)}
+              onBlur={() => {
+                if (Platform.OS === 'android') {
+                  setTimeout(() => setShowStateOptions(false), 120);
+                } else {
+                  setShowStateOptions(false);
+                }
+              }}
+            />
+            {showStateOptions && filteredStates.length > 0 && (
+              <View style={styles.dropdown}>
+                <ScrollView nestedScrollEnabled style={{ maxHeight: 220 }}>
+                  {filteredStates.map((st) => (
+                    <TouchableOpacity
+                      key={st}
+                      onPress={() => {
+                        setState(st);
+                        setStateQuery(st);
+                        setCity('');
+                        setCityQuery('');
+                        setShowStateOptions(false);
+                      }}
+                      style={styles.dropdownItem}
                     >
-                      {st}
-                    </Text>
-                  </TouchableOpacity>
-                );
-              })}
-            </ScrollView>
+                      <Text style={styles.dropdownText}>{st}</Text>
+                    </TouchableOpacity>
+                  ))}
+                </ScrollView>
+              </View>
+            )}
           </View>
 
           <View style={styles.field}>
@@ -226,6 +284,9 @@ export default function KycScreen({ navigation }) {
                 }
               }}
             />
+            {loadingCities && (
+              <Text style={styles.helper}>Loading cities...</Text>
+            )}
             {showCityOptions && state && filteredCities.length > 0 && (
               <View style={styles.dropdown}>
                 <ScrollView nestedScrollEnabled style={{ maxHeight: 200 }}>
@@ -362,6 +423,19 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   dropdownText: {
+    fontSize: 14,
+    color: colors.text,
+  },
+  selectInput: {
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 12,
+    backgroundColor: colors.background,
+    justifyContent: 'center',
+  },
+  selectInputText: {
     fontSize: 14,
     color: colors.text,
   },
