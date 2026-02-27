@@ -3,7 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Home, Users, BarChart3, User } from 'lucide-react-native';
+import { Home, Users, BarChart3, User, ShieldCheck } from 'lucide-react-native';
 
 import OnboardingScreen from '../screens/OnboardingScreen';
 import AuthScreen from '../screens/AuthScreen';
@@ -11,6 +11,8 @@ import HomeScreen from '../screens/HomeScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import GroupsScreen from '../screens/GroupsScreen';
 import DashboardScreen from '../screens/DashboardScreen';
+import KycScreen from '../screens/KycScreen';
+import GroupDetailsScreen from '../screens/GroupDetailsScreen';
 import { colors } from '../theme/colors';
 
 const Stack = createNativeStackNavigator();
@@ -62,6 +64,14 @@ function AppTabs() {
                     tabBarIcon: ({ color, size }) => <User color={color} size={size} />
                 }}
             />
+            <Tab.Screen
+                name="KycTab"
+                component={KycScreen}
+                options={{
+                    tabBarLabel: 'KYC',
+                    tabBarIcon: ({ color, size }) => <ShieldCheck color={color} size={size} />
+                }}
+            />
         </Tab.Navigator>
     );
 }
@@ -89,6 +99,7 @@ export default function RootNavigator() {
                 )}
                 <Stack.Screen name="Auth" component={AuthScreen} />
                 <Stack.Screen name="AppLayout" component={AppTabs} />
+                <Stack.Screen name="GroupDetails" component={GroupDetailsScreen} options={{ headerShown: false }} />
             </Stack.Navigator>
         </NavigationContainer>
     );

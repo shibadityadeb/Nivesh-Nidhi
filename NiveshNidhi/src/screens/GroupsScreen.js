@@ -171,7 +171,15 @@ export default function GroupsScreen({ navigation }) {
         }
 
         return (
-            <View style={styles.card}>
+            <TouchableOpacity
+                activeOpacity={0.9}
+                style={styles.card}
+                onPress={() => {
+                    if (groupId) {
+                        navigation.navigate('GroupDetails', { groupId });
+                    }
+                }}
+            >
                 <Text style={styles.groupName}>{item.name}</Text>
 
                 <View style={styles.infoRow}>
@@ -196,7 +204,7 @@ export default function GroupsScreen({ navigation }) {
                     style={styles.joinBtn}
                     disabled={isPending || isLoading}
                 />
-            </View>
+            </TouchableOpacity>
         );
     };
 
