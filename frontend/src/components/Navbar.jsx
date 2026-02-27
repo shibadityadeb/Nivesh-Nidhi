@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { ChevronDown, Menu, X, LogIn, User, ShieldAlert } from "lucide-react";
+import { ChevronDown, Menu, X, LogIn, User, ShieldAlert, Users } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { useNavigate, useLocation } from "react-router-dom";
 import { user as userApi } from "@/lib/api";

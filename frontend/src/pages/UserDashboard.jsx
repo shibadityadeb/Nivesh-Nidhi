@@ -22,12 +22,14 @@ export default function UserDashboard() {
     }, [isAuthenticated, navigate]);
 
     const fetchMyChits = async () => {
+        setLoading(true);
         try {
             const res = await userApi.getChits();
             if (res.data.success) {
-                setTransactions(res.data.data);
+                setTransactions(res.data.data || []);
             }
         } catch (error) {
+            console.error('Error fetching chits:', error);
             toast.error("Failed to load your investments.");
         } finally {
             setLoading(false);

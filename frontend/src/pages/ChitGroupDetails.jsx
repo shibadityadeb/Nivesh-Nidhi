@@ -22,10 +22,13 @@ export default function ChitGroupDetails() {
   const [paymentLoading, setPaymentLoading] = useState(false);
 
   useEffect(() => {
-    fetchGroupDetails();
+    if (id) {
+      fetchGroupDetails();
+    }
   }, [id, isAuthenticated]);
 
   const fetchGroupDetails = async () => {
+    if (!id) return;
     setLoading(true);
     try {
       const res = await chitGroupsApi.getById(id);
@@ -38,6 +41,7 @@ export default function ChitGroupDetails() {
         toast.error(res.data.message || "Group not found");
       }
     } catch (error) {
+      console.error('Error fetching group details:', error);
       toast.error(error.response?.data?.message || "Failed to load group details");
     } finally {
       setLoading(false);

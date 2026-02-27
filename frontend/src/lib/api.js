@@ -23,6 +23,20 @@ api.interceptors.request.use(
     (error) => Promise.reject(error)
 );
 
+// Add a response interceptor to handle errors
+api.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        if (error.response?.status === 401) {
+            // Token expired or invalid
+            localStorage.removeItem('nn_token');
+            localStorage.removeItem('nn_user');
+            window.location.href = '/';
+        }
+        return Promise.reject(error);
+    }
+);
+
 export const auth = {
     login: (credentials) => api.post('/auth/login', credentials),
     signup: (userData) => api.post('/auth/signup', userData),

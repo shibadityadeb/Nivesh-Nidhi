@@ -20,9 +20,10 @@ const ChitGroups = () => {
     try {
       const res = await chitGroupsApi.getAll();
       if (res.data.success) {
-        setChitGroups(res.data.data);
+        setChitGroups(res.data.data || []);
       }
     } catch (error) {
+      console.error('Error fetching chit groups:', error);
       toast.error("Failed to load chit groups");
     } finally {
       setLoading(false);
