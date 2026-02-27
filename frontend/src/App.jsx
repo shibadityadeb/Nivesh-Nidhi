@@ -1,32 +1,51 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
-import ProtectedRoute from './components/ProtectedRoute';
-import Login from './pages/Login';
-import Signup from './pages/Signup';
-import Dashboard from './pages/Dashboard';
+import { Toaster } from "@/components/ui/toaster";
+import { Toaster as Sonner } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "@/contexts/AuthContext";
+import Chatbot from "@/components/Chatbot";
+import Index from "./pages/Index";
+import ChitGroups from "./pages/ChitGroups";
+import ChitGroupDetails from "./pages/ChitGroupDetails";
+import ApplyOrganizer from "./pages/ApplyOrganizer";
+import AdminDashboard from "./pages/AdminDashboard";
+import UserDashboard from "./pages/UserDashboard";
+import MyChitGroup from "./pages/MyChitGroup";
+import JoinedGroups from "./pages/JoinedGroups";
+import Kyc from "./pages/Kyc";
+import ChitProcess from "./pages/ChitProcess";
+import GovSchemes from "./pages/GovSchemes";
+import NotFound from "./pages/NotFound";
 
-function App() {
-  return (
-    <AuthProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Navigate to="/login" replace />} />
-          <Route path="/login"   element={<Login />} />
-          <Route path="/signup"  element={<Signup />} />
-          <Route
-            path="/dashboard"
-            element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            }
-          />
-          {/* Catch-all */}
-          <Route path="*" element={<Navigate to="/login" replace />} />
-        </Routes>
-      </BrowserRouter>
-    </AuthProvider>
-  );
-}
+const queryClient = new QueryClient();
+
+const App = () => (
+  <QueryClientProvider client={queryClient}>
+    <TooltipProvider>
+      <AuthProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/chit-groups" element={<ChitGroups />} />
+            <Route path="/chit-groups/:id" element={<ChitGroupDetails />} />
+            <Route path="/apply-organizer" element={<ApplyOrganizer />} />
+            <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/kyc" element={<Kyc />} />
+            <Route path="/chit-process" element={<ChitProcess />} />
+            <Route path="/gov-schemes" element={<GovSchemes />} />
+            <Route path="/dashboard" element={<UserDashboard />} />
+            <Route path="/joined-groups" element={<JoinedGroups />} />
+            <Route path="/my-chit-group" element={<MyChitGroup />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+          <Chatbot />
+        </BrowserRouter>
+      </AuthProvider>
+    </TooltipProvider>
+  </QueryClientProvider>
+);
 
 export default App;
