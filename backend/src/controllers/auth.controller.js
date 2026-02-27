@@ -1,6 +1,9 @@
 const User = require('../models/User');
 const { generateToken } = require('../utils/token');
 const { validationResult } = require('express-validator');
+const { OAuth2Client } = require('google-auth-library');
+
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 const signup = async (req, res) => {
   try {
@@ -71,6 +74,14 @@ const login = async (req, res) => {
       return res.status(401).json({
         success: false,
         message: 'Invalid email or password'
+      });
+    }
+
+    // If user signed up via Google and has no password
+    if (!user.password) {
+      return res.status(401).json({
+        success: false,
+        message: 'This account uses Google Sign-In. Please login with Google.'
       });
     }
 
@@ -148,4 +159,62 @@ const getProfile = async (req, res) => {
   }
 };
 
-module.exports = { signup, login, getProfile };
+const googleAuth = async (req, res) => {
+  try {
+    const { credential } = req.body;
+
+    if (!credential) {
+      return res.status(400).json({
+        success: false,
+        message: 'Google credential is required'
+      });
+    }
+
+    // Verify the Google ID token
+    const ticket = await googleClient.verifyIdToken({
+      idToken: credential,
+      audience: process.env.GOOGLE_CLIENT_ID
+    });
+
+    const payload = ticket.getPayload();
+    const { sub: googleId, email, name, picture } = payload;
+
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        message: 'Google account does not have an email'
+      });
+    }
+
+    // Find or create user
+    const user = await User.findOrCreateGoogleUser({ googleId, email, name });
+    const token = generateToken(user.id);
+
+    res.status(200).json({
+      success: true,
+      message: 'Google authentication successful',
+      data: {
+        user: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          phone: user.phone,
+          role: user.role,
+          isKycVerified: user.isKycVerified,
+          city: user.city,
+          state: user.state
+        },
+        token
+      }
+    });
+  } catch (error) {
+    console.error('GOOGLE AUTH ERROR:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Google authentication failed',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+};
+
+module.exports = { signup, login, getProfile, googleAuth };

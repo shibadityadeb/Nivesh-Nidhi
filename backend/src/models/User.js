@@ -133,6 +133,47 @@ const User = {
     return await bcrypt.compare(candidatePassword, hashedPassword);
   },
 
+  // Find or create a user from Google OAuth
+  findOrCreateGoogleUser: async ({ googleId, email, name }) => {
+    // First check if user exists with this googleId
+    let user = await prisma.user.findUnique({
+      where: { googleId: googleId }
+    });
+
+    if (user) return user;
+
+    // Check if user exists with this email (local signup)
+    user = await prisma.user.findUnique({
+      where: { email: email.toLowerCase().trim() }
+    });
+
+    if (user) {
+      // Link Google account to existing user
+      user = await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          googleId: googleId,
+          authProvider: user.password ? 'both' : 'google'
+        }
+      });
+      return user;
+    }
+
+    // Create new user from Google
+    user = await prisma.user.create({
+      data: {
+        name: name.trim().substring(0, 100),
+        email: email.toLowerCase().trim(),
+        googleId: googleId,
+        authProvider: 'google',
+        role: 'USER',
+        isKycVerified: false
+      }
+    });
+
+    return user;
+  },
+
   // Validate user data
   validate: (userData) => {
     const errors = [];

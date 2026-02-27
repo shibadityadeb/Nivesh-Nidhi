@@ -3,10 +3,11 @@ import { X, Mail, Lock, User, Phone, Eye, EyeOff, AlertCircle } from "lucide-rea
 import { useAuth } from "@/context/AuthContext";
 import { getCurrentLocation } from "@/utils/getCurrentLocation";
 import { T } from "@/context/LanguageContext";
+import { GoogleLogin } from "@react-oauth/google";
 
 
 const AuthModal = () => {
-  const { showAuthModal, setShowAuthModal, signupUser, loginUser } = useAuth();
+  const { showAuthModal, setShowAuthModal, signupUser, loginUser, googleLoginUser } = useAuth();
   const [isSignUp, setIsSignUp] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [name, setName] = useState("");
@@ -159,6 +160,38 @@ const AuthModal = () => {
               {loading ? <T>Please wait...</T> : isSignUp ? <T>Create Account</T> : <T>Sign In</T>}
             </button>
           </form>
+
+          {/* Google Sign-In Divider */}
+          <div className="flex items-center gap-3 my-5">
+            <div className="flex-1 h-px bg-border" />
+            <span className="text-xs text-muted-foreground font-medium"><T>OR</T></span>
+            <div className="flex-1 h-px bg-border" />
+          </div>
+
+          {/* Google Sign-In Button */}
+          <div className="flex justify-center">
+            <GoogleLogin
+              onSuccess={async (credentialResponse) => {
+                setError("");
+                setLoading(true);
+                try {
+                  await googleLoginUser(credentialResponse.credential);
+                } catch (err) {
+                  setError(err.message);
+                } finally {
+                  setLoading(false);
+                }
+              }}
+              onError={() => {
+                setError("Google sign-in failed. Please try again.");
+              }}
+              theme="outline"
+              size="large"
+              width="100%"
+              text={isSignUp ? "signup_with" : "signin_with"}
+              shape="pill"
+            />
+          </div>
 
           <div className="mt-6 text-center">
             <p className="text-sm text-muted-foreground">
