@@ -13,19 +13,19 @@ import goalWealth from "@/assets/goal-wealth.jpg";
 
 
 const personalSolutions = [
-  { title: "Beginners", image: solBeginners, href: "#solutions-personalised" },
-  { title: "Experienced Professionals", image: solExperienced, href: "#solutions-personalised" },
-  { title: "Senior Citizens", image: solSeniors, href: "#solutions-personalised" },
-  { title: "Home Makers", image: solHomemakers, href: "#solutions-personalised" },
-  // { title: "Business (MSME)", image: solBusiness, href: "#solutions-personalised" },
-  // { title: "HNI Investors", image: solHni, href: "#solutions-personalised" },
+  { title: "Beginners", image: solBeginners, href: "/solutions-personalized#beginners" },
+  { title: "Experienced Professionals", image: solExperienced, href: "/solutions-personalized#experienced" },
+  { title: "Senior Citizens", image: solSeniors, href: "/solutions-personalized#seniors" },
+  { title: "Home Makers", image: solHomemakers, href: "/solutions-personalized#homemakers" },
+  // { title: "Business (MSME)", image: solBusiness, href: "/solutions-personalized#business" },
+  // { title: "HNI Investors", image: solHni, href: "/solutions-personalized#hni" },
 ];
 
 const goalSolutions = [
-  { title: "Business Needs", image: goalBusiness, href: "#solutions-goal-based-" },
-  { title: "Reducing Liability", image: goalLiability, href: "#solutions-goal-based" },
-  { title: "Family Commitments", image: goalFamily, href: "#solutions-goal-based" },
-  { title: "Grow Investment & Wealth", image: goalWealth, href: "#solutions-goal-based" },
+  { title: "Business Needs", image: goalBusiness, href: "/solutions-goal-based#business" },
+  { title: "Reducing Liability", image: goalLiability, href: "/solutions-goal-based#liability" },
+  { title: "Family Commitments", image: goalFamily, href: "/solutions-goal-based#family" },
+  { title: "Grow Investment & Wealth", image: goalWealth, href: "/solutions-goal-based#wealth" },
 ];
 
 const SolutionCardComponent = ({ card, aspectRatio = "aspect-[4/3]" }) => {

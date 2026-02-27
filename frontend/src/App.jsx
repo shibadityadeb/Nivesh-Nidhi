@@ -17,6 +17,8 @@ import JoinedGroups from "./pages/JoinedGroups";
 import Kyc from "./pages/Kyc";
 import ChitProcess from "./pages/ChitProcess";
 import GovSchemes from "./pages/GovSchemes";
+import GoalBasedSolutions from "./pages/GoalBasedSolutions";
+import PersonalizedSolutions from "./pages/PersonalizedSolutions";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -38,6 +40,8 @@ const App = () => (
               <Route path="/kyc" element={<Kyc />} />
               <Route path="/chit-process" element={<ChitProcess />} />
               <Route path="/gov-schemes" element={<GovSchemes />} />
+              <Route path="/solutions-goal-based" element={<GoalBasedSolutions />} />
+              <Route path="/solutions-personalized" element={<PersonalizedSolutions />} />
               <Route path="/dashboard" element={<UserDashboard />} />
               <Route path="/joined-groups" element={<JoinedGroups />} />
               <Route path="/my-chit-group" element={<MyChitGroup />} />
