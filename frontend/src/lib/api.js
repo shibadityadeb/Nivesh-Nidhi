@@ -31,7 +31,10 @@ export const auth = {
 
 export const user = {
     getMe: () => api.get('/user/me'),
-    getChits: () => api.get('/user/chits')
+    getChits: () => api.get('/user/chits'),
+    getNotifications: () => api.get('/user/notifications'),
+    markNotificationRead: (id) => api.patch(`/user/notifications/${id}/read`),
+    markAllNotificationsRead: () => api.patch('/user/notifications/read-all')
 };
 
 export const kyc = {
@@ -40,6 +43,16 @@ export const kyc = {
 
 export const organizers = {
     apply: (applicationData) => api.post('/organizers/apply', applicationData),
+};
+
+export const locations = {
+    getCities: (state, query) =>
+        api.get('/locations/cities', {
+            params: {
+                state,
+                q: query ? query.trim() : undefined,
+            },
+        }),
 };
 
 export const admin = {
@@ -57,6 +70,8 @@ export const organizations = {
 export const chitGroups = {
     getAll: () => api.get('/chit-groups'),
     getById: (id) => api.get(`/chit-groups/${id}`),
+    getCalculatorConfig: (groupId) => api.get(`/chit-groups/${groupId}/calculator-config`),
+    calculate: (groupId, payload) => api.post(`/chit-groups/${groupId}/calculate`, payload),
     applyToJoin: (id, payload) => api.post(`/chit-groups/${id}/apply`, payload),
     getActiveGroups: () => api.get('/chit-groups/active-groups'),
     getMyGroups: () => api.get('/chit-groups/my-groups'),

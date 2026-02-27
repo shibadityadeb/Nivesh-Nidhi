@@ -1,14 +1,3 @@
-/*
-  Warnings:
-
-  - You are about to drop the column `aadhaar_dob` on the `users` table. All the data in the column will be lost.
-  - You are about to drop the column `aadhaar_name` on the `users` table. All the data in the column will be lost.
-  - The `role` column on the `users` table would be dropped and recreated. This will lead to data loss if there is data in the column.
-  - A unique constraint covering the columns `[aadhaar_number]` on the table `users` will be added. If there are existing duplicate values, this will fail.
-  - Made the column `is_kyc_verified` on table `users` required. This step will fail if there are existing NULL values in that column.
-  - Made the column `created_at` on table `users` required. This step will fail if there are existing NULL values in that column.
-
-*/
 -- CreateEnum
 CREATE TYPE "Role" AS ENUM ('USER', 'ORGANIZER', 'ADMIN');
 
@@ -21,19 +10,28 @@ CREATE TYPE "ApplicationStatus" AS ENUM ('PENDING', 'UNDER_RISK_ASSESSMENT', 'AP
 -- CreateEnum
 CREATE TYPE "ApprovalTier" AS ENUM ('TIER_1', 'TIER_2', 'RESTRICTED');
 
--- AlterTable
-ALTER TABLE "users" DROP COLUMN "aadhaar_dob",
-DROP COLUMN "aadhaar_name",
-ADD COLUMN     "age" INTEGER,
-ADD COLUMN     "reputation_score" DOUBLE PRECISION DEFAULT 50.0,
-ADD COLUMN     "risk_score" DOUBLE PRECISION DEFAULT 50.0,
-ADD COLUMN     "updated_at" TIMESTAMP(3),
-ALTER COLUMN "phone" DROP NOT NULL,
-ALTER COLUMN "aadhaar_number" SET DATA TYPE VARCHAR(255),
-ALTER COLUMN "is_kyc_verified" SET NOT NULL,
-DROP COLUMN "role",
-ADD COLUMN     "role" "Role" NOT NULL DEFAULT 'USER',
-ALTER COLUMN "created_at" SET NOT NULL;
+-- CreateEnum
+CREATE TYPE "AuctionStatus" AS ENUM ('ACTIVE', 'CLOSED', 'WON');
+
+-- CreateTable
+CREATE TABLE "users" (
+    "id" UUID NOT NULL DEFAULT gen_random_uuid(),
+    "name" VARCHAR(100) NOT NULL,
+    "email" VARCHAR(255) NOT NULL,
+    "password" VARCHAR(255) NOT NULL,
+    "phone" VARCHAR(20),
+    "is_kyc_verified" BOOLEAN NOT NULL DEFAULT false,
+    "aadhaar_number" VARCHAR(255),
+    "age" INTEGER,
+    "aadhaar_address" TEXT,
+    "created_at" TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3),
+    "role" "Role" NOT NULL DEFAULT 'USER',
+    "reputation_score" DOUBLE PRECISION DEFAULT 50.0,
+    "risk_score" DOUBLE PRECISION DEFAULT 50.0,
+
+    CONSTRAINT "users_pkey" PRIMARY KEY ("id")
+);
 
 -- CreateTable
 CREATE TABLE "organizer_profiles" (
@@ -124,6 +122,8 @@ CREATE TABLE "chit_groups" (
     "id" UUID NOT NULL DEFAULT gen_random_uuid(),
     "organization_id" UUID NOT NULL,
     "name" VARCHAR(255) NOT NULL,
+    "state" VARCHAR(100) NOT NULL,
+    "city" VARCHAR(100) NOT NULL,
     "chit_value" DECIMAL(12,2) NOT NULL,
     "duration_months" INTEGER NOT NULL,
     "member_capacity" INTEGER NOT NULL,
@@ -289,6 +289,44 @@ CREATE TABLE "blockchain_audit_logs" (
     CONSTRAINT "blockchain_audit_logs_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "auction_requests" (
+    "id" UUID NOT NULL DEFAULT gen_random_uuid(),
+    "group_id" UUID NOT NULL,
+    "state" VARCHAR(100) NOT NULL,
+    "city" VARCHAR(100) NOT NULL,
+    "created_by" UUID NOT NULL,
+    "highest_bid" DECIMAL(12,2) NOT NULL,
+    "winner_id" UUID,
+    "status" "AuctionStatus" NOT NULL DEFAULT 'ACTIVE',
+    "reason" TEXT,
+    "round_number" INTEGER,
+    "winner_declared_at" TIMESTAMP(6),
+    "winner_payment_due_at" TIMESTAMP(6),
+    "winner_paid_at" TIMESTAMP(6),
+    "created_at" TIMESTAMP(6) DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3),
+
+    CONSTRAINT "auction_requests_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "auction_bids" (
+    "id" UUID NOT NULL DEFAULT gen_random_uuid(),
+    "auction_id" UUID NOT NULL,
+    "bidder_id" UUID NOT NULL,
+    "bid_amount" DECIMAL(12,2) NOT NULL,
+    "created_at" TIMESTAMP(6) DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "auction_bids_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateIndex
+CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "users_aadhaar_number_key" ON "users"("aadhaar_number");
+
 -- CreateIndex
 CREATE UNIQUE INDEX "organizer_profiles_user_id_key" ON "organizer_profiles"("user_id");
 
@@ -305,7 +343,16 @@ CREATE UNIQUE INDEX "chit_group_members_chit_group_id_user_id_key" ON "chit_grou
 CREATE UNIQUE INDEX "escrow_accounts_chit_group_id_key" ON "escrow_accounts"("chit_group_id");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "users_aadhaar_number_key" ON "users"("aadhaar_number");
+CREATE INDEX "auction_requests_group_id_status_idx" ON "auction_requests"("group_id", "status");
+
+-- CreateIndex
+CREATE INDEX "auction_requests_created_by_idx" ON "auction_requests"("created_by");
+
+-- CreateIndex
+CREATE INDEX "auction_bids_auction_id_created_at_idx" ON "auction_bids"("auction_id", "created_at");
+
+-- CreateIndex
+CREATE INDEX "auction_bids_bidder_id_idx" ON "auction_bids"("bidder_id");
 
 -- AddForeignKey
 ALTER TABLE "organizer_profiles" ADD CONSTRAINT "organizer_profiles_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -363,3 +410,18 @@ ALTER TABLE "payout_queue" ADD CONSTRAINT "payout_queue_chit_group_id_fkey" FORE
 
 -- AddForeignKey
 ALTER TABLE "payout_queue" ADD CONSTRAINT "payout_queue_winner_user_id_fkey" FOREIGN KEY ("winner_user_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "auction_requests" ADD CONSTRAINT "auction_requests_group_id_fkey" FOREIGN KEY ("group_id") REFERENCES "chit_groups"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "auction_requests" ADD CONSTRAINT "auction_requests_created_by_fkey" FOREIGN KEY ("created_by") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "auction_requests" ADD CONSTRAINT "auction_requests_winner_id_fkey" FOREIGN KEY ("winner_id") REFERENCES "users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "auction_bids" ADD CONSTRAINT "auction_bids_auction_id_fkey" FOREIGN KEY ("auction_id") REFERENCES "auction_requests"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "auction_bids" ADD CONSTRAINT "auction_bids_bidder_id_fkey" FOREIGN KEY ("bidder_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

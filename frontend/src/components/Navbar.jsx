@@ -1,5 +1,5 @@
-import { useState, useRef } from "react";
-import { ChevronDown, Menu, X, LogIn, User, ShieldAlert } from "lucide-react";
+import { useEffect, useState, useRef } from "react";
+import { ChevronDown, Menu, X, LogIn, User, ShieldAlert, Bell, Loader2 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { useNavigate, useLocation } from "react-router-dom";
 import { user as userApi } from "@/lib/api";
@@ -46,6 +46,10 @@ const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeMenu, setActiveMenu] = useState(null);
   const [profileLoading, setProfileLoading] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [notificationsLoading, setNotificationsLoading] = useState(false);
+  const [markAllLoading, setMarkAllLoading] = useState(false);
   const { user, logoutUser, setShowAuthModal, updateUser } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -60,23 +64,83 @@ const Navbar = () => {
     timeoutRef.current = setTimeout(() => setActiveMenu(null), 200);
   };
 
-  const handleProfileClick = async () => {
-    if (!user || profileLoading) return;
+  const handleProfileClick = () => {
+    setActiveMenu((prev) => (prev === "profile" ? null : "profile"));
+  };
 
-    setProfileLoading(true);
-
+  const fetchNotifications = async ({ silent = false } = {}) => {
+    if (!user) return;
+    if (!silent) setNotificationsLoading(true);
     try {
-      const { data } = await userApi.getMe();
-      const latestUser = data?.data?.user;
-
-      if (latestUser) {
-        updateUser(latestUser);
-        setActiveMenu((prev) => (prev === "profile" ? null : "profile"));
+      const { data } = await userApi.getNotifications();
+      if (data?.success) {
+        setNotifications(data.data || []);
+        setUnreadCount(data.unreadCount || 0);
       }
     } catch {
-      setActiveMenu((prev) => (prev === "profile" ? null : "profile"));
+      if (!silent) {
+        setNotifications([]);
+        setUnreadCount(0);
+      }
     } finally {
-      setProfileLoading(false);
+      if (!silent) setNotificationsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!user) {
+      setNotifications([]);
+      setUnreadCount(0);
+      return;
+    }
+
+    fetchNotifications({ silent: true });
+    const timer = setInterval(() => fetchNotifications({ silent: true }), 30000);
+    return () => clearInterval(timer);
+  }, [user?.id]);
+
+  const handleNotificationBell = async () => {
+    if (!user) {
+      setShowAuthModal(true);
+      return;
+    }
+    const shouldOpen = activeMenu !== "notifications";
+    setActiveMenu(shouldOpen ? "notifications" : null);
+    if (shouldOpen) {
+      await fetchNotifications();
+    }
+  };
+
+  const handleMarkAllRead = async () => {
+    if (!user || markAllLoading) return;
+    setMarkAllLoading(true);
+    try {
+      await userApi.markAllNotificationsRead();
+      setNotifications((prev) => prev.map((notif) => ({ ...notif, is_read: true })));
+      setUnreadCount(0);
+    } finally {
+      setMarkAllLoading(false);
+    }
+  };
+
+  const handleNotificationClick = async (notification) => {
+    if (!notification?.id) return;
+    if (!notification.is_read) {
+      try {
+        await userApi.markNotificationRead(notification.id);
+        setNotifications((prev) =>
+          prev.map((item) =>
+            item.id === notification.id ? { ...item, is_read: true } : item
+          )
+        );
+        setUnreadCount((prev) => Math.max(0, prev - 1));
+      } catch {
+        // keep UX non-blocking
+      }
+    }
+    if (notification.chit_group?.id) {
+      setActiveMenu(null);
+      navigate(`/chit-groups/${notification.chit_group.id}`);
     }
   };
 
@@ -136,6 +200,74 @@ const Navbar = () => {
 
             {/* Sign In & Profile */}
             <div className="flex items-center gap-3">
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={handleNotificationBell}
+                  className="relative w-10 h-10 rounded-full bg-primary/10 items-center justify-center border border-primary/20 transition-colors hover:bg-primary/15 flex"
+                >
+                  <Bell className="w-5 h-5 text-primary" />
+                  {user && unreadCount > 0 && (
+                    <span className="absolute -top-1 -right-1 min-w-5 h-5 px-1 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center">
+                      {unreadCount > 99 ? "99+" : unreadCount}
+                    </span>
+                  )}
+                </button>
+
+                {activeMenu === "notifications" && user && (
+                  <div className="absolute top-full right-0 mt-2 w-80 bg-card rounded-xl shadow-xl border border-border p-2 animate-slide-down">
+                    <div className="flex items-center justify-between px-2 py-1.5">
+                      <p className="text-sm font-semibold text-card-foreground">Notifications</p>
+                      <button
+                        type="button"
+                        disabled={markAllLoading || unreadCount === 0}
+                        onClick={handleMarkAllRead}
+                        className="text-xs text-primary disabled:text-muted-foreground"
+                      >
+                        {markAllLoading ? "Marking..." : "Mark all read"}
+                      </button>
+                    </div>
+
+                    {notificationsLoading ? (
+                      <div className="flex items-center justify-center py-8 text-muted-foreground">
+                        <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                        Loading...
+                      </div>
+                    ) : notifications.length === 0 ? (
+                      <div className="px-3 py-8 text-sm text-muted-foreground text-center">
+                        No notifications yet
+                      </div>
+                    ) : (
+                      <div className="max-h-96 overflow-y-auto space-y-1">
+                        {notifications.map((notif) => (
+                          <button
+                            key={notif.id}
+                            type="button"
+                            onClick={() => handleNotificationClick(notif)}
+                            className={`w-full text-left px-3 py-2.5 rounded-lg border transition-colors ${
+                              notif.is_read
+                                ? "border-transparent hover:bg-muted"
+                                : "border-primary/20 bg-primary/5 hover:bg-primary/10"
+                            }`}
+                          >
+                            <p className="text-sm font-medium text-card-foreground line-clamp-1">{notif.title}</p>
+                            <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">{notif.message}</p>
+                            <div className="flex items-center justify-between mt-1.5">
+                              <span className="text-[11px] text-muted-foreground">
+                                {notif.chit_group?.name || "Group update"}
+                              </span>
+                              <span className="text-[11px] text-muted-foreground">
+                                {notif.created_at ? new Date(notif.created_at).toLocaleString("en-IN") : ""}
+                              </span>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
               {user ? (
                 <div className="relative">
                   <div className="flex items-center gap-3 cursor-pointer">
@@ -148,8 +280,7 @@ const Navbar = () => {
                     <button
                       type="button"
                       onClick={handleProfileClick}
-                      disabled={profileLoading}
-                      className={`hidden sm:flex w-10 h-10 rounded-full bg-secondary/10 items-center justify-center border border-secondary/30 transition-colors ${profileLoading ? "opacity-60 cursor-not-allowed" : ""}`}
+                      className="hidden sm:flex w-10 h-10 rounded-full bg-secondary/10 items-center justify-center border border-secondary/30 transition-colors"
                     >
                       <User className="w-5 h-5 text-secondary" />
                     </button>

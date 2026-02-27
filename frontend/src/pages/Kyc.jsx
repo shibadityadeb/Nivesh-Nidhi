@@ -6,10 +6,11 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import AuthModal from "@/components/AuthModal";
 import { useAuth } from "@/context/AuthContext";
-import { kyc } from "@/lib/api";
+import { kyc, locations } from "@/lib/api";
 import { validateAadhaar } from "@/lib/validateAadhaar";
 import { STATE_CITY_MAP, STATES } from "@/constants/indiaLocations";
 import { T } from "@/context/LanguageContext";
+import { STATES } from "@/constants/indiaLocations";
 
 const initialForm = {
   aadhaarNumber: "",
@@ -26,8 +27,14 @@ export default function Kyc() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [aadhaarStatus, setAadhaarStatus] = useState("");
+
+  const [stateQuery, setStateQuery] = useState("");
+  const [showStateOptions, setShowStateOptions] = useState(false);
   const [cityQuery, setCityQuery] = useState("");
   const [showCityOptions, setShowCityOptions] = useState(false);
+
+  const [cityOptions, setCityOptions] = useState([]);
+  const [loadingCities, setLoadingCities] = useState(false);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -40,6 +47,37 @@ export default function Kyc() {
       navigate("/chit-groups");
     }
   }, [user, navigate]);
+
+  useEffect(() => {
+    if (!form.state) {
+      setCityOptions([]);
+      setForm((prev) => ({ ...prev, city: "" }));
+      setCityQuery("");
+      return;
+    }
+
+    let cancelled = false;
+    const fetchCities = async () => {
+      setLoadingCities(true);
+      try {
+        const res = await locations.getCities(form.state);
+        const cities = res.data?.data?.cities || res.data?.cities || [];
+        if (!cancelled) {
+          setCityOptions(cities);
+        }
+      } catch (error) {
+        if (!cancelled) setCityOptions([]);
+      } finally {
+        if (!cancelled) setLoadingCities(false);
+      }
+    };
+
+    fetchCities();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [form.state]);
 
   useEffect(() => {
     if (isSubmitting || isSuccess) {
@@ -116,8 +154,12 @@ export default function Kyc() {
   };
 
   if (!isAuthenticated) return null;
-  const availableCities = form.state ? (STATE_CITY_MAP[form.state] || []) : [];
-  const filteredCities = availableCities.filter((city) =>
+
+  const filteredStates = STATES.filter((s) =>
+    s.toLowerCase().includes(stateQuery.toLowerCase())
+  );
+
+  const filteredCities = cityOptions.filter((city) =>
     city.toLowerCase().includes(cityQuery.toLowerCase())
   );
 
@@ -264,8 +306,68 @@ export default function Kyc() {
                         ))}
                       </div>
                     )}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label htmlFor="state" className="text-sm font-semibold">State</label>
+                <select
+                  id="state"
+                  name="state"
+                  required
+                  value={form.state}
+                  onChange={(e) => {
+                    const nextState = e.target.value;
+                    setForm((prev) => ({ ...prev, state: nextState, city: "" }));
+                    setCityQuery("");
+                    setShowCityOptions(false);
+                  }}
+                  className="flex h-12 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                >
+                  <option value="">Select state</option>
+                  {STATES.map((state) => (
+                    <option key={state} value={state}>{state}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="space-y-2 relative">
+                <label htmlFor="citySearch" className="text-sm font-semibold">City</label>
+                <input
+                  id="citySearch"
+                  name="citySearch"
+                  type="text"
+                  required
+                  disabled={!form.state}
+                  value={cityQuery}
+                  onChange={(e) => {
+                    setCityQuery(e.target.value);
+                    setForm((prev) => ({ ...prev, city: "" }));
+                    setShowCityOptions(true);
+                  }}
+                  onFocus={() => setShowCityOptions(true)}
+                  onBlur={() => setTimeout(() => setShowCityOptions(false), 120)}
+                  className="flex h-12 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:opacity-60"
+                  placeholder={form.state ? "Search city" : "Select state first"}
+                />
+                {showCityOptions && form.state && filteredCities.length > 0 && (
+                  <div className="absolute z-20 mt-1 w-full max-h-48 overflow-auto rounded-md border border-border bg-card shadow-lg">
+                    {filteredCities.map((city) => (
+                      <button
+                        key={city}
+                        type="button"
+                        onClick={() => {
+                          setForm((prev) => ({ ...prev, city }));
+                          setCityQuery(city);
+                          setShowCityOptions(false);
+                        }}
+                        className="w-full px-3 py-2 text-left text-sm hover:bg-muted"
+                      >
+                        {city}
+                      </button>
+                    ))}
                   </div>
-                </div>
+                )}
+              </div>
+            </div>
 
                 <button
                   type="submit"

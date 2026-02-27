@@ -35,22 +35,7 @@ const loginValidation = [
     .notEmpty().withMessage('Password is required'),
   body('role')
     .notEmpty().withMessage('Role is required')
-    .isIn(['USER', 'ORGANIZER', 'ADMIN']).withMessage('Invalid role'),
-  body('location')
-    .exists().withMessage('Location is mandatory for login')
-    .isObject().withMessage('Location must be an object'),
-  body('location.latitude')
-    .exists().withMessage('Location latitude is required')
-    .isFloat({ min: -90, max: 90 }).withMessage('Invalid latitude'),
-  body('location.longitude')
-    .exists().withMessage('Location longitude is required')
-    .isFloat({ min: -180, max: 180 }).withMessage('Invalid longitude'),
-  body('location.accuracy')
-    .exists().withMessage('Location accuracy is required')
-    .isFloat({ min: 0 }).withMessage('Invalid location accuracy'),
-  body('location.timestamp')
-    .exists().withMessage('Location timestamp is required')
-    .isInt({ min: 1 }).withMessage('Invalid location timestamp')
+    .isIn(['USER', 'ORGANIZER', 'ADMIN']).withMessage('Invalid role')
 ];
 
 router.post('/signup', signupValidation, signup);

@@ -448,6 +448,22 @@ export default function ChitGroupDetails() {
       };
     }
 
+    if (user?.role === "ADMIN") {
+      return {
+        label: "Admins cannot join groups",
+        disabled: true,
+        action: undefined,
+      };
+    }
+
+    if (user?.role === "ORGANIZER") {
+      return {
+        label: "Organizers cannot join groups",
+        disabled: true,
+        action: undefined,
+      };
+    }
+
     if (isMember || joinRequestStatus === "approved") {
       if (group.hasPaidCurrentMonth) {
         return {
@@ -557,12 +573,7 @@ export default function ChitGroupDetails() {
                   <div className="bg-white rounded-xl p-6 border border-border">
                     <h2 className="font-heading font-bold text-xl mb-4"><T>Payout Calculator</T></h2>
                     <ChitPayoutCalculator
-                      totalMembers={group.calcInputs.totalMembers}
-                      monthlyContribution={group.calcInputs.monthlyContribution}
-                      durationMonths={group.calcInputs.durationMonths}
-                      foremanCommissionPercent={group.calcInputs.foremanCommissionPercent}
-                      minDiscount={group.calcInputs.minimumBidDiscountPercent}
-                      maxDiscount={group.calcInputs.maximumBidDiscountPercent}
+                      groupId={group.group.id}
                       onCalculate={(r) => setCalcSnapshot(r)}
                     />
                   </div>

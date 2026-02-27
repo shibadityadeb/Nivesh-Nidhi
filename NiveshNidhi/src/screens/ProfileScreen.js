@@ -84,7 +84,7 @@ export default function ProfileScreen({ navigation }) {
                         )}
                         <View style={styles.badgeContainer}>
                             <ShieldCheck size={14} color={colors.accent} />
-                            <Text style={styles.badgeText}>{profileData?.aadhaarVerified ? t('profile.kyc_verified') : t('profile.kyc_pending')}</Text>
+                            <Text style={styles.badgeText}>{profileData?.isKycVerified ? t('profile.kyc_verified') : t('profile.kyc_pending')}</Text>
                         </View>
                     </View>
                 </View>
@@ -97,13 +97,7 @@ export default function ProfileScreen({ navigation }) {
                         title={t('profile.personal_info')}
                         onPress={() => Alert.alert("Coming Soon", "Personal info management is currently under development.")}
                     />
-                    <View style={styles.divider} />
-                    <SettingRow
-                        icon={Briefcase}
-                        title={t('profile.become_organizer')}
-                        subtitle={t('profile.host_chits')}
-                        onPress={() => Alert.alert("Coming Soon", "Organizer applications are not open on this device yet.")}
-                    />
+
                     <View style={styles.divider} />
                     <SettingRow
                         icon={FileText}

@@ -55,11 +55,11 @@ export const AuthProvider = ({ children }) => {
     return data.data;
   };
 
-  const loginUser = async ({ email, password, role = "USER", location }) => {
+  const loginUser = async ({ email, password, role = "USER" }) => {
     const res = await fetch(`${API_BASE}/api/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password, role, location }),
+      body: JSON.stringify({ email, password, role }),
     });
     const data = await res.json();
 

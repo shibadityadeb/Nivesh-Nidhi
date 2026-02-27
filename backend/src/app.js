@@ -11,6 +11,7 @@ const escrowRoutes = require('./routes/escrow.routes');
 const orgManageRoutes = require('./routes/orgmanage.routes');
 const organizerRequestRoutes = require('./routes/organizerRequest.routes');
 const chatbotRoutes = require('./routes/chatbot.routes');
+const locationRoutes = require('./routes/location.routes');
 
 const app = express();
 
@@ -37,6 +38,7 @@ app.use('/api/escrow', escrowRoutes);
 app.use('/api/org-manage', orgManageRoutes);
 app.use('/api/organizer/requests', organizerRequestRoutes);
 app.use('/api/chatbot', chatbotRoutes);
+app.use('/api/locations', locationRoutes);
 
 app.use((req, res) => {
   res.status(404).json({

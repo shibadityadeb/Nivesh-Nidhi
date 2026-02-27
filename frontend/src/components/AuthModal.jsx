@@ -4,6 +4,7 @@ import { useAuth } from "@/context/AuthContext";
 import { getCurrentLocation } from "@/utils/getCurrentLocation";
 import { T } from "@/context/LanguageContext";
 
+
 const AuthModal = () => {
   const { showAuthModal, setShowAuthModal, signupUser, loginUser } = useAuth();
   const [isSignUp, setIsSignUp] = useState(false);
@@ -14,7 +15,6 @@ const AuthModal = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [locationLoading, setLocationLoading] = useState(false);
 
   if (!showAuthModal) return null;
 
@@ -35,19 +35,15 @@ const AuthModal = () => {
       if (isSignUp) {
         await signupUser({ name, email, phone, password });
       } else {
-        setLocationLoading(true);
-        const location = await getCurrentLocation();
         await loginUser({
           email,
           password,
           role: "USER",
-          location,
         });
       }
     } catch (err) {
       setError(err.message);
     } finally {
-      setLocationLoading(false);
       setLoading(false);
     }
   };
@@ -157,10 +153,11 @@ const AuthModal = () => {
 
             <button
               type="submit"
-              disabled={loading || locationLoading}
+              disabled={loading}
               className="w-full py-3 rounded-xl gradient-navy text-primary-foreground font-heading font-semibold text-sm shadow-md hover:shadow-lg transition-all hover:scale-[1.01] disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {locationLoading ? <T>Fetching your location...</T> : loading ? <T>Please wait...</T> : isSignUp ? <T>Create Account</T> : <T>Sign In</T>}
+              {loading ? "Please wait..." : isSignUp ? "Create Account" : "Sign In"}
             </button>
           </form>
 

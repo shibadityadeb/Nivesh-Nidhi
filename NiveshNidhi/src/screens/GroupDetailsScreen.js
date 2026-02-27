@@ -6,7 +6,18 @@ import { Users, Calendar, IndianRupee, ShieldCheck } from 'lucide-react-native';
 import { chitGroups, escrow, user as userApi } from '../services/api';
 import { colors } from '../theme/colors';
 import Button from '../components/Button';
-import RazorpayCheckout from 'react-native-razorpay';
+
+function getRazorpayCheckout() {
+  try {
+    // `react-native-razorpay` is a native module and will not exist in Expo Go.
+    // Lazy-require so the app can run in Expo Go; payments will require a dev build.
+    // eslint-disable-next-line global-require
+    const mod = require('react-native-razorpay');
+    return mod?.default ?? mod;
+  } catch (e) {
+    return null;
+  }
+}
 
 export default function GroupDetailsScreen({ navigation }) {
   const route = useRoute();
@@ -145,11 +156,21 @@ export default function GroupDetailsScreen({ navigation }) {
 
     setPaymentLoading(true);
     try {
+      const RazorpayCheckout = getRazorpayCheckout();
+      if (!RazorpayCheckout?.open) {
+        setPaymentLoading(false);
+        Alert.alert(
+          'Payments not supported in Expo Go',
+          'Razorpay needs a custom development build (or production build). Please run the app with a dev build to make payments.'
+        );
+        return;
+      }
+
       const monthlyAmount =
         Number(group.group.rules?.monthly_amount || 0) > 0
           ? Number(group.group.rules.monthly_amount)
           : Number(group.group.chit_value) /
-            Math.max(Number(group.group.duration_months), 1);
+          Math.max(Number(group.group.duration_months), 1);
 
       const res = await escrow.contribute({
         chit_group_id: group.group.id,
@@ -240,8 +261,8 @@ export default function GroupDetailsScreen({ navigation }) {
       Alert.alert(
         'Payment Error',
         error?.response?.data?.message ||
-          error?.message ||
-          'Could not initiate payment. Please try again later.'
+        error?.message ||
+        'Could not initiate payment. Please try again later.'
       );
     }
   };
@@ -251,6 +272,22 @@ export default function GroupDetailsScreen({ navigation }) {
 
     const isFull =
       group.memberStats?.total >= group.memberStats?.capacity;
+
+    if (profile?.role === 'ADMIN') {
+      return {
+        label: 'Admins cannot join groups',
+        disabled: true,
+        action: undefined,
+      };
+    }
+
+    if (profile?.role === 'ORGANIZER') {
+      return {
+        label: 'Organizers cannot join groups',
+        disabled: true,
+        action: undefined,
+      };
+    }
 
     if (isMember || joinRequestStatus === 'approved') {
       if (group.hasPaidCurrentMonth) {

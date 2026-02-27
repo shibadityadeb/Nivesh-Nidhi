@@ -7,6 +7,8 @@ const {
     updateChitGroup,
     deleteChitGroup,
     getChitGroupDetails,
+    getGroupCalculatorConfig,
+    calculateGroupReturn,
     applyToJoinChitGroup,
     getMyActiveGroups
 } = require('../controllers/chitgroup.controller');
@@ -28,6 +30,8 @@ router.get('/', getAllChitGroups);
 router.get('/my-groups', protect, authorize('ORGANIZER', 'ADMIN'), getMyChitGroups);
 router.get('/active-groups', protect, getMyActiveGroups);
 router.get('/:id', optionalProtect, getChitGroupDetails);
+router.get('/:groupId/calculator-config', optionalProtect, getGroupCalculatorConfig);
+router.post('/:groupId/calculate', optionalProtect, calculateGroupReturn);
 router.post('/:id/apply', protect, applyToJoinChitGroup);
 router.get('/:groupId/auctions', protect, listAuctions);
 router.post('/:groupId/auctions', protect, createAuction);

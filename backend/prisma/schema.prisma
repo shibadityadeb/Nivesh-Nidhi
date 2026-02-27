@@ -198,6 +198,13 @@ model ChitGroup {
   member_capacity Int
   current_members Int     @default(0)
   status          String  @default("OPEN") // OPEN, IN_PROGRESS, COMPLETED
+  min_amount              Decimal @default(1.00) @db.Decimal(12, 2)
+  max_amount              Decimal @default(100000.00) @db.Decimal(12, 2)
+  default_rate            Float   @default(0.0)
+  calculation_type        String  @default("simple") @db.VarChar(20) // simple | compound | custom
+  allowed_time_period_min Int     @default(1)
+  allowed_time_period_max Int     @default(12)
+  calculator_custom_rules Json?
 
   created_at DateTime? @default(now()) @db.Timestamp(6)
   updated_at DateTime? @updatedAt
