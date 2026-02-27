@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { MessageCircle, X, Send, Loader2, Bot, User } from 'lucide-react';
+import { MessageCircle, X, Send, Loader2 } from 'lucide-react';
 import { sendChatMessage, getChatbotContext } from '../lib/api';
 
 const Chatbot = () => {
@@ -29,36 +29,22 @@ const Chatbot = () => {
       const response = await getChatbotContext();
       if (response.success) {
         setUserContext(response.data);
-        // Add welcome message
-        let welcomeMessage;
-        if (response.data.isAuthenticated) {
-          welcomeMessage = {
-            role: 'assistant',
-            content: `Hello ${response.data.userName}! I'm Nidhi AI, your intelligent assistant for managing your chit fund activities. ${
-              (response.data.role === 'USER' || response.data.role === 'MEMBER')
-                ? "I can help you with your chit memberships, payment history, and escrow balance."
-                : "I can help you manage your organizations, monitor chit groups, and review member activities."
-            } How can I assist you today?`,
-            timestamp: new Date(),
-          };
-        } else {
-          welcomeMessage = {
-            role: 'assistant',
-            content: `Hello! I'm Nidhi AI, your intelligent assistant for chit fund information. I can help answer your questions about how chit funds work, provide guidance on managing chit groups, and assist with general inquiries. To access personalized features and manage your accounts, please log in. How can I help you today?`,
-            timestamp: new Date(),
-          };
-        }
+        const welcomeMessage = {
+          role: 'assistant',
+          content: response.data.isAuthenticated
+            ? `Hi ${response.data.userName}! 👋 I'm Nidhi AI. How can I help you today?`
+            : `Hello! 👋 I'm Nidhi AI, your chit fund assistant. How can I help you today?`,
+          timestamp: new Date(),
+        };
         setMessages([welcomeMessage]);
       }
     } catch (error) {
       console.error('Failed to load context:', error);
-      // Continue even if context loading fails
-      const defaultMessage = {
+      setMessages([{
         role: 'assistant',
-        content: `Hello! I'm Nidhi AI, your intelligent assistant for chit fund information. How can I help you today?`,
+        content: `Hello! 👋 I'm Nidhi AI. How can I help you today?`,
         timestamp: new Date(),
-      };
-      setMessages([defaultMessage]);
+      }]);
     }
   };
 
@@ -76,13 +62,12 @@ const Chatbot = () => {
     setIsLoading(true);
 
     try {
-      // Prepare conversation history for API
       const conversationHistory = messages
         .map((msg) => ({
           role: msg.role === 'assistant' ? 'assistant' : 'user',
           content: msg.content,
         }))
-        .slice(-10); // Keep last 10 messages for context
+        .slice(-10);
 
       const response = await sendChatMessage(inputMessage, conversationHistory);
 
@@ -90,7 +75,6 @@ const Chatbot = () => {
         const assistantMessage = {
           role: 'assistant',
           content: response.data.response,
-          actionIntent: response.data.actionIntent,
           timestamp: new Date(),
         };
         setMessages((prev) => [...prev, assistantMessage]);
@@ -101,7 +85,7 @@ const Chatbot = () => {
       console.error('Chat error:', error);
       const errorMessage = {
         role: 'assistant',
-        content: "I'm sorry, I encountered an error processing your request. Please try again.",
+        content: "I'm sorry, I encountered an error. Please try again.",
         timestamp: new Date(),
         isError: true,
       };
@@ -118,129 +102,77 @@ const Chatbot = () => {
     }
   };
 
-  const formatMessage = (content) => {
-    // Handle JSON action intents
-    try {
-      const jsonMatch = content.match(/\{[\s\S]*"intent"[\s\S]*\}/);
-      if (jsonMatch) {
-        const json = JSON.parse(jsonMatch[0]);
-        const textPart = content.replace(jsonMatch[0], '').trim();
-        return (
-          <>
-            {textPart && <p className="mb-2">{textPart}</p>}
-            <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-              <p className="text-sm font-semibold text-blue-900 mb-1">
-                Action Required: {json.action}
-              </p>
-              <p className="text-sm text-blue-700">{json.message}</p>
-            </div>
-          </>
-        );
-      }
-    } catch (e) {
-      // Not a JSON response, render as is
-    }
-
-    // Format regular text with line breaks
-    return content.split('\n').map((line, i) => (
-      <p key={i} className="mb-1">
-        {line}
-      </p>
-    ));
-  };
-
   if (!isOpen) {
     return (
       <button
         onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-6 rounded-full bg-transparent p-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 z-50 group border-0"
+        className="fixed bottom-20 right-6 rounded-full bg-transparent p-0 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 z-50 border-0"
         aria-label="Open Nidhi AI Chatbot"
       >
         <img
           src="/chatbot.png"
           alt="Chatbot"
-            className="w-32 h-32 rounded-full object-cover"
+          className="w-20 h-20 rounded-full object-cover"
         />
-        <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center animate-pulse">
-          AI
-        </span>
+        <span className="absolute -top-1 -right-1 w-5 h-5 bg-green-500 rounded-full border-2 border-white animate-pulse" />
       </button>
     );
   }
 
   return (
-    <div className="fixed bottom-6 right-6 w-96 h-[600px] bg-white rounded-2xl shadow-2xl flex flex-col z-50 border border-gray-200">
+    <div className="fixed bottom-20 right-6 w-[360px] h-[520px] bg-white rounded-2xl shadow-2xl flex flex-col z-50 border border-gray-100 overflow-hidden">
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-4 rounded-t-2xl flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="rounded-full">
-            <img src="/chatbot.png" alt="Chatbot" className="w-10 h-10 rounded-full" />
-          </div>
+      <div className="bg-gradient-to-br from-primary/5 to-secondary/5 p-3.5 flex items-center justify-between border-b border-border">
+        <div className="flex items-center gap-2.5">
+          <img src="/chatbot.png" alt="Nidhi AI" className="w-9 h-9 rounded-full object-cover" />
           <div>
-            <h3 className="font-bold text-lg">Nidhi AI</h3>
-            <p className="text-xs text-blue-100">
-              {userContext?.role === 'MEMBER' ? 'Member Assistant' : 'Organizer Assistant'}
+            <h3 className="font-semibold text-foreground text-sm">Nidhi AI</h3>
+            <p className="text-xs text-muted-foreground flex items-center gap-1">
+              <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+              Online now
             </p>
           </div>
         </div>
         <button
           onClick={() => setIsOpen(false)}
-          className="hover:bg-white/20 p-2 rounded-full transition-colors"
+          className="w-7 h-7 rounded-full hover:bg-muted flex items-center justify-center transition-colors"
           aria-label="Close chatbot"
         >
-          <X className="w-5 h-5" />
+          <X className="w-4 h-4 text-muted-foreground" />
         </button>
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
+      <div className="flex-1 overflow-y-auto p-3 space-y-2.5 bg-secondary/5">
         {messages.map((message, index) => (
           <div
             key={index}
-            className={`flex gap-2 ${
-              message.role === 'user' ? 'justify-end' : 'justify-start'
-            }`}
+            className={`flex gap-2 ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
           >
             {message.role === 'assistant' && (
-              <div className="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center">
-                <img src="/chatbot.png" alt="AI" className="w-8 h-8 rounded-full" />
-              </div>
+              <img src="/chatbot.png" alt="AI" className="w-6 h-6 rounded-full object-cover flex-shrink-0 mt-0.5" />
             )}
             <div
-              className={`max-w-[75%] rounded-2xl px-4 py-2 ${
+              className={`max-w-[75%] rounded-xl px-3 py-2 ${
                 message.role === 'user'
-                  ? 'bg-blue-600 text-white rounded-br-none'
+                  ? 'bg-gradient-to-br from-primary to-primary/90 text-primary-foreground rounded-br-sm'
                   : message.isError
-                  ? 'bg-red-50 text-red-900 border border-red-200 rounded-bl-none'
-                  : 'bg-white text-gray-800 shadow-sm border border-gray-200 rounded-bl-none'
+                  ? 'bg-red-50 text-red-900 border border-red-100 rounded-bl-sm'
+                  : 'bg-card text-card-foreground shadow-sm border border-border rounded-bl-sm'
               }`}
             >
-              <div className="text-sm">{formatMessage(message.content)}</div>
-              <div
-                className={`text-xs mt-1 ${
-                  message.role === 'user' ? 'text-blue-100' : 'text-gray-400'
-                }`}
-              >
-                {new Date(message.timestamp).toLocaleTimeString([], {
-                  hour: '2-digit',
-                  minute: '2-digit',
-                })}
-              </div>
+              <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
+              <p className={`text-xs mt-1 ${message.role === 'user' ? 'text-primary-foreground/70' : 'text-muted-foreground'}`}>
+                {new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+              </p>
             </div>
-            {message.role === 'user' && (
-              <div className="flex-shrink-0 w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center">
-                <User className="w-5 h-5 text-white" />
-              </div>
-            )}
           </div>
         ))}
         {isLoading && (
           <div className="flex gap-2 justify-start">
-            <div className="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center">
-              <img src="/chatbot.png" alt="AI" className="w-8 h-8 rounded-full" />
-            </div>
-            <div className="bg-white rounded-2xl rounded-bl-none px-4 py-3 shadow-sm border border-gray-200">
-              <Loader2 className="w-5 h-5 text-blue-600 animate-spin" />
+            <img src="/chatbot.png" alt="AI" className="w-6 h-6 rounded-full object-cover flex-shrink-0 mt-0.5" />
+            <div className="bg-card rounded-xl rounded-bl-sm px-3 py-2 shadow-sm border border-border">
+              <Loader2 className="w-4 h-4 text-primary animate-spin" />
             </div>
           </div>
         )}
@@ -248,29 +180,27 @@ const Chatbot = () => {
       </div>
 
       {/* Input */}
-      <div className="p-4 border-t border-gray-200 bg-white rounded-b-2xl">
-        <div className="flex gap-2">
+      <div className="p-3 border-t border-border bg-card">
+        <div className="flex gap-2 items-center">
           <input
             type="text"
             value={inputMessage}
             onChange={(e) => setInputMessage(e.target.value)}
             onKeyPress={handleKeyPress}
-            placeholder="Ask me anything..."
-            className="flex-1 px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+            placeholder="Type your message..."
+            className="flex-1 px-3 py-2 text-sm border border-input rounded-full focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all bg-background"
             disabled={isLoading}
           />
           <button
             onClick={handleSendMessage}
             disabled={isLoading || !inputMessage.trim()}
-            className="bg-blue-600 text-white p-2 rounded-full hover:bg-blue-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
+            className="w-9 h-9 rounded-full bg-gradient-to-br from-primary to-primary/90 text-primary-foreground flex items-center justify-center hover:shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
             aria-label="Send message"
           >
-            <Send className="w-5 h-5" />
+            <Send className="w-4 h-4" />
           </button>
         </div>
-        <p className="text-xs text-gray-400 mt-2 text-center">
-          Powered by Claude AI • Secure & Compliant
-        </p>
+        <p className="text-xs text-muted-foreground text-center mt-2">Powered by Team Async</p>
       </div>
     </div>
   );

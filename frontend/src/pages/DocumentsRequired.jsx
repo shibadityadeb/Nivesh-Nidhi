@@ -54,12 +54,16 @@ const DocumentsRequired = () => {
         </div>
 
         {/* Hero Section */}
-        <section className="bg-primary py-16 relative z-10">
-          <div className="container mx-auto px-4">
-            <h1 className="font-heading font-bold text-4xl md:text-5xl text-primary-foreground text-center mb-4">
+        <section className="pt-24 pb-12 bg-gradient-to-br from-primary/5 to-secondary/5 relative z-10">
+          <div className="container mx-auto px-4 text-center">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 mb-4">
+              <FileText className="w-4 h-4 text-primary" />
+              <span className="text-sm font-semibold text-primary">Document Checklist</span>
+            </div>
+            <h1 className="font-bold text-3xl md:text-4xl text-gray-900 mb-3">
               Documents Required for Chits
             </h1>
-            <p className="text-center text-primary-foreground/80 text-lg max-w-2xl mx-auto">
+            <p className="text-gray-600 text-base max-w-2xl mx-auto">
               Get a complete checklist of documents needed to join a chit group and start your journey.
             </p>
           </div>
