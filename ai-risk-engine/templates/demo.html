@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Risk Pipeline Demo</title>
+    <style>
+      body { font-family: Arial, sans-serif; margin: 24px; background: #f7fafc; color: #1a202c; }
+      .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; }
+      .card { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px; }
+      h1 { margin-bottom: 8px; }
+      h2 { margin: 0 0 8px 0; font-size: 18px; }
+      pre { background: #f8fafc; border: 1px solid #edf2f7; padding: 12px; border-radius: 8px; overflow-x: auto; }
+      .badge { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 12px; font-weight: 700; }
+      .low { background: #c6f6d5; color: #22543d; }
+      .medium { background: #fefcbf; color: #744210; }
+      .high { background: #fed7d7; color: #822727; }
+      button { margin-top: 8px; padding: 8px 10px; border-radius: 8px; border: 1px solid #cbd5e0; background: #fff; cursor: pointer; }
+    </style>
+  </head>
+  <body>
+    <h1>AI Risk Pipeline Demo (Flask)</h1>
+    <p>Shows organizer risk profile and chit group risk analysis using your Python weighted pipeline.</p>
+
+    <div class="grid">
+      <section class="card">
+        <h2>Organizer Input (Dummy)</h2>
+        <pre>{{ organizer | tojson(indent=2) }}</pre>
+        <h2>Organizer Risk Output</h2>
+        <p>
+          Score: <strong>{{ organizer_result.riskScore }}</strong>/100
+          <span class="badge {{ organizer_result.riskLevel | lower }}">{{ organizer_result.riskLevel }}</span>
+        </p>
+        <p>{{ organizer_result.explanation }}</p>
+        <pre>{{ organizer_result | tojson(indent=2) }}</pre>
+        <button onclick="testOrganizerAPI()">Test /api/organizer-risk</button>
+      </section>
+
+      <section class="card">
+        <h2>Group Input (Dummy)</h2>
+        <pre>{{ group | tojson(indent=2) }}</pre>
+        <h2>Group Risk Output</h2>
+        <p>
+          Score: <strong>{{ group_result.riskScore }}</strong>/100
+          <span class="badge {{ group_result.riskLevel | lower }}">{{ group_result.riskLevel }}</span>
+        </p>
+        <p>{{ group_result.explanation }}</p>
+        <pre>{{ group_result | tojson(indent=2) }}</pre>
+        <button onclick="testGroupAPI()">Test /api/group-risk</button>
+      </section>
+    </div>
+
+    <section class="card" style="margin-top:16px;">
+      <h2>Live API Response</h2>
+      <pre id="liveOutput">Click one of the test buttons above.</pre>
+    </section>
+
+    <script>
+      async function testOrganizerAPI() {
+        const res = await fetch('/api/organizer-risk', { method: 'POST' });
+        const json = await res.json();
+        document.getElementById('liveOutput').textContent = JSON.stringify(json, null, 2);
+      }
+
+      async function testGroupAPI() {
+        const res = await fetch('/api/group-risk', { method: 'POST' });
+        const json = await res.json();
+        document.getElementById('liveOutput').textContent = JSON.stringify(json, null, 2);
+      }
+    </script>
+  </body>
+</html>
