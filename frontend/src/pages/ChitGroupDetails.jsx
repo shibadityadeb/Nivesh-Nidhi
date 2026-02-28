@@ -209,7 +209,7 @@ export default function ChitGroupDetails() {
           handleback: true,
           ondismiss: function () {
             setPaymentLoading(false);
-            toast.info("Payment cancelled.");
+            toast.error("Payment cancelled.");
           }
         }
       };

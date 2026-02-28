@@ -9,7 +9,6 @@ import { LanguageProvider } from "@/context/LanguageContext";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import PageTransition from "@/components/PageTransition";
 import Chatbot from "@/components/Chatbot";
-import IntroVideo from "@/components/IntroVideo";
 import { startAppTutorial } from "@/utils/tutorial";
 import Index from "./pages/Index";
 import ChitGroups from "./pages/ChitGroups";
@@ -32,48 +31,28 @@ import NotFound from "./pages/NotFound";
 const queryClient = new QueryClient();
 
 const TutorialBootstrap = () => {
-  const { user, isAuthenticated, showTermsModal, showSuccessModal, showLoginSuccessModal } = useAuth();
-  const location = useLocation();
-  const lastAttemptRef = useRef("");
+  const { user, isAuthenticated } = useAuth();
+  const hasRunRef = useRef(false);
 
   useEffect(() => {
     if (!isAuthenticated || !user?.id) return;
+    if (hasRunRef.current) return;
 
-    const storageKey = `hasSeenTutorial_${user.id}`;
-    if (localStorage.getItem(storageKey)) return;
+    const hasSeenTutorial = localStorage.getItem("hasSeenTutorial");
+    const termsAccepted = localStorage.getItem("termsAccepted");
+    
+    if (hasSeenTutorial || !termsAccepted) return;
 
-    // Do not attempt if modals are open
-    if (showTermsModal || showSuccessModal || showLoginSuccessModal) return;
-
-    const attemptKey = `global:${location.pathname}`;
-    // We only want to prevent *repeated* identical path attempts that failed, 
-    // but we SHOULD retry if we just closed a modal.
-    // If it succeeds, the storageKey prevents future runs.
-
-    // Use an interval to poll every 500ms for up to 5 seconds to see if DOM is ready
-    let attempts = 0;
-    const maxAttempts = 10;
-
-    const tryStart = () => {
-      attempts++;
-      console.log(`[TutorialBootstrap] Attempt ${attempts} to start tutorial on path ${location.pathname}`);
+    const timer = setTimeout(() => {
       const started = startAppTutorial();
       if (started) {
-        console.log(`[TutorialBootstrap] Tutorial started successfully! Setting local storage.`);
-        localStorage.setItem(`hasSeenTutorial_${user.id}`, "true");
-      } else if (attempts < maxAttempts) {
-        console.log(`[TutorialBootstrap] Tutorial failed to start (no elements?). Retrying in 500ms...`);
-        timer = setTimeout(tryStart, 500);
-      } else {
-        console.log(`[TutorialBootstrap] Max attempts reached. Giving up on path ${location.pathname}.`);
-        lastAttemptRef.current = attemptKey;
+        localStorage.setItem("hasSeenTutorial", "true");
+        hasRunRef.current = true;
       }
-    };
-
-    let timer = setTimeout(tryStart, 500);
+    }, 1000);
 
     return () => clearTimeout(timer);
-  }, [isAuthenticated, location.pathname, showTermsModal, showSuccessModal, showLoginSuccessModal]);
+  }, [isAuthenticated, user?.id]);
 
   return null;
 };
@@ -88,7 +67,6 @@ const App = () => (
           <AuthProvider>
             <Toaster />
             <Sonner />
-            <IntroVideo />
             <BrowserRouter>
               <TutorialBootstrap />
               <PageTransition>

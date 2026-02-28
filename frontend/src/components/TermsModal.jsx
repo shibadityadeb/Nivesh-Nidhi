@@ -9,6 +9,7 @@ const TermsModal = ({ show, onAccept }) => {
 
   const handleAccept = () => {
     if (agreed) {
+      localStorage.setItem("termsAccepted", "true");
       onAccept();
     }
   };
