@@ -8,6 +8,12 @@ const anthropic = new Anthropic({
 const DEPRECATED_MODEL_ALIASES = new Map([
   ['claude-3-5-haiku-latest', 'claude-3-5-haiku'],
 ]);
+const OUT_OF_SCOPE_MESSAGE = 'I can only help with questions related to this platform.';
+const PLATFORM_TOPIC_KEYWORDS = [
+  'organiser', 'organizer', 'application', 'kyc', 'group', 'join', 'member',
+  'auction', 'bid', 'escrow', 'risk score', 'risk', 'dashboard', 'notification',
+  'announcement', 'chit', 'chit fund', 'payment', 'profile', 'platform',
+];
 
 function buildModelCandidates() {
   const configured = (process.env.CLAUDE_MODEL || 'claude-3-5').trim();
@@ -24,6 +30,18 @@ function buildModelCandidates() {
 }
 
 class ChatbotService {
+  isPlatformRelated(message = '') {
+    const normalized = String(message).toLowerCase();
+    return PLATFORM_TOPIC_KEYWORDS.some((keyword) => normalized.includes(keyword));
+  }
+
+  enforceSentenceLimit(text = '', maxSentences = 5) {
+    const cleaned = String(text || '').trim();
+    if (!cleaned) return cleaned;
+    const parts = cleaned.match(/[^.!?]+[.!?]?/g) || [cleaned];
+    return parts.slice(0, maxSentences).join(' ').trim();
+  }
+
   /**
    * Get context data based on user role
    */
@@ -201,7 +219,15 @@ class ChatbotService {
    * Build system prompt based on role
    */
   buildSystemPrompt(role) {
-    const basePrompt = `You are Nidhi AI, an intelligent assistant for a blockchain-backed digital chit fund platform called NiveshNidhi. You help users understand their chit fund activities, payments, and compliance status.
+    const basePrompt = `You are the official assistant of NiveshNidhi. 
+
+STRICT RESPONSE POLICY:
+- Answer ONLY questions related to this platform and its features.
+- Allowed topics: organiser application, KYC, group joining, auctions, escrow, risk score, dashboard, notifications, platform features.
+- If the question is unrelated, reply with exactly: "I can only help with questions related to this platform."
+- Keep answers short and precise: maximum 3-5 sentences.
+- Do not provide generic knowledge, coding tutorials, legal advice, business advice, motivational content, or technical theory.
+- Be clear, direct, and professional.
 
 SECURITY & COMPLIANCE RULES:
 - Never fabricate or hallucinate data
@@ -307,6 +333,18 @@ GUEST RESTRICTIONS:
    */
   async processMessage(userId, role, message, conversationHistory = []) {
     try {
+      if (!this.isPlatformRelated(message)) {
+        return {
+          response: OUT_OF_SCOPE_MESSAGE,
+          actionIntent: null,
+          context: {
+            userId,
+            role,
+            timestamp: new Date(),
+          },
+        };
+      }
+
       // Get user context
       const context = await this.getUserContext(userId, role);
 
@@ -400,6 +438,8 @@ GUEST RESTRICTIONS:
         console.log('Failed to parse JSON from response:', e.message);
         console.log('Raw response:', aiResponse.substring(0, 200));
       }
+
+      cleanedResponse = this.enforceSentenceLimit(cleanedResponse, 5);
 
       return {
         response: cleanedResponse,
