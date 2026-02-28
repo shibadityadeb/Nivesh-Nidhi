@@ -587,11 +587,31 @@ const proceedWinnerPayment = async (req, res, next) => {
     }
 
     if (auction.winner_paid_at) {
-      return res.status(400).json({ success: false, message: 'Winner payment already completed' });
+      return res.status(400).json({ success: false, message: 'Winner payout already received' });
     }
 
     if (auction.winner_payment_due_at && new Date(auction.winner_payment_due_at).getTime() < Date.now()) {
-      return res.status(400).json({ success: false, message: 'Payment window expired. Organizer can reopen auction.' });
+      return res.status(400).json({ success: false, message: 'Payout window expired. Organizer can reopen auction.' });
+    }
+
+    const group = await prisma.chitGroup.findUnique({
+      where: { id: groupId },
+      include: { rules: true },
+    });
+    if (!group) {
+      return res.status(404).json({ success: false, message: 'Group not found' });
+    }
+
+    const chitValue = toNumber(group.chit_value);
+    const highestBid = toNumber(auction.highest_bid);
+    const commissionPct = toNumber(group.rules?.commission_pct) || 5;
+    const payoutAmount = Math.max(1, Math.round(chitValue * (1 - commissionPct / 100) - highestBid));
+
+    if (payoutAmount <= 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'Payout amount would be zero or negative. Check group rules and winning bid.',
+      });
     }
 
     let account = await prisma.escrowAccount.findUnique({ where: { chit_group_id: groupId } });
@@ -601,27 +621,45 @@ const proceedWinnerPayment = async (req, res, next) => {
       });
     }
 
-    const amount = Math.max(1, Math.round(toNumber(auction.highest_bid)));
+    const locked = toNumber(account.locked_amount);
+    if (locked < payoutAmount) {
+      return res.status(400).json({
+        success: false,
+        message: `Insufficient escrow balance (₹${locked}). Payout requires ₹${payoutAmount}.`,
+      });
+    }
 
-    const transaction = await prisma.escrowTransaction.create({
-      data: {
-        escrow_account_id: account.id,
-        user_id: userId,
-        type: 'CONTRIBUTION',
-        amount,
-        status: 'PENDING',
+    await prisma.$transaction(async (tx) => {
+      await tx.escrowAccount.update({
+        where: { id: account.id },
+        data: {
+          locked_amount: { decrement: payoutAmount },
+          total_released: { increment: payoutAmount },
+        },
+      });
+      await tx.auctionRequest.update({
+        where: { id: auctionId },
+        data: { winner_paid_at: new Date() },
+      });
+    });
+
+    const updated = await prisma.auctionRequest.findFirst({
+      where: { id: auctionId, group_id: groupId },
+      include: {
+        created_by_user: { select: { id: true, name: true } },
+        winner_user: { select: { id: true, name: true } },
+        bids: {
+          include: { bidder: { select: { id: true, name: true } } },
+          orderBy: { created_at: 'desc' },
+        },
       },
     });
 
-    const order = await escrowService.createOrder(amount, transaction.id);
-
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
-      transaction_id: transaction.id,
-      razorpay_order_id: order.id,
-      amount: order.amount / 100,
-      currency: order.currency,
-      auction_id: auctionId,
+      message: 'Payout released to winner',
+      data: serializeAuction(updated, userId),
+      payout_amount: payoutAmount,
     });
   } catch (error) {
     next(error);

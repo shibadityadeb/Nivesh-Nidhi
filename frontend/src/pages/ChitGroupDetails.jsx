@@ -344,95 +344,25 @@ export default function ChitGroupDetails() {
     }
   };
 
-  const handleWinnerPayment = async (auction) => {
-    if (!window.Razorpay) {
-      toast.error("Payment gateway is not available right now.");
-      return;
-    }
-
+  const handleWinnerPayout = async (auction) => {
     setWinnerPaymentLoadingId(auction.id);
     try {
-      const startRes = await auctionsApi.proceedPayment(id, auction.id);
-      if (!startRes.data.success) {
-        throw new Error(startRes.data.message || "Failed to initialize payment");
+      const res = await auctionsApi.proceedPayment(id, auction.id);
+      if (res.data.success) {
+        const amount = res.data.payout_amount ?? res.data.data?.payout_amount;
+        toast.success(
+          amount
+            ? `Payout of ₹${Number(amount).toLocaleString("en-IN")} released to you. Funds are from the group escrow.`
+            : "Payout released successfully. You have received your winning amount from the escrow."
+        );
+        await fetchAuctions({ silent: true });
+      } else {
+        toast.error(res.data.message || "Failed to release payout");
       }
-
-      const { razorpay_order_id, transaction_id, amount } = startRes.data;
-
-      const options = {
-        key: import.meta.env.VITE_RAZORPAY_KEY_ID || "rzp_test_SKVpiqvO8UAmrn",
-        amount: amount * 100,
-        currency: "INR",
-        name: "Nivesh Nidhi",
-        description: `Auction winner payment - ${group?.group?.name || "Chit Group"}`,
-        order_id: razorpay_order_id,
-        handler: async function (response) {
-          try {
-            const verifyRes = await escrow.verifyWebhook({
-              transaction_id,
-              payload: {
-                payment: {
-                  entity: {
-                    id: response.razorpay_payment_id,
-                    notes: { transaction_id },
-                  },
-                },
-              },
-            });
-
-            if (!verifyRes.data.success) {
-              throw new Error("Payment verification failed");
-            }
-
-            const confirmRes = await auctionsApi.confirmPayment(id, auction.id, { transaction_id });
-            if (confirmRes.data.success) {
-              toast.success("Winner payment completed and linked to auction.");
-              await fetchAuctions({ silent: true });
-            } else {
-              toast.error(confirmRes.data.message || "Payment confirmed but auction update failed");
-            }
-          } catch (err) {
-            toast.error("Sorry something went wrong. If money has been deducted it will be refunded to your account in 2-3 days.");
-          } finally {
-            setWinnerPaymentLoadingId(null);
-          }
-        },
-        prefill: {
-          name: user?.name || "User",
-          email: user?.email || "",
-          contact: user?.phone || "",
-        },
-        theme: {
-          color: "#1d4ed8",
-        },
-        modal: {
-          backdropclose: false,
-          escape: true,
-          handleback: true,
-          ondismiss: function () {
-            setWinnerPaymentLoadingId(null);
-            toast.info("Payment cancelled.");
-          }
-        }
-      };
-
-      const rzp = new window.Razorpay(options);
-      rzp.on("payment.failed", async function (response) {
-        setWinnerPaymentLoadingId(null);
-        toast.error(`Payment Failed: ${response.error.description}. If money has been deducted it will be refunded to your account in 2-3 days.`);
-        try {
-          await escrow.webhookFailed({
-            transaction_id,
-            error_description: response.error.description,
-          });
-        } catch (err) {
-          // no-op
-        }
-      });
-      rzp.open();
     } catch (error) {
+      toast.error(error.response?.data?.message || error.message || "Could not release payout");
+    } finally {
       setWinnerPaymentLoadingId(null);
-      toast.error(error.response?.data?.message || error.message || "Could not initiate winner payment");
     }
   };
 
@@ -630,7 +560,7 @@ export default function ChitGroupDetails() {
                                 <p className="flex items-center gap-1"><Clock3 className="w-3.5 h-3.5" /> Created: {auction.createdAt ? new Date(auction.createdAt).toLocaleString() : "N/A"}</p>
                                 <p className="flex items-center gap-1"><Users className="w-3.5 h-3.5" /> Total bids: {auction.totalBids}</p>
                                 {auction.winnerName && <p className="flex items-center gap-1"><Trophy className="w-3.5 h-3.5" /> Winner: {auction.winnerName}</p>}
-                                {dueText && <p>Payment due: {dueText}</p>}
+                                {dueText && <p>Payout available until: {dueText}</p>}
                               </div>
 
                               {canBid && (
@@ -690,14 +620,14 @@ export default function ChitGroupDetails() {
                                 <button
                                   className="px-4 py-2 rounded-lg bg-green-600 text-white font-semibold hover:bg-green-700 disabled:opacity-60"
                                   disabled={winnerPaymentLoadingId === auction.id}
-                                  onClick={() => handleWinnerPayment(auction)}
+                                  onClick={() => handleWinnerPayout(auction)}
                                 >
-                                  {winnerPaymentLoadingId === auction.id ? <T>Processing...</T> : <T>Proceed to Payment</T>}
+                                  {winnerPaymentLoadingId === auction.id ? <T>Releasing...</T> : <T>Receive Payout</T>}
                                 </button>
                               )}
 
                               {auction.winnerPaidAt && (
-                                <p className="text-xs text-green-700 font-medium">Winner payment completed on {new Date(auction.winnerPaidAt).toLocaleString()}</p>
+                                <p className="text-xs text-green-700 font-medium">Payout received on {new Date(auction.winnerPaidAt).toLocaleString()}</p>
                               )}
                             </div>
                           );
