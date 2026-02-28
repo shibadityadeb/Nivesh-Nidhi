@@ -1,0 +1,180 @@
+/* Custom Driver.js Tutorial Styling - Nivesh Nidhi Theme */
+
+/* Overlay - Light Dark (25% opacity) */
+.driver-overlay {
+  background-color: rgba(28, 42, 75, 0.25) !important;
+}
+
+/* Remove blur from active element */
+.driver-active-element {
+  filter: none !important;
+  backdrop-filter: none !important;
+}
+
+/* Popover Container */
+.driver-popover.nivesh-tutorial-popover {
+  background: linear-gradient(135deg, hsl(0 0% 100%), hsl(220 20% 98%)) !important;
+  border: 2px solid hsl(30 100% 60%) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 20px 60px rgba(28, 42, 75, 0.25) !important;
+  max-width: 360px !important;
+  padding: 0 !important;
+}
+
+/* Popover Arrow */
+.driver-popover.nivesh-tutorial-popover .driver-popover-arrow {
+  border-color: hsl(30 100% 60%) !important;
+}
+
+.driver-popover.nivesh-tutorial-popover .driver-popover-arrow-side-left {
+  border-left-color: hsl(30 100% 60%) !important;
+}
+
+.driver-popover.nivesh-tutorial-popover .driver-popover-arrow-side-right {
+  border-right-color: hsl(30 100% 60%) !important;
+}
+
+.driver-popover.nivesh-tutorial-popover .driver-popover-arrow-side-top {
+  border-top-color: hsl(30 100% 60%) !important;
+}
+
+.driver-popover.nivesh-tutorial-popover .driver-popover-arrow-side-bottom {
+  border-bottom-color: hsl(30 100% 60%) !important;
+}
+
+/* Title */
+.driver-popover.nivesh-tutorial-popover .driver-popover-title {
+  font-family: 'Poppins', sans-serif !important;
+  font-size: 18px !important;
+  font-weight: 700 !important;
+  color: hsl(220 70% 18%) !important;
+  padding: 20px 24px 12px !important;
+  margin: 0 !important;
+  background: linear-gradient(135deg, hsl(30 100% 98%), hsl(25 100% 96%)) !important;
+  border-radius: 14px 14px 0 0 !important;
+  border-bottom: 1px solid hsl(30 100% 90%) !important;
+}
+
+/* Description */
+.driver-popover.nivesh-tutorial-popover .driver-popover-description {
+  font-family: 'Noto Sans', sans-serif !important;
+  font-size: 14px !important;
+  line-height: 1.6 !important;
+  color: hsl(220 25% 30%) !important;
+  padding: 16px 24px !important;
+  margin: 0 !important;
+}
+
+/* Footer */
+.driver-popover.nivesh-tutorial-popover .driver-popover-footer {
+  padding: 16px 24px 20px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 12px !important;
+  background: transparent !important;
+}
+
+/* Progress Text */
+.driver-popover.nivesh-tutorial-popover .driver-popover-progress-text {
+  font-family: 'Noto Sans', sans-serif !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: hsl(220 70% 18%) !important;
+}
+
+/* Buttons */
+.driver-popover.nivesh-tutorial-popover .driver-popover-btn {
+  font-family: 'Poppins', sans-serif !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  padding: 10px 20px !important;
+  border-radius: 10px !important;
+  border: none !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Remove any pseudo-elements that might cause doubled text */
+.driver-popover.nivesh-tutorial-popover .driver-popover-btn::before,
+.driver-popover.nivesh-tutorial-popover .driver-popover-btn::after {
+  content: none !important;
+  display: none !important;
+}
+
+/* Previous Button */
+.driver-popover.nivesh-tutorial-popover .driver-popover-prev-btn {
+  background: hsl(0 0% 100%) !important;
+  color: hsl(220 70% 18%) !important;
+  border: 2px solid hsl(220 15% 90%) !important;
+}
+
+.driver-popover.nivesh-tutorial-popover .driver-popover-prev-btn:hover {
+  background: hsl(220 20% 96%) !important;
+  border-color: hsl(220 70% 18%) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(28, 42, 75, 0.15) !important;
+}
+
+/* Next Button */
+.driver-popover.nivesh-tutorial-popover .driver-popover-next-btn {
+  background: linear-gradient(135deg, hsl(30 100% 60%), hsl(25 100% 50%)) !important;
+  color: hsl(0 0% 100%) !important;
+}
+
+.driver-popover.nivesh-tutorial-popover .driver-popover-next-btn:hover {
+  background: linear-gradient(135deg, hsl(30 100% 55%), hsl(25 100% 45%)) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 16px rgba(255, 138, 0, 0.4) !important;
+}
+
+/* Close Button */
+.driver-popover.nivesh-tutorial-popover .driver-popover-close-btn {
+  position: absolute !important;
+  top: 16px !important;
+  right: 16px !important;
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 8px !important;
+  background: hsl(0 0% 100%) !important;
+  color: hsl(220 25% 30%) !important;
+  border: 1px solid hsl(220 15% 90%) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 20px !important;
+  line-height: 1 !important;
+  padding: 0 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+
+.driver-popover.nivesh-tutorial-popover .driver-popover-close-btn:hover {
+  background: hsl(0 84.2% 60.2%) !important;
+  color: hsl(0 0% 100%) !important;
+  border-color: hsl(0 84.2% 60.2%) !important;
+  transform: rotate(90deg) !important;
+}
+
+/* Highlighted Element */
+.driver-active-element {
+  border-radius: 12px !important;
+  box-shadow: 0 0 0 4px hsl(30 100% 60%), 0 0 0 8px hsla(30 100% 60% / 0.3) !important;
+}
+
+/* Animation */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.driver-popover.nivesh-tutorial-popover {
+  animation: slideIn 0.3s ease-out !important;
+}

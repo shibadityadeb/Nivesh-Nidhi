@@ -1,5 +1,6 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import AuthModal from "@/components/AuthModal";
 import { T } from "@/context/LanguageContext";
 const steps = [
   {
@@ -48,10 +49,15 @@ const ChitProcess = () => {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-white relative overflow-hidden">
+        {/* Gradient Splashes */}
+        <div className="fixed inset-0 pointer-events-none z-0">
+          <div className="absolute top-20 right-20 w-[500px] h-[500px] bg-gradient-to-br from-secondary/15 to-transparent rounded-full blur-3xl" />
+          <div className="absolute bottom-40 left-20 w-[400px] h-[400px] bg-gradient-to-tr from-primary/15 to-transparent rounded-full blur-3xl" />
+        </div>
 
         {/* Page Header */}
-        <section className="pt-28 pb-16 border-b border-gray-100">
+        <section className="pt-28 pb-16 border-b border-gray-100 relative z-10">
           <div className="container mx-auto px-6 lg:px-16 max-w-5xl">
             <p className="text-xs font-semibold tracking-widest uppercase text-orange-500 mb-4">
               <T>How it works</T>
@@ -68,7 +74,7 @@ const ChitProcess = () => {
         </section>
 
         {/* Steps */}
-        <section className="py-20">
+        <section className="py-20 relative z-10">
           <div className="container mx-auto px-6 lg:px-16 max-w-5xl">
             <div className="divide-y divide-gray-100">
               {steps.map((item, i) => (
@@ -99,7 +105,7 @@ const ChitProcess = () => {
         </section>
 
         {/* Example */}
-        <section className="py-20 bg-gray-50 border-t border-gray-100">
+        <section className="py-20 bg-gray-50 border-t border-gray-100 relative z-10">
           <div className="container mx-auto px-6 lg:px-16 max-w-5xl">
 
             <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-12">
@@ -145,7 +151,7 @@ const ChitProcess = () => {
         </section>
 
         {/* CTA strip */}
-        <section className="py-16 border-t border-gray-100">
+        <section className="py-16 border-t border-gray-100 relative z-10">
           <div className="container mx-auto px-6 lg:px-16 max-w-5xl flex flex-col sm:flex-row items-center justify-between gap-6">
             <div>
               <h3 className="font-heading font-bold text-2xl text-gray-900 mb-1"><T>Ready to join a chit group?</T></h3>
@@ -163,6 +169,7 @@ const ChitProcess = () => {
 
       </div>
       <Footer />
+      <AuthModal />
     </>
   );
 };

@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { ChevronDown, Menu, X, LogIn, User, ShieldAlert, Bell, Loader2 } from "lucide-react";
+import { ChevronDown, Menu, X, LogIn, User, ShieldAlert, Bell, Loader2, LayoutDashboard, ShieldCheck, GraduationCap, LogOut, Settings } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { useNavigate, useLocation } from "react-router-dom";
 import { user as userApi } from "@/lib/api";
@@ -287,66 +287,91 @@ const Navbar = () => {
 
               {user ? (
                 <div className="relative">
-                  <div className="flex items-center gap-3 cursor-pointer">
-                    <div className="hidden sm:flex flex-col items-end mr-1">
-                      <span className="text-sm font-bold leading-none">{user.name?.split(' ')[0]}</span>
-                      <span className="text-xs text-muted-foreground">
-                        {user.role}
-                      </span>
+                  <button
+                    type="button"
+                    onClick={handleProfileClick}
+                    id="profileBtn"
+                    className="hidden sm:flex items-center gap-2.5 px-3 py-2 rounded-xl bg-gradient-to-br from-secondary/10 to-secondary/5 border border-secondary/20 hover:border-secondary/40 transition-all hover:shadow-md group"
+                  >
+                    <div className="w-9 h-9 rounded-full bg-gradient-to-br from-secondary to-secondary/80 flex items-center justify-center text-white font-bold text-sm shadow-sm">
+                      {user.name?.charAt(0).toUpperCase()}
                     </div>
-                    <button
-                      type="button"
-                      onClick={handleProfileClick}
-                      id="profileBtn"
-                      className="hidden sm:flex w-10 h-10 rounded-full bg-secondary/10 items-center justify-center border border-secondary/30 transition-colors"
-                    >
-                      <User className="w-5 h-5 text-secondary" />
-                    </button>
-                  </div>
+                    <div className="flex flex-col items-start">
+                      <span className="text-sm font-semibold text-foreground leading-tight">{user.name?.split(' ')[0]}</span>
+                      <span className="text-[11px] text-muted-foreground capitalize leading-tight">{user.role?.toLowerCase()}</span>
+                    </div>
+                    <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform ${activeMenu === 'profile' ? 'rotate-180' : ''}`} />
+                  </button>
 
                   {activeMenu === 'profile' && (
-                    <div className="absolute top-full right-0 mt-2 w-48 bg-card rounded-xl shadow-xl border border-border p-2 animate-slide-down">
-                      {user.role === "ADMIN" && (
-                        <a href="/admin" className="block px-4 py-2.5 text-sm font-medium text-amber-600 hover:bg-amber-50 rounded-lg transition-colors mb-1">
-                          <T>Admin Dashboard</T>
-                        </a>
-                      )}
-                      {(user.role === "ORGANIZER" || user.role === "ADMIN") && (
-                        <a id="createChitBtn" href="/my-chit-group" className="block px-4 py-2.5 text-sm font-medium text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors mb-1">
-                          <T>My Chit Group</T>
-                        </a>
-                      )}
-                      <a href="/dashboard" className="block px-4 py-2.5 text-sm font-medium text-card-foreground hover:bg-muted hover:text-primary rounded-lg transition-colors mb-1">
-                        <T>My Dashboard</T>
-                      </a>
-                      {user.isKycVerified ? (
-                        <div className="block px-4 py-2.5 text-sm font-medium text-green-600 bg-green-50 rounded-lg mb-1">
-                          <T>KYC Verified</T>
+                    <div className="absolute top-full right-0 mt-2 w-64 bg-card rounded-xl shadow-2xl border border-border overflow-hidden animate-slide-down">
+                      {/* Profile Header */}
+                      <div className="px-4 py-3 bg-gradient-to-br from-secondary/10 to-secondary/5 border-b border-border">
+                        <div className="flex items-center gap-3">
+                          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-secondary to-secondary/80 flex items-center justify-center text-white font-bold text-lg shadow-md">
+                            {user.name?.charAt(0).toUpperCase()}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-semibold text-foreground truncate">{user.name}</p>
+                            <p className="text-xs text-muted-foreground truncate">{user.email}</p>
+                          </div>
                         </div>
-                      ) : (
+                      </div>
+
+                      {/* Menu Items */}
+                      <div className="p-2">
+                        {user.role === "ADMIN" && (
+                          <a href="/admin" className="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-foreground hover:bg-amber-50 hover:text-amber-600 rounded-lg transition-colors group">
+                            <ShieldAlert className="w-4 h-4 text-amber-500 group-hover:text-amber-600" />
+                            <T>Admin Dashboard</T>
+                          </a>
+                        )}
+                        {(user.role === "ORGANIZER" || user.role === "ADMIN") && (
+                          <a id="createChitBtn" href="/my-chit-group" className="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-foreground hover:bg-indigo-50 hover:text-indigo-600 rounded-lg transition-colors group">
+                            <Settings className="w-4 h-4 text-indigo-500 group-hover:text-indigo-600" />
+                            <T>My Chit Group</T>
+                          </a>
+                        )}
+                        <a href="/dashboard" className="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-foreground hover:bg-primary/5 hover:text-primary rounded-lg transition-colors group">
+                          <LayoutDashboard className="w-4 h-4 text-primary/70 group-hover:text-primary" />
+                          <T>My Dashboard</T>
+                        </a>
+                        {user.isKycVerified ? (
+                          <div className="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-green-600 bg-green-50 rounded-lg">
+                            <ShieldCheck className="w-4 h-4" />
+                            <T>KYC Verified</T>
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => {
+                              setActiveMenu(null);
+                              navigate("/kyc");
+                            }}
+                            className="w-full flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-foreground hover:bg-orange-50 hover:text-secondary rounded-lg transition-colors group"
+                          >
+                            <ShieldCheck className="w-4 h-4 text-secondary/70 group-hover:text-secondary" />
+                            <T>Complete KYC</T>
+                          </button>
+                        )}
                         <button
-                          onClick={() => {
-                            setActiveMenu(null);
-                            navigate("/kyc");
-                          }}
-                          className="w-full text-left px-4 py-2.5 text-sm font-medium text-card-foreground hover:bg-muted hover:text-primary rounded-lg transition-colors mb-1"
+                          onClick={handleRestartTutorial}
+                          className="w-full flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-foreground hover:bg-muted hover:text-primary rounded-lg transition-colors group"
                         >
-                          <T>Complete KYC</T>
+                          <GraduationCap className="w-4 h-4 text-muted-foreground group-hover:text-primary" />
+                          <T>Restart Tutorial</T>
                         </button>
-                      )}
-                      <button
-                        onClick={handleRestartTutorial}
-                        className="w-full text-left px-4 py-2.5 text-sm font-medium text-card-foreground hover:bg-muted hover:text-primary rounded-lg transition-colors mb-1"
-                      >
-                        <T>Restart Tutorial</T>
-                      </button>
-                      <button
-                        onClick={logoutUser}
-                        className="w-full text-left px-4 py-2.5 text-sm font-medium text-destructive hover:bg-destructive/10 rounded-lg transition-colors flex items-center gap-2"
-                      >
-                        <LogIn className="w-4 h-4 rotate-180" />
-                        <T>Sign Out</T>
-                      </button>
+                      </div>
+
+                      {/* Logout */}
+                      <div className="p-2 border-t border-border">
+                        <button
+                          onClick={logoutUser}
+                          className="w-full flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-destructive hover:bg-destructive/10 rounded-lg transition-colors group"
+                        >
+                          <LogOut className="w-4 h-4" />
+                          <T>Sign Out</T>
+                        </button>
+                      </div>
                     </div>
                   )}
                 </div>
