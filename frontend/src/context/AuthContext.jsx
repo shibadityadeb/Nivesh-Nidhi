@@ -47,11 +47,11 @@ export const AuthProvider = ({ children }) => {
     persistUser(data.data.user);
     setToken(data.data.token);
     setShowAuthModal(false);
-    
+
     // Show success modal then terms modal
     setNewUserName(name);
     setShowSuccessModal(true);
-    
+
     return data.data;
   };
 
@@ -75,11 +75,11 @@ export const AuthProvider = ({ children }) => {
     persistUser(data.data.user);
     setToken(data.data.token);
     setShowAuthModal(false);
-    
+
     // Show simple login success notification
     setNewUserName(data.data.user.name);
     setShowLoginSuccessModal(true);
-    
+
     return data.data;
   };
 
@@ -136,6 +136,9 @@ export const AuthProvider = ({ children }) => {
     <AuthContext.Provider value={{
       showAuthModal,
       setShowAuthModal,
+      showTermsModal,
+      showSuccessModal,
+      showLoginSuccessModal,
       user,
       token,
       isAuthenticated: !!user && !!token,
@@ -146,18 +149,18 @@ export const AuthProvider = ({ children }) => {
       logoutUser
     }}>
       {children}
-      <SuccessModal 
-        show={showSuccessModal} 
-        onClose={handleSuccessClose} 
+      <SuccessModal
+        show={showSuccessModal}
+        onClose={handleSuccessClose}
         userName={newUserName}
       />
-      <TermsModal 
-        show={showTermsModal} 
+      <TermsModal
+        show={showTermsModal}
         onAccept={handleTermsAccept}
       />
-      <LoginSuccessModal 
-        show={showLoginSuccessModal} 
-        onClose={handleLoginSuccessClose} 
+      <LoginSuccessModal
+        show={showLoginSuccessModal}
+        onClose={handleLoginSuccessClose}
         userName={newUserName}
       />
     </AuthContext.Provider>

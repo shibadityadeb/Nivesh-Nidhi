@@ -32,29 +32,48 @@ import NotFound from "./pages/NotFound";
 const queryClient = new QueryClient();
 
 const TutorialBootstrap = () => {
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, showTermsModal, showSuccessModal, showLoginSuccessModal } = useAuth();
   const location = useLocation();
   const lastAttemptRef = useRef("");
 
   useEffect(() => {
-    if (!isAuthenticated) return;
+    if (!isAuthenticated || !user?.id) return;
 
-    const storageKey = "hasSeenTutorial";
+    const storageKey = `hasSeenTutorial_${user.id}`;
     if (localStorage.getItem(storageKey)) return;
 
-    const attemptKey = `global:${location.pathname}`;
-    if (lastAttemptRef.current === attemptKey) return;
-    lastAttemptRef.current = attemptKey;
+    // Do not attempt if modals are open
+    if (showTermsModal || showSuccessModal || showLoginSuccessModal) return;
 
-    const timer = setTimeout(() => {
+    const attemptKey = `global:${location.pathname}`;
+    // We only want to prevent *repeated* identical path attempts that failed, 
+    // but we SHOULD retry if we just closed a modal.
+    // If it succeeds, the storageKey prevents future runs.
+
+    // Use an interval to poll every 500ms for up to 5 seconds to see if DOM is ready
+    let attempts = 0;
+    const maxAttempts = 10;
+
+    const tryStart = () => {
+      attempts++;
+      console.log(`[TutorialBootstrap] Attempt ${attempts} to start tutorial on path ${location.pathname}`);
       const started = startAppTutorial();
       if (started) {
-        localStorage.setItem(storageKey, "true");
+        console.log(`[TutorialBootstrap] Tutorial started successfully! Setting local storage.`);
+        localStorage.setItem(`hasSeenTutorial_${user.id}`, "true");
+      } else if (attempts < maxAttempts) {
+        console.log(`[TutorialBootstrap] Tutorial failed to start (no elements?). Retrying in 500ms...`);
+        timer = setTimeout(tryStart, 500);
+      } else {
+        console.log(`[TutorialBootstrap] Max attempts reached. Giving up on path ${location.pathname}.`);
+        lastAttemptRef.current = attemptKey;
       }
-    }, 500);
+    };
+
+    let timer = setTimeout(tryStart, 500);
 
     return () => clearTimeout(timer);
-  }, [isAuthenticated, location.pathname]);
+  }, [isAuthenticated, location.pathname, showTermsModal, showSuccessModal, showLoginSuccessModal]);
 
   return null;
 };

@@ -135,12 +135,18 @@ const Navbar = () => {
   };
 
   const handleRestartTutorial = () => {
-    localStorage.removeItem("hasSeenTutorial");
+    if (user?.id) {
+      localStorage.removeItem(`hasSeenTutorial_${user.id}`);
+    } else {
+      localStorage.removeItem("hasSeenTutorial");
+    }
     setActiveMenu(null);
     setMobileOpen(false);
     setTimeout(() => {
       startAppTutorial();
-      localStorage.setItem("hasSeenTutorial", "true");
+      if (user?.id) {
+        localStorage.setItem(`hasSeenTutorial_${user.id}`, "true");
+      }
     }, 150);
   };
 
@@ -256,11 +262,10 @@ const Navbar = () => {
                             key={notif.id}
                             type="button"
                             onClick={() => handleNotificationClick(notif)}
-                            className={`w-full text-left px-3 py-2.5 rounded-lg border transition-colors ${
-                              notif.is_read
+                            className={`w-full text-left px-3 py-2.5 rounded-lg border transition-colors ${notif.is_read
                                 ? "border-transparent hover:bg-muted"
                                 : "border-primary/20 bg-primary/5 hover:bg-primary/10"
-                            }`}
+                              }`}
                           >
                             <p className="text-sm font-medium text-card-foreground line-clamp-1">{notif.title}</p>
                             <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">{notif.message}</p>

@@ -56,20 +56,32 @@ const resolveStepElement = (selectors = []) => {
   for (const selector of selectors) {
     const matches = document.querySelectorAll(selector);
     for (const match of matches) {
-      if (isVisible(match)) return match;
+      if (isVisible(match)) {
+        console.log(`[tutorial.js] Found visible element for selector: ${selector}`, match);
+        return match;
+      } else {
+        console.log(`[tutorial.js] Element found for selector: ${selector} but is NOT visible`, match);
+      }
     }
   }
+  console.log(`[tutorial.js] No visible elements found for selectors: ${selectors.join(", ")}`);
   return null;
 };
 
 export const startAppTutorial = () => {
+  console.log("[tutorial.js] startAppTutorial requested. Checking elements...");
   const steps = STEP_TARGETS.map((step) => {
     const element = resolveStepElement(step.selectors);
     if (!element) return null;
     return { element, popover: step.popover };
   }).filter(Boolean);
 
-  if (steps.length === 0) return false;
+  if (steps.length === 0) {
+    console.log("[tutorial.js] startAppTutorial aborted: No valid steps found.");
+    return false;
+  }
+
+  console.log(`[tutorial.js] Starting tutorial with ${steps.length} steps.`);
 
   const driverObj = driver({
     showProgress: true,
