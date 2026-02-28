@@ -1,18 +1,26 @@
 import { useRef } from "react";
 import { T } from "@/context/LanguageContext";
+import solBeginners from "@/assets/sol-beginners.jpg";
+import solExperienced from "@/assets/sol-experienced.jpg";
+import solSeniors from "@/assets/sol-seniors.jpg";
+import solHomemakers from "@/assets/sol-homemakers.jpg";
+import goalBusiness from "@/assets/goal-business.jpg";
+import goalLiability from "@/assets/goal-liability.jpg";
+import goalFamily from "@/assets/goal-family.jpg";
+import goalWealth from "@/assets/goal-wealth.jpg";
 
 const personalSolutions = [
-  { title: "Beginners", image: "https://mahamoney.s3.ap-south-1.amazonaws.com/sol-beginners.jpg", href: "/solutions-personalized#beginners" },
-  { title: "Experienced Professionals", image: "https://mahamoney.s3.ap-south-1.amazonaws.com/sol-experienced.jpg", href: "/solutions-personalized#experienced" },
-  { title: "Senior Citizens", image: "https://mahamoney.s3.ap-south-1.amazonaws.com/sol-seniors.jpg", href: "/solutions-personalized#seniors" },
-  { title: "Home Makers", image: "https://mahamoney.s3.ap-south-1.amazonaws.com/sol-homemakers.jpg", href: "/solutions-personalized#homemakers" },
+  { title: "Beginners", image: solBeginners, href: "/solutions-personalized#beginners" },
+  { title: "Experienced Professionals", image: solExperienced, href: "/solutions-personalized#experienced" },
+  { title: "Senior Citizens", image: solSeniors, href: "/solutions-personalized#seniors" },
+  { title: "Home Makers", image: solHomemakers, href: "/solutions-personalized#homemakers" },
 ];
 
 const goalSolutions = [
-  { title: "Business Needs", image: "https://mahamoney.s3.ap-south-1.amazonaws.com/goal-business.jpg", href: "/solutions-goal-based#business" },
-  { title: "Reducing Liability", image: "https://mahamoney.s3.ap-south-1.amazonaws.com/goal-liability.jpg", href: "/solutions-goal-based#liability" },
-  { title: "Family Commitments", image: "https://mahamoney.s3.ap-south-1.amazonaws.com/goal-family.jpg", href: "/solutions-goal-based#family" },
-  { title: "Grow Investment & Wealth", image: "https://mahamoney.s3.ap-south-1.amazonaws.com/goal-wealth.jpg", href: "/solutions-goal-based#wealth" },
+  { title: "Business Needs", image: goalBusiness, href: "/solutions-goal-based#business" },
+  { title: "Reducing Liability", image: goalLiability, href: "/solutions-goal-based#liability" },
+  { title: "Family Commitments", image: goalFamily, href: "/solutions-goal-based#family" },
+  { title: "Grow Investment & Wealth", image: goalWealth, href: "/solutions-goal-based#wealth" },
 ];
 
 const SolutionCardComponent = ({ card, aspectRatio = "aspect-[4/3]" }) => {
