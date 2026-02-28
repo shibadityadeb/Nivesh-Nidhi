@@ -100,8 +100,13 @@ export default function Kyc() {
         .slice(0, 12)
         .replace(/(\d{4})(?=\d)/g, "$1 ")
         .trim();
-      const status = validateAadhaar(digits);
-      setAadhaarStatus(status);
+      
+      if (digits.length === 12) {
+        const status = validateAadhaar(digits);
+        setAadhaarStatus(status);
+      } else {
+        setAadhaarStatus("");
+      }
     }
 
     setForm((prev) => ({
@@ -201,16 +206,25 @@ export default function Kyc() {
                     className="flex h-11 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary transition-all"
                     placeholder="XXXX XXXX XXXX"
                   />
-                  {form.aadhaarNumber.length > 0 && (
-                    <div className={`flex items-center gap-2 px-3 py-2 rounded-lg ${aadhaarStatus === "verified" ? "bg-orange-50 dark:bg-orange-950/20 border border-orange-200 dark:border-orange-800" : "bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800"}`}>
+                  {form.aadhaarNumber.replace(/\s/g, "").length === 12 && (
+                    <div className={`flex items-center gap-2 px-3 py-2 rounded-lg ${aadhaarStatus === "verified" ? "bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800" : "bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800"}`}>
                       {aadhaarStatus === "verified" ? (
-                        <BadgeCheck className="w-4 h-4 text-orange-600 dark:text-orange-400" />
+                        <>
+                          <BadgeCheck className="w-5 h-5 text-green-600 dark:text-green-400" />
+                          <p className="text-sm font-semibold text-green-700 dark:text-green-300">
+                            <T>Aadhaar Card Verified ✓</T>
+                          </p>
+                        </>
                       ) : (
-                        <div className="w-4 h-4 rounded-full border-2 border-amber-500 border-t-transparent animate-spin" />
+                        <>
+                          <div className="w-5 h-5 rounded-full border-2 border-red-500 flex items-center justify-center">
+                            <span className="text-red-500 text-xs font-bold">✕</span>
+                          </div>
+                          <p className="text-sm font-semibold text-red-700 dark:text-red-300">
+                            <T>Invalid Aadhaar Number</T>
+                          </p>
+                        </>
                       )}
-                      <p className={`text-xs font-medium ${aadhaarStatus === "verified" ? "text-orange-700 dark:text-orange-300" : "text-amber-700 dark:text-amber-300"}`}>
-                        {aadhaarStatus === "verified" ? <T>Aadhaar Verified Successfully</T> : <T>Enter valid 12-digit Aadhaar</T>}
-                      </p>
                     </div>
                   )}
                 </div>
