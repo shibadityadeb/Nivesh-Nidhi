@@ -55,6 +55,8 @@ export default function ApplyOrganizer() {
         state: "",
         pincode: "",
         proposed_chit_size: "",
+        proposed_duration_months: "",
+        organiser_commission: "",
         past_3_yr_turnover: "",
         existing_group_count: "",
         total_active_members: "",
@@ -150,6 +152,9 @@ export default function ApplyOrganizer() {
                     reasonForOpeningFund: formData.reason_for_opening_fund,
                     expectedMembersCount: Number(formData.expected_members_count),
                     targetMonthlyContribution: Number(formData.target_monthly_contribution),
+                    organiserCommissionPct: formData.organiser_commission
+                        ? Number(formData.organiser_commission)
+                        : null,
                 },
             };
 
@@ -294,7 +299,7 @@ export default function ApplyOrganizer() {
                                 <h2 className="text-2xl font-bold font-heading mb-6"><T>Business Identity</T></h2>
                                 <div className="grid md:grid-cols-2 gap-6">
                                     <div className="space-y-2">
-                                        <label className="text-sm font-semibold"><T>Company Name *</T></label>
+                                        <label className="text-sm font-semibold"><T>Chit Fund Name *</T></label>
                                         <input
                                             required
                                             name="company_name"
@@ -304,41 +309,85 @@ export default function ApplyOrganizer() {
                                             placeholder="e.g. Acme Chit Funds Pvt Ltd"
                                         />
                                     </div>
+                                    {formData.type === "EXISTING" && (
+                                        <>
+                                            <div className="space-y-2">
+                                                <label className="text-sm font-semibold"><T>Legal Structure *</T></label>
+                                                <select
+                                                    required
+                                                    name="legal_structure"
+                                                    value={formData.legal_structure}
+                                                    onChange={handleChange}
+                                                    className="flex h-12 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                                                >
+                                                    <option value="Proprietorship">Proprietorship</option>
+                                                    <option value="Partnership">Partnership</option>
+                                                    <option value="Private Limited">Private Limited</option>
+                                                    <option value="Trust">Trust</option>
+                                                </select>
+                                            </div>
+                                            <div className="space-y-2">
+                                                <label className="text-sm font-semibold"><T>Chit License Number *</T></label>
+                                                <input
+                                                    required
+                                                    name="chit_license_number"
+                                                    value={formData.chit_license_number}
+                                                    onChange={handleChange}
+                                                    className="flex h-12 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm"
+                                                    placeholder="Required for Existing Business"
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <label className="text-sm font-semibold"><T>Years of Operation *</T></label>
+                                                <input
+                                                    required
+                                                    type="number"
+                                                    name="years_of_operation"
+                                                    value={formData.years_of_operation}
+                                                    onChange={handleChange}
+                                                    className="flex h-12 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm"
+                                                    placeholder="e.g. 5"
+                                                    min="0"
+                                                />
+                                            </div>
+                                        </>
+                                    )}
                                     <div className="space-y-2">
-                                        <label className="text-sm font-semibold"><T>Legal Structure</T></label>
-                                        <select
-                                            name="legal_structure"
-                                            value={formData.legal_structure}
-                                            onChange={handleChange}
-                                            className="flex h-12 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                                        >
-                                            <option value="Proprietorship">Proprietorship</option>
-                                            <option value="Partnership">Partnership</option>
-                                            <option value="Private Limited">Private Limited</option>
-                                            <option value="Trust">Trust</option>
-                                        </select>
-                                    </div>
-                                    <div className="space-y-2">
-                                        <label className="text-sm font-semibold"><T>Chit License Number</T></label>
-                                        <input
-                                            name="chit_license_number"
-                                            value={formData.chit_license_number}
-                                            onChange={handleChange}
-                                            className="flex h-12 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm"
-                                            placeholder="Required for Existing/Migrating"
-                                        />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <label className="text-sm font-semibold"><T>Years of Operation *</T></label>
+                                        <label className="text-sm font-semibold"><T>Time Period *</T></label>
                                         <input
                                             required
                                             type="number"
-                                            name="years_of_operation"
-                                            value={formData.years_of_operation}
+                                            min="1"
+                                            name="proposed_duration_months"
+                                            value={formData.proposed_duration_months}
+                                            onChange={handleChange}
+                                            className="flex h-12 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm"
+                                            placeholder="e.g. 12 months"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-semibold"><T>Organiser / Foreman Name *</T></label>
+                                        <input
+                                            required
+                                            name="license_issuing_auth"
+                                            value={formData.license_issuing_auth}
+                                            onChange={handleChange}
+                                            className="flex h-12 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm"
+                                            placeholder="Enter organiser / foreman name"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-semibold"><T>Foreman / Organiser Commission (%)</T></label>
+                                        <input
+                                            type="number"
+                                            min="0"
+                                            max="100"
+                                            step="0.1"
+                                            name="organiser_commission"
+                                            value={formData.organiser_commission}
                                             onChange={handleChange}
                                             className="flex h-12 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm"
                                             placeholder="e.g. 5"
-                                            min="0"
                                         />
                                     </div>
                                 </div>
