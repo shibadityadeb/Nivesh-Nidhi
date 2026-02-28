@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useAuth } from "@/context/AuthContext";
-import { user as userApi } from "@/lib/api";
+import { user as userApi, chitGroups } from "@/lib/api";
 import { toast } from "sonner";
 import { IndianRupee, ShieldCheck, Link2, ExternalLink, Calendar, Loader2, ArrowRight } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
@@ -11,6 +11,7 @@ import { T } from "@/context/LanguageContext";
 export default function UserDashboard() {
     const { user, isAuthenticated } = useAuth();
     const [transactions, setTransactions] = useState([]);
+    const [activeGroups, setActiveGroups] = useState([]);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
@@ -24,9 +25,17 @@ export default function UserDashboard() {
 
     const fetchMyChits = async () => {
         try {
-            const res = await userApi.getChits();
-            if (res.data.success) {
-                setTransactions(res.data.data);
+            const [txRes, groupsRes] = await Promise.all([
+                userApi.getChits(),
+                chitGroups.getActiveGroups()
+            ]);
+
+            if (txRes.data.success) {
+                setTransactions(txRes.data.data);
+            }
+            if (groupsRes.data.success) {
+                // The API might return the members array. Map to just the groups.
+                setActiveGroups(groupsRes.data.data.map(m => m.chit_group || m) || []);
             }
         } catch (error) {
             toast.error("Failed to load your investments.");
@@ -65,7 +74,7 @@ export default function UserDashboard() {
                         <Loader2 className="w-8 h-8 animate-spin text-primary" />
                         <span className="ml-3 text-muted-foreground"><T>Loading your portfolio...</T></span>
                     </div>
-                ) : transactions.length === 0 ? (
+                ) : activeGroups.length === 0 ? (
                     <div className="text-center py-20 bg-card rounded-2xl border border-border">
                         <ShieldCheck className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-50" />
                         <h3 className="text-lg font-medium text-foreground"><T>No Investments Found</T></h3>
@@ -85,41 +94,37 @@ export default function UserDashboard() {
                                 <T>My Active Chit Funds</T>
                             </h2>
                             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                                {Array.from(new Set(transactions.map(t => t.escrow_account?.chit_group?.id)))
-                                    .filter(Boolean)
-                                    .map(groupId => {
-                                        const tx = transactions.find(t => t.escrow_account?.chit_group?.id === groupId);
-                                        const group = tx.escrow_account.chit_group;
-                                        return (
-                                            <Link key={groupId} to={`/chit-groups/${groupId}`} className="block group">
-                                                <div className="bg-white border border-border rounded-2xl p-6 shadow-sm group-hover:shadow-md transition-shadow group-hover:border-primary/30">
-                                                    <div className="flex justify-between items-start mb-4">
-                                                        <h3 className="font-bold text-lg text-foreground line-clamp-1 flex-1 pr-2">{group.name}</h3>
-                                                        <span className="shrink-0 px-2 py-1 rounded bg-green-100 text-green-700 text-[10px] font-bold uppercase tracking-wider">
-                                                            ACTIVE
-                                                        </span>
+                                {activeGroups.map(group => {
+                                    return (
+                                        <Link key={group.id} to={`/chit-groups/${group.id}`} className="block group">
+                                            <div className="bg-white border border-border rounded-2xl p-6 shadow-sm group-hover:shadow-md transition-shadow group-hover:border-primary/30">
+                                                <div className="flex justify-between items-start mb-4">
+                                                    <h3 className="font-bold text-lg text-foreground line-clamp-1 flex-1 pr-2">{group.name}</h3>
+                                                    <span className="shrink-0 px-2 py-1 rounded bg-green-100 text-green-700 text-[10px] font-bold uppercase tracking-wider">
+                                                        ACTIVE
+                                                    </span>
+                                                </div>
+                                                <div className="space-y-3 mb-6">
+                                                    <div className="flex justify-between items-center text-sm">
+                                                        <span className="text-muted-foreground"><T>Chit Value</T></span>
+                                                        <span className="font-semibold">₹{Number(group.chit_value).toLocaleString('en-IN')}</span>
                                                     </div>
-                                                    <div className="space-y-3 mb-6">
-                                                        <div className="flex justify-between items-center text-sm">
-                                                            <span className="text-muted-foreground"><T>Chit Value</T></span>
-                                                            <span className="font-semibold">₹{Number(group.chit_value).toLocaleString('en-IN')}</span>
-                                                        </div>
-                                                        <div className="flex justify-between items-center text-sm">
-                                                            <span className="text-muted-foreground"><T>Duration</T></span>
-                                                            <span className="font-medium">{group.duration_months} Months</span>
-                                                        </div>
-                                                        <div className="flex justify-between items-center text-sm">
-                                                            <span className="text-muted-foreground"><T>Members</T></span>
-                                                            <span className="font-medium">{group.current_members} / {group.member_capacity}</span>
-                                                        </div>
+                                                    <div className="flex justify-between items-center text-sm">
+                                                        <span className="text-muted-foreground"><T>Duration</T></span>
+                                                        <span className="font-medium">{group.duration_months} Months</span>
                                                     </div>
-                                                    <div className="w-full py-2.5 bg-primary/5 text-primary text-center rounded-lg font-medium text-sm group-hover:bg-primary group-hover:text-white transition-colors">
-                                                        <T>View Group Dashboard</T>
+                                                    <div className="flex justify-between items-center text-sm">
+                                                        <span className="text-muted-foreground"><T>Members</T></span>
+                                                        <span className="font-medium">{group.current_members} / {group.member_capacity}</span>
                                                     </div>
                                                 </div>
-                                            </Link>
-                                        );
-                                    })}
+                                                <div className="w-full py-2.5 bg-primary/5 text-primary text-center rounded-lg font-medium text-sm group-hover:bg-primary group-hover:text-white transition-colors">
+                                                    <T>View Group Dashboard</T>
+                                                </div>
+                                            </div>
+                                        </Link>
+                                    );
+                                })}
                             </div>
                         </section>
 
