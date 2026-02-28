@@ -19,6 +19,7 @@ const serializeAuction = (auction, currentUserId) => {
     bidderId: bid.bidder_id,
     bidderName: bid.bidder?.name || 'Unknown',
     bidAmount: toNumber(bid.bid_amount),
+    interestPerAuction: toNumber(bid.interest_per_auction),
     createdAt: bid.created_at,
   }));
 
@@ -150,7 +151,7 @@ const createAuction = async (req, res, next) => {
   try {
     const { groupId } = req.params;
     const userId = req.user.id;
-    const { bidAmount, reason, roundNumber } = req.body;
+    const { bidAmount, interestPerAuction, reason, roundNumber } = req.body;
 
     if (!prisma.auctionRequest?.create) {
       return res.status(503).json({
@@ -170,6 +171,10 @@ const createAuction = async (req, res, next) => {
     const normalizedBid = Number(bidAmount);
     if (!Number.isFinite(normalizedBid) || normalizedBid <= 0) {
       return res.status(400).json({ success: false, message: 'Valid bid amount is required' });
+    }
+    const normalizedInterest = Number(interestPerAuction);
+    if (!Number.isFinite(normalizedInterest) || normalizedInterest < 0 || normalizedInterest > 100) {
+      return res.status(400).json({ success: false, message: 'Valid interest per auction (%) is required' });
     }
 
     const auction = await prisma.$transaction(async (tx) => {
@@ -195,6 +200,7 @@ const createAuction = async (req, res, next) => {
           auction_id: createdAuction.id,
           bidder_id: userId,
           bid_amount: normalizedBid,
+          interest_per_auction: normalizedInterest,
         },
       });
 
@@ -227,7 +233,7 @@ const placeBid = async (req, res, next) => {
   try {
     const { groupId, auctionId } = req.params;
     const userId = req.user.id;
-    const { bidAmount } = req.body;
+    const { bidAmount, interestPerAuction } = req.body;
 
     if (!prisma.auctionRequest?.findUnique) {
       return res.status(503).json({
@@ -250,6 +256,10 @@ const placeBid = async (req, res, next) => {
     const normalizedBid = Number(bidAmount);
     if (!Number.isFinite(normalizedBid) || normalizedBid <= 0) {
       return res.status(400).json({ success: false, message: 'Valid bid amount is required' });
+    }
+    const normalizedInterest = Number(interestPerAuction);
+    if (!Number.isFinite(normalizedInterest) || normalizedInterest < 0 || normalizedInterest > 100) {
+      return res.status(400).json({ success: false, message: 'Valid interest per auction (%) is required' });
     }
 
     const result = await prisma.$transaction(async (tx) => {
@@ -296,6 +306,7 @@ const placeBid = async (req, res, next) => {
           auction_id: auctionId,
           bidder_id: userId,
           bid_amount: normalizedBid,
+          interest_per_auction: normalizedInterest,
         },
       });
 
