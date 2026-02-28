@@ -1,5 +1,5 @@
 
-import { ArrowRight, Shield, Users, TrendingUp, ChevronDown } from "lucide-react";
+import { ArrowRight, Shield, Users, TrendingUp, ChevronDown, BrainCircuit } from "lucide-react";
 import { T } from "@/context/LanguageContext";
 
 const HeroSection = () => {
@@ -49,8 +49,8 @@ const HeroSection = () => {
           {/* Stats */}
           <div className="flex flex-wrap gap-8">
             {[
-              { icon: Users, label: "Active Groups", value: "2,500+" },
-              { icon: TrendingUp, label: "Funds Managed", value: "₹50Cr+" },
+              { icon: BrainCircuit, label: "Continuous Monitoring", value: "AI Intelligence" },
+              { icon: TrendingUp, label: "Funds Managed", value: "Escrow" },
               { icon: Shield, label: "Secured by", value: "Blockchain" },
             ].map((stat) => (
               <div key={stat.label} className="flex items-center gap-3">

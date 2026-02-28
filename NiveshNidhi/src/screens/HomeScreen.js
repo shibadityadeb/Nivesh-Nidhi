@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, RefreshControl, I
 import { useTranslation } from 'react-i18next';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Shield, Users, TrendingUp, ChevronRight, FileText, User } from 'lucide-react-native';
+import { Shield, Users, TrendingUp, ChevronRight, FileText, User, BrainCircuit } from 'lucide-react-native';
 import { colors } from '../theme/colors';
 import { user } from '../services/api';
 
@@ -35,9 +35,9 @@ export default function HomeScreen({ navigation }) {
     };
 
     const stats = [
-        { icon: Users, value: "108,000+", label: t('home.happy_subscribers') },
+        { icon: BrainCircuit, value: "AI Intelligence", label: t('home.continuous_monitoring') },
         { icon: Shield, value: t('home.blockchain'), label: t('home.secured_by') },
-        { icon: TrendingUp, value: "₹50Cr+", label: t('home.funds_managed') },
+        { icon: TrendingUp, value: "Escrow", label: t('home.funds_managed') },
     ];
 
     return (

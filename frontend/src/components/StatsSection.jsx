@@ -1,12 +1,12 @@
-import { Users, Building2, MapPin, UserCheck } from "lucide-react";
+import { ShieldCheck, BrainCircuit, Link2, Clock } from "lucide-react";
 import { T } from "@/context/LanguageContext";
 
 const StatsSection = () => {
   const stats = [
-    { icon: Users, value: "108,000+", label: "Happy subscribers" },
-    { icon: Building2, value: "1,000+", label: "Employees" },
-    { icon: MapPin, value: "50+", label: "Branches" },
-    { icon: UserCheck, value: "1,500+", label: "Adviser" },
+    { icon: ShieldCheck, value: "100%", label: "Escrow Protected" },
+    { icon: BrainCircuit, value: "AI", label: "Risk Assessment" },
+    { icon: Link2, value: "On-Chain", label: "Blockchain Verified" },
+    { icon: Clock, value: "24/7", label: "Real-time Monitoring" },
   ];
 
   return (
