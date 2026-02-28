@@ -1,26 +1,18 @@
 import { useRef } from "react";
 import { T } from "@/context/LanguageContext";
-import solBeginners from "@/assets/sol-beginners.jpg";
-import solExperienced from "@/assets/sol-experienced.jpg";
-import solSeniors from "@/assets/sol-seniors.jpg";
-import solHomemakers from "@/assets/sol-homemakers.jpg";
-import goalBusiness from "@/assets/goal-business.jpg";
-import goalLiability from "@/assets/goal-liability.jpg";
-import goalFamily from "@/assets/goal-family.jpg";
-import goalWealth from "@/assets/goal-wealth.jpg";
 
 const personalSolutions = [
-  { title: "Beginners", image: solBeginners, href: "/solutions-personalized#beginners" },
-  { title: "Experienced Professionals", image: solExperienced, href: "/solutions-personalized#experienced" },
-  { title: "Senior Citizens", image: solSeniors, href: "/solutions-personalized#seniors" },
-  { title: "Home Makers", image: solHomemakers, href: "/solutions-personalized#homemakers" },
+  { title: "Beginners", image: "/assets/sol-beginners.jpg", href: "/solutions-personalized#beginners" },
+  { title: "Experienced Professionals", image: "/assets/sol-experienced.jpg", href: "/solutions-personalized#experienced" },
+  { title: "Senior Citizens", image: "/assets/sol-seniors.jpg", href: "/solutions-personalized#seniors" },
+  { title: "Home Makers", image: "/assets/sol-homemakers.jpg", href: "/solutions-personalized#homemakers" },
 ];
 
 const goalSolutions = [
-  { title: "Business Needs", image: goalBusiness, href: "/solutions-goal-based#business" },
-  { title: "Reducing Liability", image: goalLiability, href: "/solutions-goal-based#liability" },
-  { title: "Family Commitments", image: goalFamily, href: "/solutions-goal-based#family" },
-  { title: "Grow Investment & Wealth", image: goalWealth, href: "/solutions-goal-based#wealth" },
+  { title: "Business Needs", image: "/assets/goal-business.jpg", href: "/solutions-goal-based#business" },
+  { title: "Reducing Liability", image: "/assets/goal-liability.jpg", href: "/solutions-goal-based#liability" },
+  { title: "Family Commitments", image: "/assets/goal-family.jpg", href: "/solutions-goal-based#family" },
+  { title: "Grow Investment & Wealth", image: "/assets/goal-wealth.jpg", href: "/solutions-goal-based#wealth" },
 ];
 
 const SolutionCardComponent = ({ card, aspectRatio = "aspect-[4/3]" }) => {
@@ -32,6 +24,11 @@ const SolutionCardComponent = ({ card, aspectRatio = "aspect-[4/3]" }) => {
       <img
         src={card.image}
         alt={card.title}
+        loading="lazy"
+        onError={(e) => {
+          e.target.onerror = null;
+          e.target.src = "https://images.unsplash.com/photo-1554224311-beee460c201f?w=800&q=80";
+        }}
         className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
       />
       <div className="absolute inset-0 bg-gradient-to-t from-primary/80 via-primary/30 to-transparent" />
