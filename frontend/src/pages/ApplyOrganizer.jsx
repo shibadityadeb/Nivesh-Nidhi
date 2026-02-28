@@ -265,7 +265,7 @@ export default function ApplyOrganizer() {
                                             className="sr-only"
                                         />
                                         <div className="font-bold text-lg mb-2 text-blue-700"><T>Existing Business</T></div>
-                                        <p className="text-sm text-muted-foreground"><T>Running offline chits. Verified license required. Medium trust tier.</T></p>
+                                        <p className="text-sm text-muted-foreground"><T>Previously operated a chit fund and looking to restart. Verified license required.</T></p>
                                     </label>
 
                                     {/* MIGRATING */}
@@ -287,7 +287,7 @@ export default function ApplyOrganizer() {
                                             className="sr-only"
                                         />
                                         <div className="font-bold text-lg mb-2 text-amber-700 mt-2"><T>Migrating Platform</T></div>
-                                        <p className="text-sm text-muted-foreground"><T>Bringing existing large-scale operations. Fast-tracked priority review queue.</T></p>
+                                        <p className="text-sm text-muted-foreground"><T>Currently running offline chit fund operations and migrating to our online platform. Fast-tracked priority review.</T></p>
                                     </label>
                                 </div>
                             </div>
