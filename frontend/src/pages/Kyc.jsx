@@ -170,20 +170,20 @@ export default function Kyc() {
         <div className="absolute bottom-40 left-40 w-[450px] h-[450px] bg-gradient-to-tr from-primary/10 to-transparent rounded-full blur-3xl" />
       </div>
       <Navbar />
-      <main className="container mx-auto px-4 pt-24 pb-16 relative z-10">
+      <main className="container mx-auto px-4 pt-32 pb-16 relative z-10">
         <div className="max-w-5xl mx-auto">
           {/* Header Section */}
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-500/20 to-orange-600/20 mb-4">
-              <ShieldCheck className="w-8 h-8 text-orange-600" />
-            </div>
-            <h1 className="text-3xl md:text-4xl font-heading font-bold mb-2"><T>Complete Your KYC</T></h1>
-            <p className="text-muted-foreground"><T>Secure and instant verification powered by Government of India</T></p>
+          <div className="text-center mb-10">
+            <h1 className="text-4xl md:text-5xl font-heading font-bold mb-3">
+              <span className="text-primary">Complete Your </span>
+              <span className="text-secondary">KYC</span>
+            </h1>
+            <p className="text-muted-foreground text-lg max-w-2xl mx-auto"><T>Instant verification powered by Government of India's DigiLocker</T></p>
           </div>
 
-          <div className="grid md:grid-cols-[1fr,380px] gap-8 items-start">
+          <div className="grid md:grid-cols-[1fr,420px] gap-10 items-start">
             {/* Form Section */}
-            <div className="bg-card border border-border rounded-xl p-6 shadow-sm order-2 md:order-1">
+            <div className="bg-card border-2 border-border rounded-2xl p-8 shadow-lg order-2 md:order-1">
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-1.5">
                   <label htmlFor="aadhaarNumber" className="text-xs font-semibold text-muted-foreground uppercase tracking-wide"><T>Aadhaar Number</T></label>
@@ -321,7 +321,7 @@ export default function Kyc() {
                 <button
                   type="submit"
                   disabled={isSubmitting || isSuccess || !form.state || !form.city}
-                  className="w-full h-11 rounded-lg bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold hover:from-orange-600 hover:to-orange-700 hover:shadow-lg hover:shadow-orange-500/25 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none mt-6"
+                  className="w-full h-11 rounded-lg bg-gradient-to-r from-primary to-primary/90 text-white font-semibold hover:from-primary/90 hover:to-primary hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none mt-6"
                 >
                   <T>Verify & Continue</T>
                 </button>
@@ -329,47 +329,53 @@ export default function Kyc() {
             </div>
 
             {/* Info Sidebar */}
-            <div className="space-y-4 order-1 md:order-2">
+            <div className="space-y-6 order-1 md:order-2">
               {/* DigiLocker Badge */}
-              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 border border-blue-200 dark:border-blue-800 rounded-xl p-5">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-12 h-12 rounded-lg bg-white flex items-center justify-center flex-shrink-0 shadow-sm">
-                    <img
-                      src="https://digilocker.gov.in/assets/img/digilocker_logo.png"
-                      alt="DigiLocker"
-                      className="w-10 h-10 object-contain"
-                    />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-blue-900 dark:text-blue-100"><T>DigiLocker</T></h3>
-                    <p className="text-xs text-blue-700 dark:text-blue-300"><T>Government of India</T></p>
-                  </div>
+              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 border-2 border-blue-200 dark:border-blue-800 rounded-2xl p-6">
+                <div className="flex flex-col items-center text-center mb-4">
+                  <img
+                    src="https://digilocker.gov.in/assets/img/digilocker_logo.png"
+                    alt="DigiLocker"
+                    className="w-48 h-48 object-contain mb-3"
+                  />
+                  <h3 className="font-heading font-bold text-xl text-blue-900 dark:text-blue-100 mb-1"><T>DigiLocker Verified</T></h3>
+                  <p className="text-sm text-blue-700 dark:text-blue-300 font-medium"><T>Government of India</T></p>
                 </div>
-                <p className="text-xs text-blue-800 dark:text-blue-200 leading-relaxed"><T>Your documents are securely verified through India's official digital locker system</T></p>
+                <p className="text-sm text-blue-800 dark:text-blue-200 leading-relaxed text-center"><T>Your documents are securely verified through India's official digital locker system</T></p>
               </div>
 
               {/* Security Features */}
-              <div className="bg-card border border-border rounded-xl p-5">
-                <h3 className="font-semibold text-sm mb-3 flex items-center gap-2">
-                  <Lock className="w-4 h-4 text-orange-600" />
+              <div className="bg-card border-2 border-border rounded-2xl p-6 shadow-sm">
+                <h3 className="font-heading font-bold text-lg mb-4 flex items-center gap-2 text-primary">
+                  <div className="w-8 h-8 rounded-lg bg-secondary/10 flex items-center justify-center">
+                    <Lock className="w-4 h-4 text-secondary" />
+                  </div>
                   <T>Secured Verification</T>
                 </h3>
-                <div className="space-y-2.5">
-                  <div className="flex items-start gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-orange-600 mt-0.5 flex-shrink-0" />
-                    <p className="text-xs text-muted-foreground"><T>256-bit encrypted data transmission</T></p>
+                <div className="space-y-3">
+                  <div className="flex items-start gap-3">
+                    <div className="w-5 h-5 rounded-full bg-secondary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <CheckCircle2 className="w-3 h-3 text-secondary" />
+                    </div>
+                    <p className="text-sm text-muted-foreground"><T>256-bit encrypted data transmission</T></p>
                   </div>
-                  <div className="flex items-start gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-orange-600 mt-0.5 flex-shrink-0" />
-                    <p className="text-xs text-muted-foreground"><T>Instant verification in seconds</T></p>
+                  <div className="flex items-start gap-3">
+                    <div className="w-5 h-5 rounded-full bg-secondary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <CheckCircle2 className="w-3 h-3 text-secondary" />
+                    </div>
+                    <p className="text-sm text-muted-foreground"><T>Instant verification in seconds</T></p>
                   </div>
-                  <div className="flex items-start gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-orange-600 mt-0.5 flex-shrink-0" />
-                    <p className="text-xs text-muted-foreground"><T>No data stored on our servers</T></p>
+                  <div className="flex items-start gap-3">
+                    <div className="w-5 h-5 rounded-full bg-secondary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <CheckCircle2 className="w-3 h-3 text-secondary" />
+                    </div>
+                    <p className="text-sm text-muted-foreground"><T>No data stored on our servers</T></p>
                   </div>
-                  <div className="flex items-start gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-orange-600 mt-0.5 flex-shrink-0" />
-                    <p className="text-xs text-muted-foreground"><T>Compliant with IT Act 2000</T></p>
+                  <div className="flex items-start gap-3">
+                    <div className="w-5 h-5 rounded-full bg-secondary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <CheckCircle2 className="w-3 h-3 text-secondary" />
+                    </div>
+                    <p className="text-sm text-muted-foreground"><T>Compliant with IT Act 2000</T></p>
                   </div>
                 </div>
               </div>

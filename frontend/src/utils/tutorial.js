@@ -1,5 +1,6 @@
 import { driver } from "driver.js";
 import "driver.js/dist/driver.css";
+import "./tutorial.css";
 
 const STEP_TARGETS = [
   {
@@ -73,9 +74,10 @@ export const startAppTutorial = () => {
   const driverObj = driver({
     showProgress: true,
     allowClose: true,
-    nextBtnText: "Next ➜",
-    prevBtnText: "⬅ Back",
-    doneBtnText: "Finish 🎉",
+    nextBtnText: "Next",
+    prevBtnText: "Back",
+    doneBtnText: "Finish",
+    popoverClass: "nivesh-tutorial-popover",
     steps,
   });
 

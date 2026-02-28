@@ -1,5 +1,6 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import AuthModal from "@/components/AuthModal";
 import { CheckCircle2, AlertCircle, Users, Building2 } from "lucide-react";
 import { T } from "@/context/LanguageContext";
 
@@ -281,6 +282,7 @@ const EligibilityCriteria = () => {
         </section>
       </div>
       <Footer />
+      <AuthModal />
     </>
   );
 };

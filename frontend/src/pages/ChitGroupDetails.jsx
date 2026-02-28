@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { auctions as auctionsApi, chitGroups as chitGroupsApi, escrow } from "@/lib/api";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import AuthModal from "@/components/AuthModal";
 import { Loader2, Users, Calendar, IndianRupee, Gavel, Clock3, Trophy, XCircle } from "lucide-react";
 import { RiskAssessmentCard } from "@/components/RiskAssessmentCard";
 import { GroupRiskCard } from "@/components/GroupRiskCard";
@@ -804,6 +805,7 @@ export default function ChitGroupDetails() {
       )}
 
       <Footer />
+      <AuthModal />
     </div>
   );
 }

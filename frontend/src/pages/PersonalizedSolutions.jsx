@@ -113,8 +113,14 @@ const PersonalizedSolutions = () => {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-background pt-24 pb-20">
-        <div className="container mx-auto px-4 max-w-6xl">
+      <div className="min-h-screen bg-background pt-24 pb-20 relative overflow-hidden">
+        {/* Gradient Splashes */}
+        <div className="fixed inset-0 pointer-events-none z-0">
+          <div className="absolute top-20 right-20 w-[500px] h-[500px] bg-gradient-to-br from-secondary/15 to-transparent rounded-full blur-3xl" />
+          <div className="absolute bottom-40 left-20 w-[400px] h-[400px] bg-gradient-to-tr from-primary/15 to-transparent rounded-full blur-3xl" />
+        </div>
+        
+        <div className="container mx-auto px-4 max-w-6xl relative z-10">
 
           {/* Page Header */}
           <div className="text-center mb-20">

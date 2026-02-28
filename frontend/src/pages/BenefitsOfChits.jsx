@@ -1,5 +1,6 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import AuthModal from "@/components/AuthModal";
 import { TrendingUp, Users, Target, Award, Zap, DollarSign } from "lucide-react";
 import { T } from "@/context/LanguageContext";
 
@@ -191,10 +192,9 @@ const BenefitsOfChits = () => {
         </section>
       </div>
       <Footer />
+      <AuthModal />
     </>
   );
 };
 
 export default BenefitsOfChits;
-
-
