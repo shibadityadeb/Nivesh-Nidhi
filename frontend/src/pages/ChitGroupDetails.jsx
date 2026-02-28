@@ -36,10 +36,12 @@ export default function ChitGroupDetails() {
   const [createAuctionLoading, setCreateAuctionLoading] = useState(false);
   const [createAuctionForm, setCreateAuctionForm] = useState({
     bidAmount: "",
+    interestPerAuction: "",
     reason: "",
     roundNumber: "",
   });
   const [bidInputs, setBidInputs] = useState({});
+  const [interestInputs, setInterestInputs] = useState({});
   const [bidLoadingId, setBidLoadingId] = useState(null);
   const [organizerActionLoadingId, setOrganizerActionLoadingId] = useState(null);
   const [winnerPaymentLoadingId, setWinnerPaymentLoadingId] = useState(null);
@@ -246,10 +248,17 @@ export default function ChitGroupDetails() {
       return;
     }
 
+    const interestPerAuction = Number(createAuctionForm.interestPerAuction);
+    if (!Number.isFinite(interestPerAuction) || interestPerAuction < 0 || interestPerAuction > 100) {
+      toast.error("Enter a valid interest percentage (0-100).");
+      return;
+    }
+
     setCreateAuctionLoading(true);
     try {
       const res = await auctionsApi.create(id, {
         bidAmount,
+        interestPerAuction,
         reason: createAuctionForm.reason || undefined,
         roundNumber: createAuctionForm.roundNumber ? Number(createAuctionForm.roundNumber) : undefined,
       });
@@ -257,7 +266,7 @@ export default function ChitGroupDetails() {
       if (res.data.success) {
         toast.success("Auction created successfully");
         setShowCreateAuctionModal(false);
-        setCreateAuctionForm({ bidAmount: "", reason: "", roundNumber: "" });
+        setCreateAuctionForm({ bidAmount: "", interestPerAuction: "", reason: "", roundNumber: "" });
         await fetchAuctions();
       } else {
         toast.error(res.data.message || "Failed to create auction");
@@ -276,12 +285,19 @@ export default function ChitGroupDetails() {
       return;
     }
 
+    const interestPerAuction = Number(interestInputs[auctionId]);
+    if (!Number.isFinite(interestPerAuction) || interestPerAuction < 0 || interestPerAuction > 100) {
+      toast.error("Enter a valid interest percentage (0-100).");
+      return;
+    }
+
     setBidLoadingId(auctionId);
     try {
-      const res = await auctionsApi.placeBid(id, auctionId, { bidAmount });
+      const res = await auctionsApi.placeBid(id, auctionId, { bidAmount, interestPerAuction });
       if (res.data.success) {
         toast.success("Bid placed successfully");
         setBidInputs((prev) => ({ ...prev, [auctionId]: "" }));
+        setInterestInputs((prev) => ({ ...prev, [auctionId]: "" }));
         await fetchAuctions({ silent: true });
       } else {
         toast.error(res.data.message || "Failed to place bid");
@@ -573,8 +589,18 @@ export default function ChitGroupDetails() {
                                     value={bidInputs[auction.id] || ""}
                                     onChange={(e) => setBidInputs((prev) => ({ ...prev, [auction.id]: e.target.value }))}
                                   />
+                                  <input
+                                    type="number"
+                                    min="0"
+                                    max="100"
+                                    step="0.1"
+                                    placeholder="Interest (%)"
+                                    className="w-full sm:w-32 border border-border rounded-lg px-3 py-2 text-sm"
+                                    value={interestInputs[auction.id] || ""}
+                                    onChange={(e) => setInterestInputs((prev) => ({ ...prev, [auction.id]: e.target.value }))}
+                                  />
                                   <button
-                                    className="px-4 py-2 rounded-lg bg-secondary text-secondary-foreground font-semibold hover:bg-secondary/90 disabled:bg-muted disabled:text-muted-foreground"
+                                    className="px-4 py-2 rounded-lg bg-secondary text-secondary-foreground font-semibold hover:bg-secondary/90 disabled:bg-muted disabled:text-muted-foreground whitespace-nowrap"
                                     disabled={bidLoadingId === auction.id}
                                     onClick={() => handlePlaceBid(auction.id)}
                                   >
@@ -690,6 +716,19 @@ export default function ChitGroupDetails() {
                   className="w-full mt-1 border border-border rounded-lg px-3 py-2"
                   value={createAuctionForm.bidAmount}
                   onChange={(e) => setCreateAuctionForm((prev) => ({ ...prev, bidAmount: e.target.value }))}
+                />
+              </div>
+
+              <div>
+                <label className="text-sm font-medium text-foreground"><T>Interest Per Auction (%)</T></label>
+                <input
+                  type="number"
+                  min="0"
+                  max="100"
+                  step="0.1"
+                  className="w-full mt-1 border border-border rounded-lg px-3 py-2"
+                  value={createAuctionForm.interestPerAuction}
+                  onChange={(e) => setCreateAuctionForm((prev) => ({ ...prev, interestPerAuction: e.target.value }))}
                 />
               </div>
 
