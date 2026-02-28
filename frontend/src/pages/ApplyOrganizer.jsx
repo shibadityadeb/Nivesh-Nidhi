@@ -3,6 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { organizers } from "@/lib/api";
 import { toast } from "sonner";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import {
     ArrowRight,
     ArrowLeft,
@@ -173,7 +175,9 @@ export default function ApplyOrganizer() {
     };
 
     return (
-        <div className="min-h-screen bg-background flex flex-col items-center pt-24 pb-12 px-4 relative overflow-hidden">
+        <>
+            <Navbar />
+            <div className="min-h-screen bg-background flex flex-col items-center pt-24 pb-12 px-4 relative overflow-hidden">
             {/* Gradient Splashes */}
             <div className="fixed inset-0 pointer-events-none z-0">
                 <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-to-br from-secondary/12 to-transparent rounded-full blur-3xl" />
@@ -724,6 +728,8 @@ export default function ApplyOrganizer() {
                     </form>
                 </div>
             </div>
-        </div>
+            </div>
+            <Footer />
+        </>
     );
 }

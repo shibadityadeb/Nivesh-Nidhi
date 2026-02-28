@@ -11,7 +11,7 @@ const personas = [
     subtitle: "Build the habits of regular investment and set the foundation for lifelong wealth.",
     icon: GraduationCap,
     accent: "#f97316",
-    image: "src/assets/sol-beginners.jpg",
+    image: "/assets/sol-beginners.jpg",
     items: [
       { q: "Monthly Compulsory Savings", a: "Build a disciplined saving habit with automated monthly contributions." },
       { q: "Large Expenses", a: "Save systematically for major milestones like your wedding or first home." },
@@ -26,7 +26,7 @@ const personas = [
     subtitle: "Economical and invaluable options to reduce dependency on loans and avoid liabilities.",
     icon: Briefcase,
     accent: "#0ea5e9",
-    image: "src/assets/sol-experienced.jpg",
+    image: "/assets/sol-experienced.jpg",
     items: [
       { q: "Prepay Loans", a: "Save hard-earned money by pre-closing your existing loans early." },
       { q: "Future Expenses", a: "Convenient saving for marriages, education, cars, and home renovations." },
@@ -40,7 +40,7 @@ const personas = [
     subtitle: "Fulfil lifelong ambitions and stay prepared for emergencies without dipping into savings.",
     icon: Users,
     accent: "#8b5cf6",
-    image: "src/assets/sol-seniors.jpg",
+    image: "/assets/sol-seniors.jpg",
     items: [
       { q: "Lifelong Dreams", a: "Finally take that dream leisure trip you have been putting off for years." },
       { q: "Life Upgrade", a: "Upgrade to a comfortable automatic car for easier daily commutes." },
@@ -54,7 +54,7 @@ const personas = [
     subtitle: "A hard-to-miss opportunity to generate additional income and create a buffer for contingencies.",
     icon: Home,
     accent: "#ec4899",
-    image: "src/assets/sol-homemakers.jpg",
+    image: "/assets/sol-homemakers.jpg",
     items: [
       { q: "Monthly Compulsory Saving", a: "Grow your monthly savings with higher returns and zero risk." },
       { q: "Child Education", a: "Provide your child with the best education possible, stress-free." },

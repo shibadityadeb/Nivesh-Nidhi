@@ -1,11 +1,11 @@
-import { ShieldCheck, BrainCircuit, Link2, Clock } from "lucide-react";
+import { ShieldCheck, BrainCircuit, Smartphone, Clock } from "lucide-react";
 import { T } from "@/context/LanguageContext";
 
 const StatsSection = () => {
   const stats = [
     { icon: ShieldCheck, value: "100%", label: "Escrow Protected" },
     { icon: BrainCircuit, value: "AI", label: "Risk Assessment" },
-    { icon: Link2, value: "On-Chain", label: "Blockchain Verified" },
+    { icon: Smartphone, value: "App", label: "Available on Mobile" },
     { icon: Clock, value: "24/7", label: "Real-time Monitoring" },
   ];
 

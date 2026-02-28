@@ -11,7 +11,7 @@ const solutions = [
     description: "The perfect financial solution to fuel your business ambitions — from raw materials to expansion.",
     icon: Briefcase,
     accent: "#f97316",
-    image: "src/assets/goal-business.jpg",
+    image: "/assets/goal-business.jpg",
     items: [
       { title: "Bulk Purchases", desc: "Reduce unit cost of raw materials by buying in bulk with pooled funds." },
       { title: "Expansion", desc: "Grow your business and invest in new products and services seamlessly." },
@@ -25,7 +25,7 @@ const solutions = [
     description: "Take control of your finances — close high-cost debts and free yourself from financial burden.",
     icon: TrendingDown,
     accent: "#0ea5e9",
-    image: "src/assets/goal-liability.jpg",
+    image: "/assets/goal-liability.jpg",
     items: [
       { title: "Closing High-Cost Loans", desc: "Foreclose loans that eat into your long-term savings and wealth." },
       { title: "Personal & Hand Loans", desc: "Pay off financial obligations to peers or lenders through Chits." },
@@ -39,7 +39,7 @@ const solutions = [
     description: "Borrow from your future savings to comfortably meet life's most important milestones.",
     icon: Heart,
     accent: "#ec4899",
-    image: "src/assets/goal-family.jpg",
+    image: "/assets/goal-family.jpg",
     items: [
       { title: "House Renovation", desc: "Don't think twice before taking up a home improvement project." },
       { title: "Medical Expenses", desc: "Maintain a reserve for any healthcare-related emergencies." },
@@ -53,7 +53,7 @@ const solutions = [
     description: "The most cost-efficient tool to acquire assets and multiply wealth — without taking a loan.",
     icon: TrendingUp,
     accent: "#10b981",
-    image: "src/assets/goal-wealth.jpg",
+    image: "/assets/goal-wealth.jpg",
     items: [
       { title: "Land & Real Estate", desc: "Purchase land or property and watch your money multiply over time." },
       { title: "Vehicles", desc: "Glide through your daily commute by purchasing your dream vehicle." },

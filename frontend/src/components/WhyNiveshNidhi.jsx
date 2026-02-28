@@ -50,7 +50,7 @@ const WhyNiveshNidhi = () => {
   const steps = [
     "1. Sign-up and complete eKYC",
     "2. Start saving monthly",
-    "3. Participate in weekly e-auctions",
+    "3. Participate in anytime e-auctions",
     "4. Realize your goals"
   ];
 
