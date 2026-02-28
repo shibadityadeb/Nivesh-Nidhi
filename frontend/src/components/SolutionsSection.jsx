@@ -2,17 +2,17 @@ import { useRef } from "react";
 import { T } from "@/context/LanguageContext";
 
 const personalSolutions = [
-  { title: "Beginners", image: "https://t3.ftcdn.net/jpg/03/34/69/94/360_F_334699422_sWZ3mvEKs7Ou2Qugn7JwHjlhWtdBfgiN.jpg", href: "/solutions-personalized#beginners" },
-  { title: "Experienced Professionals", image: "https://www.millenniumpost.in/h-upload/2025/05/26/857938-images-2025-05-26t104645306.jpg", href: "/solutions-personalized#experienced" },
-  { title: "Senior Citizens", image: "https://thespace.ink/wp-content/uploads/2023/10/5-4-scaled-1.jpg", href: "/solutions-personalized#seniors" },
-  { title: "Home Makers", image: "https://rohanbuilders.com/wp-content/uploads/2024/05/activities-the-katkaris.png", href: "/solutions-personalized#homemakers" },
+  { title: "Beginners", image: "https://mahamoney.s3.ap-south-1.amazonaws.com/sol-beginners.jpg", href: "/solutions-personalized#beginners" },
+  { title: "Experienced Professionals", image: "https://mahamoney.s3.ap-south-1.amazonaws.com/sol-experienced.jpg", href: "/solutions-personalized#experienced" },
+  { title: "Senior Citizens", image: "https://mahamoney.s3.ap-south-1.amazonaws.com/sol-seniors.jpg", href: "/solutions-personalized#seniors" },
+  { title: "Home Makers", image: "https://mahamoney.s3.ap-south-1.amazonaws.com/sol-homemakers.jpg", href: "/solutions-personalized#homemakers" },
 ];
 
 const goalSolutions = [
-  { title: "Business Needs", image: "https://static.langimg.com/mt/thumb/112195214/pen-umbarde-bachat-gat-mata-superwoman.jpg?imgsize=110814&width=1600&height=900&resizemode=75", href: "/solutions-goal-based#business" },
-  { title: "Reducing Liability", image: "https://img.freepik.com/premium-psd/family-photo-transparent-background_1028124-40873.jpg?semt=ais_user_personalization&w=740&q=80", href: "/solutions-goal-based#liability" },
-  { title: "Family Commitments", image: "https://media.istockphoto.com/id/1205326855/photo/indian-family-in-agricultural-field.jpg?s=612x612&w=0&k=20&c=ivRFoyJyg_tosWdCafoqU75t0xojhQKx1kXiJsbkBoc=", href: "/solutions-goal-based#family" },
-  { title: "Grow Investment & Wealth", image: "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcRo8tAHGah4Qeh5Vr9GZ6q6mqVcOw4WEqeEvEiecehsRIiys6tS", href: "/solutions-goal-based#wealth" },
+  { title: "Business Needs", image: "https://mahamoney.s3.ap-south-1.amazonaws.com/goal-business.jpg", href: "/solutions-goal-based#business" },
+  { title: "Reducing Liability", image: "https://mahamoney.s3.ap-south-1.amazonaws.com/goal-liability.jpg", href: "/solutions-goal-based#liability" },
+  { title: "Family Commitments", image: "https://mahamoney.s3.ap-south-1.amazonaws.com/goal-family.jpg", href: "/solutions-goal-based#family" },
+  { title: "Grow Investment & Wealth", image: "https://mahamoney.s3.ap-south-1.amazonaws.com/goal-wealth.jpg", href: "/solutions-goal-based#wealth" },
 ];
 
 const SolutionCardComponent = ({ card, aspectRatio = "aspect-[4/3]" }) => {
