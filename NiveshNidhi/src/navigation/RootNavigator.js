@@ -14,6 +14,7 @@ import GroupsScreen from '../screens/GroupsScreen';
 import DashboardScreen from '../screens/DashboardScreen';
 import KycScreen from '../screens/KycScreen';
 import GroupDetailsScreen from '../screens/GroupDetailsScreen';
+import GovSchemesScreen from '../screens/GovSchemesScreen';
 import { colors } from '../theme/colors';
 import { user } from '../services/api';
 
@@ -143,6 +144,7 @@ export default function RootNavigator() {
                 <Stack.Screen name="Auth" component={AuthScreen} />
                 <Stack.Screen name="AppLayout" component={AppTabs} />
                 <Stack.Screen name="GroupDetails" component={GroupDetailsScreen} options={{ headerShown: false }} />
+                <Stack.Screen name="GovSchemes" component={GovSchemesScreen} options={{ headerShown: true, title: 'Government Schemes' }} />
             </Stack.Navigator>
         </NavigationContainer>
     );

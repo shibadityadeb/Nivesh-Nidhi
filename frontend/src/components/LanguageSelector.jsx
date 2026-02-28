@@ -27,8 +27,7 @@ const LanguageSelector = () => {
         title="Change Language"
       >
         <Globe className="w-4 h-4 text-primary" />
-        <span className="hidden sm:inline">{currentLang.nativeName}</span>
-        <span className="sm:hidden">{currentLang.flag}</span>
+        <span>{currentLang.nativeName}</span>
       </button>
 
       {isOpen && (
@@ -46,7 +45,6 @@ const LanguageSelector = () => {
                   : "text-card-foreground hover:bg-muted hover:text-primary"
               }`}
             >
-              <span className="text-lg">{lang.flag}</span>
               <span className="flex-1 text-left">{lang.nativeName}</span>
               <span className="text-xs text-muted-foreground">{lang.name}</span>
               {language === lang.code && (

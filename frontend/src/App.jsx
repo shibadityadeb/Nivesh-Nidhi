@@ -9,6 +9,7 @@ import { LanguageProvider } from "@/context/LanguageContext";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import PageTransition from "@/components/PageTransition";
 import Chatbot from "@/components/Chatbot";
+import IntroVideo from "@/components/IntroVideo";
 import { startAppTutorial } from "@/utils/tutorial";
 import Index from "./pages/Index";
 import ChitGroups from "./pages/ChitGroups";
@@ -68,6 +69,7 @@ const App = () => (
           <AuthProvider>
             <Toaster />
             <Sonner />
+            <IntroVideo />
             <BrowserRouter>
               <TutorialBootstrap />
               <PageTransition>

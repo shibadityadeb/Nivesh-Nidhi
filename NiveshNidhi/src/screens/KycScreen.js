@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TextInput, TouchableOpacity, ActivityIndicator, Alert, Platform, DeviceEventEmitter } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TextInput, TouchableOpacity, ActivityIndicator, Alert, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { ShieldCheck } from 'lucide-react-native';
+import { ShieldCheck, Lock, CheckCircle } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
+import { LinearGradient } from 'expo-linear-gradient';
 import { colors } from '../theme/colors';
 import Button from '../components/Button';
 import { kyc, locations } from '../services/api';
@@ -121,7 +122,6 @@ export default function KycScreen({ navigation }) {
 
       const res = await kyc.verify(payload);
       if (res.data?.success) {
-        DeviceEventEmitter.emit('kyc_completed');
         Alert.alert('KYC Verified', 'Your KYC has been verified successfully.', [
           {
             text: 'OK',
@@ -150,14 +150,50 @@ export default function KycScreen({ navigation }) {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.header}>
-          <View style={styles.iconBox}>
-            <ShieldCheck size={28} color={colors.secondary} />
+          <Text style={styles.title}>Complete Your KYC</Text>
+          <Text style={styles.subtitle}>
+            Instant verification powered by Government of India's DigiLocker
+          </Text>
+        </View>
+
+        {/* DigiLocker Badge */}
+        <LinearGradient
+          colors={['#e0f2fe', '#dbeafe']}
+          style={styles.digilockerCard}
+        >
+          <Image
+            source={{ uri: 'https://digilocker.gov.in/assets/img/digilocker_logo.png' }}
+            style={styles.digilockerLogo}
+            resizeMode="contain"
+          />
+          <Text style={styles.digilockerTitle}>DigiLocker Verified</Text>
+          <Text style={styles.digilockerSubtitle}>Government of India</Text>
+          <Text style={styles.digilockerDesc}>
+            Your documents are securely verified through India's official digital locker system
+          </Text>
+        </LinearGradient>
+
+        {/* Security Features */}
+        <View style={styles.securityCard}>
+          <View style={styles.securityHeader}>
+            <View style={styles.securityIconBox}>
+              <Lock size={16} color={colors.secondary} />
+            </View>
+            <Text style={styles.securityTitle}>Secured Verification</Text>
           </View>
-          <View style={{ flex: 1 }}>
-            <Text style={styles.title}>Complete Your KYC</Text>
-            <Text style={styles.subtitle}>
-              Secure Aadhaar verification is required to continue.
-            </Text>
+          <View style={styles.securityList}>
+            <View style={styles.securityItem}>
+              <CheckCircle size={14} color={colors.secondary} />
+              <Text style={styles.securityText}>256-bit encrypted data transmission</Text>
+            </View>
+            <View style={styles.securityItem}>
+              <CheckCircle size={14} color={colors.secondary} />
+              <Text style={styles.securityText}>Instant verification in seconds</Text>
+            </View>
+            <View style={styles.securityItem}>
+              <CheckCircle size={14} color={colors.secondary} />
+              <Text style={styles.securityText}>No data stored on our servers</Text>
+            </View>
           </View>
         </View>
 
@@ -340,39 +376,118 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
   },
   content: {
-    padding: 16,
+    padding: 20,
     paddingBottom: 32,
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
     marginBottom: 24,
-  },
-  iconBox: {
-    width: 44,
-    height: 44,
-    borderRadius: 16,
-    backgroundColor: colors.secondaryLight || '#fef3c7',
     alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 12,
   },
   title: {
-    fontSize: 22,
-    fontWeight: '700',
+    fontSize: 28,
+    fontWeight: '800',
     color: colors.primary,
-    marginBottom: 4,
+    marginBottom: 8,
+    textAlign: 'center',
   },
   subtitle: {
+    fontSize: 14,
+    color: colors.textMuted,
+    textAlign: 'center',
+    lineHeight: 20,
+  },
+  digilockerCard: {
+    borderRadius: 20,
+    padding: 24,
+    marginBottom: 20,
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#bfdbfe',
+    elevation: 3,
+    shadowColor: '#3b82f6',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+  },
+  digilockerLogo: {
+    width: 180,
+    height: 180,
+    marginBottom: 12,
+  },
+  digilockerTitle: {
+    fontSize: 18,
+    fontWeight: '800',
+    color: '#1e3a8a',
+    marginBottom: 4,
+  },
+  digilockerSubtitle: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#1e40af',
+    marginBottom: 12,
+  },
+  digilockerDesc: {
+    fontSize: 13,
+    color: '#1e40af',
+    textAlign: 'center',
+    lineHeight: 18,
+  },
+  securityCard: {
+    backgroundColor: colors.surface,
+    borderRadius: 20,
+    padding: 20,
+    marginBottom: 20,
+    borderWidth: 2,
+    borderColor: colors.border,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+  },
+  securityHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  securityIconBox: {
+    width: 32,
+    height: 32,
+    borderRadius: 10,
+    backgroundColor: colors.lightSecondary,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 10,
+  },
+  securityTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: colors.primary,
+  },
+  securityList: {
+    gap: 12,
+  },
+  securityItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  securityText: {
     fontSize: 13,
     color: colors.textMuted,
+    flex: 1,
   },
   form: {
     backgroundColor: colors.surface,
-    borderRadius: 16,
-    padding: 16,
-    borderWidth: 1,
+    borderRadius: 20,
+    padding: 20,
+    borderWidth: 2,
     borderColor: colors.border,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
   },
   field: {
     marginBottom: 16,
@@ -384,11 +499,11 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   input: {
-    borderWidth: 1,
+    borderWidth: 2,
     borderColor: colors.border,
-    borderRadius: 10,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
+    borderRadius: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
     fontSize: 14,
     color: colors.text,
     backgroundColor: colors.background,
@@ -415,11 +530,16 @@ const styles = StyleSheet.create({
   },
   dropdown: {
     marginTop: 4,
-    borderRadius: 10,
-    borderWidth: 1,
+    borderRadius: 12,
+    borderWidth: 2,
     borderColor: colors.border,
     backgroundColor: colors.surface,
     overflow: 'hidden',
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
   },
   dropdownItem: {
     paddingHorizontal: 12,

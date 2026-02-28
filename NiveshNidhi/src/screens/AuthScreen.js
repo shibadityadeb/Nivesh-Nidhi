@@ -186,8 +186,8 @@ const styles = StyleSheet.create({
         marginBottom: 40,
     },
     title: {
-        fontSize: 28,
-        fontWeight: '700',
+        fontSize: 32,
+        fontWeight: '800',
         color: colors.primary,
         marginBottom: 8,
     },
@@ -220,10 +220,10 @@ const styles = StyleSheet.create({
     errorContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: colors.error + '10', // 10% opacity
-        padding: 12,
-        borderRadius: 8,
-        borderWidth: 1,
+        backgroundColor: colors.error + '10',
+        padding: 14,
+        borderRadius: 12,
+        borderWidth: 2,
         borderColor: colors.error + '30',
         gap: 8,
     },
@@ -246,8 +246,8 @@ const styles = StyleSheet.create({
         fontSize: 14,
     },
     switchLink: {
-        color: colors.secondary, // Saffron
+        color: colors.secondary,
         fontSize: 14,
-        fontWeight: '600',
+        fontWeight: '700',
     }
 });

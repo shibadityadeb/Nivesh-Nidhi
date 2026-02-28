@@ -21,18 +21,6 @@ const navItems = [
     ],
   },
   {
-    label: "CHIT GROUP",
-    buttonId: "auctionBtnMobile",
-    submenu: [
-      { label: "New Chits Available", href: "/chit-groups", id: "exploreChitsBtnMobile" },
-      { label: "Ongoing Chits Available", href: "/chit-groups" },
-      { label: "Planning Amount", href: "#" },
-      { label: "My Chits", href: "#" },
-      { label: "Bid Offer Submission", href: "#" },
-      { label: "Join Live Auction", href: "/chit-groups", id: "auctionBtn" },
-    ],
-  },
-  {
     label: "SOLUTIONS",
     submenu: [
       { label: "Goal Based Solution", href: "/solutions-goal-based" },
@@ -182,7 +170,6 @@ const Navbar = () => {
                   onMouseLeave={handleMouseLeave}
                 >
                   <button
-                    id={item.label === "CHIT GROUP" ? "auctionBtn" : undefined}
                     className={`flex items-center gap-1 text-sm font-medium transition-colors ${activeMenu === item.label ? "text-primary" : "text-foreground hover:text-primary"}`}
                   >
                     <T>{item.label}</T>
@@ -205,6 +192,14 @@ const Navbar = () => {
                   )}
                 </div>
               ))}
+              <a
+                href="/chit-groups"
+                id="exploreChitsBtn"
+                className="text-sm font-medium text-foreground hover:text-primary transition-colors relative pb-1"
+              >
+                <T>CHIT GROUPS</T>
+                {location.pathname === '/chit-groups' && <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-secondary" />}
+              </a>
               <a
                 href="/gov-schemes"
                 className="text-sm font-medium text-foreground hover:text-primary transition-colors relative pb-1"
@@ -405,6 +400,9 @@ const Navbar = () => {
                 {navItems.map((item) => (
                   <MobileNavItem key={item.label} item={item} />
                 ))}
+                <a href="/chit-groups" id="exploreChitsBtnMobile" className="block px-4 py-3 font-medium text-foreground hover:text-primary rounded-lg hover:bg-muted transition-colors">
+                  <T>CHIT GROUPS</T>
+                </a>
                 <a href="/gov-schemes" className="block px-4 py-3 font-medium text-foreground hover:text-primary rounded-lg hover:bg-muted transition-colors">
                   <T>GOVT. SCHEMES</T>
                 </a>
